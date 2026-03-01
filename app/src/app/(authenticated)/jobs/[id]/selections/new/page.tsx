@@ -25,10 +25,10 @@ export default function NewSelectionPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { data: categoriesResponse } = useSelectionCategories({ limit: 500, job_id: jobId } as any)
+  const { data: categoriesResponse, isLoading: categoriesLoading } = useSelectionCategories({ limit: 500, job_id: jobId } as any)
   const categories = ((categoriesResponse as { data: Category[] } | undefined)?.data ?? [])
 
-  const { data: optionsResponse } = useSelectionOptions({ limit: 500 } as any)
+  const { data: optionsResponse, isLoading: optionsLoading } = useSelectionOptions({ limit: 500 } as any)
   const options = ((optionsResponse as { data: Option[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
@@ -109,7 +109,7 @@ export default function NewSelectionPage() {
               <div className="space-y-2">
                 <label htmlFor="category_id" className="text-sm font-medium">Category <span className="text-red-500">*</span></label>
                 <select id="category_id" name="category_id" value={formData.category_id} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">Select a category...</option>
+                  <option value="">{categoriesLoading ? 'Loading categories...' : 'Select a category...'}</option>
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}{c.room ? ` (${c.room})` : ''}
@@ -120,7 +120,7 @@ export default function NewSelectionPage() {
               <div className="space-y-2">
                 <label htmlFor="option_id" className="text-sm font-medium">Option <span className="text-red-500">*</span></label>
                 <select id="option_id" name="option_id" value={formData.option_id} onChange={handleChange} required disabled={!formData.category_id} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50">
-                  <option value="">Select an option...</option>
+                  <option value="">{optionsLoading ? 'Loading options...' : 'Select an option...'}</option>
                   {filteredOptions.map((o) => (
                     <option key={o.id} value={o.id}>{o.name}</option>
                   ))}

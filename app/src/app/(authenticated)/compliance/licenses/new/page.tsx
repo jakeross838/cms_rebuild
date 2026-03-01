@@ -19,7 +19,7 @@ export default function NewCertificationPage() {
   const createCertification = useCreateHrCertification()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: employeesResponse } = useEmployees({ limit: 500 } as any)
+  const { data: employeesResponse, isLoading: employeesLoading } = useEmployees({ limit: 500 } as any)
   const employees = ((employeesResponse as { data: { id: string; first_name: string; last_name: string }[] } | undefined)?.data ?? []).map((e) => ({
     id: e.id,
     name: `${e.first_name} ${e.last_name}`,
@@ -97,7 +97,7 @@ export default function NewCertificationPage() {
               <div className="space-y-2">
                 <label htmlFor="employee_id" className="text-sm font-medium">Employee <span className="text-red-500">*</span></label>
                 <select id="employee_id" name="employee_id" value={formData.employee_id} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">Select an employee...</option>
+                  <option value="">{employeesLoading ? 'Loading employees...' : 'Select an employee...'}</option>
                   {employees.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
                 </select>
               </div>

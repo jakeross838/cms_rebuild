@@ -21,7 +21,7 @@ export default function NewContactPage() {
   const createMutation = useCreateContactFlat()
 
   // ── Dropdown data ──────────────────────────────────────────────
-  const { data: vendorsResponse } = useVendors({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 } as Record<string, string | number | boolean | undefined>)
   const vendors: VendorRow[] = ((vendorsResponse as { data: VendorRow[] } | undefined)?.data ?? [])
 
   const [error, setError] = useState<string | null>(null)
@@ -122,7 +122,7 @@ export default function NewContactPage() {
             <div className="space-y-2">
               <label htmlFor="vendor_id" className="text-sm font-medium">Vendor <span className="text-red-500">*</span></label>
               <select id="vendor_id" name="vendor_id" value={formData.vendor_id} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                <option value="">Select a vendor...</option>
+                <option value="">{vendorsLoading ? 'Loading vendors...' : 'Select a vendor...'}</option>
                 {vendors.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
               </select>
             </div>

@@ -32,7 +32,7 @@ export default function NewJournalEntryPage() {
   const createJournalEntry = useCreateJournalEntry()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: accountsResponse } = useGlAccounts({ limit: 500 } as any)
+  const { data: accountsResponse, isLoading: accountsLoading } = useGlAccounts({ limit: 500 } as any)
   const accounts = ((accountsResponse as { data: { id: string; name: string; account_number: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
@@ -218,7 +218,7 @@ export default function NewJournalEntryPage() {
                           onChange={(e) => handleLineChange(index, 'account_id', e.target.value)}
                           className="flex h-9 w-full rounded-md border border-input bg-transparent px-2 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                         >
-                          <option value="">Select account...</option>
+                          <option value="">{accountsLoading ? 'Loading accounts...' : 'Select account...'}</option>
                           {accounts.map((a) => (
                             <option key={a.id} value={a.id}>{a.account_number} — {a.name}</option>
                           ))}

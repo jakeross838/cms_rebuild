@@ -23,7 +23,7 @@ export default function NewInspectionPage() {
   const createMutation = useCreateInspection()
 
   // ── Dropdown data ──────────────────────────────────────────────
-  const { data: permitsResponse } = usePermits({ job_id: jobId, limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const { data: permitsResponse, isLoading: permitsLoading } = usePermits({ job_id: jobId, limit: 500 } as Record<string, string | number | boolean | undefined>)
   const permits: PermitRow[] = ((permitsResponse as { data: PermitRow[] } | undefined)?.data ?? [])
 
   const [error, setError] = useState<string | null>(null)
@@ -96,7 +96,7 @@ export default function NewInspectionPage() {
               <div className="space-y-2">
                 <label htmlFor="permit_id" className="text-sm font-medium">Permit <span className="text-red-500">*</span></label>
                 <select id="permit_id" name="permit_id" value={formData.permit_id} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">Select a permit...</option>
+                  <option value="">{permitsLoading ? 'Loading permits...' : 'Select a permit...'}</option>
                   {permits.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.permit_type}{p.permit_number ? ` (${p.permit_number})` : ''}

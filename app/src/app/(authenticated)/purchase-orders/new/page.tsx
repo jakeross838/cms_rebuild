@@ -27,7 +27,7 @@ export default function NewPurchaseOrderPage() {
   const { data: jobsResponse, isLoading: loadingOptions } = useJobs({ limit: 500 } as any)
   const jobs = ((jobsResponse as { data: { id: string; name: string; job_number: string | null }[] } | undefined)?.data ?? [])
 
-  const { data: vendorsResponse } = useVendors({ limit: 500 } as any)
+  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 } as any)
   const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
@@ -141,7 +141,7 @@ export default function NewPurchaseOrderPage() {
                   required
                   disabled={loadingOptions}
                 >
-                  <option value="">{loadingOptions ? 'Loading...' : 'Select a job'}</option>
+                  <option value="">{loadingOptions ? 'Loading jobs...' : 'Select a job'}</option>
                   {jobs.map((job) => (
                     <option key={job.id} value={job.id}>
                       {job.job_number ? `${job.job_number} - ` : ''}{job.name}
@@ -158,9 +158,9 @@ export default function NewPurchaseOrderPage() {
                   onChange={handleChange}
                   className={selectClassName}
                   required
-                  disabled={loadingOptions}
+                  disabled={vendorsLoading}
                 >
-                  <option value="">{loadingOptions ? 'Loading...' : 'Select a vendor'}</option>
+                  <option value="">{vendorsLoading ? 'Loading vendors...' : 'Select a vendor'}</option>
                   {vendors.map((vendor) => (
                     <option key={vendor.id} value={vendor.id}>
                       {vendor.name}

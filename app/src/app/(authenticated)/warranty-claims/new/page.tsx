@@ -22,10 +22,10 @@ export default function NewWarrantyClaimPage() {
   const createMutation = useCreateWarrantyClaimFlat()
 
   // ── Dropdown data ──────────────────────────────────────────────
-  const { data: jobsResponse } = useJobs({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as Record<string, string | number | boolean | undefined>)
   const jobs: JobRow[] = ((jobsResponse as { data: JobRow[] } | undefined)?.data ?? [])
 
-  const { data: warrantiesResponse } = useWarranties({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const { data: warrantiesResponse, isLoading: warrantiesLoading } = useWarranties({ limit: 500 } as Record<string, string | number | boolean | undefined>)
   const warranties: WarrantyRow[] = ((warrantiesResponse as { data: WarrantyRow[] } | undefined)?.data ?? [])
 
   const today = new Date().toISOString().split('T')[0]
@@ -111,14 +111,14 @@ export default function NewWarrantyClaimPage() {
               <div className="space-y-2">
                 <label htmlFor="job_id" className="text-sm font-medium">Job</label>
                 <select id="job_id" name="job_id" value={formData.job_id} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">No job</option>
+                  <option value="">{jobsLoading ? 'Loading jobs...' : 'No job'}</option>
                   {jobs.map((j) => <option key={j.id} value={j.id}>{j.name}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
                 <label htmlFor="warranty_id" className="text-sm font-medium">Warranty</label>
                 <select id="warranty_id" name="warranty_id" value={formData.warranty_id} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">No warranty</option>
+                  <option value="">{warrantiesLoading ? 'Loading warranties...' : 'No warranty'}</option>
                   {filteredWarranties.map((w) => <option key={w.id} value={w.id}>{w.title}</option>)}
                 </select>
               </div>

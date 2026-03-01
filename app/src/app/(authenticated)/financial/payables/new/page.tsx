@@ -22,10 +22,10 @@ export default function NewPayablePage() {
   const createApBill = useCreateApBill()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: vendorsResponse } = useVendors({ limit: 500 } as any)
+  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 } as any)
   const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
-  const { data: jobsResponse } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as any)
   const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
@@ -106,14 +106,14 @@ export default function NewPayablePage() {
               <div className="space-y-2">
                 <label htmlFor="vendor_id" className="text-sm font-medium">Vendor <span className="text-red-500">*</span></label>
                 <select id="vendor_id" name="vendor_id" value={formData.vendor_id} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">Select a vendor...</option>
+                  <option value="">{vendorsLoading ? 'Loading vendors...' : 'Select a vendor...'}</option>
                   {vendors.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
                 <label htmlFor="job_id" className="text-sm font-medium">Job</label>
                 <select id="job_id" name="job_id" value={formData.job_id} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">No job (overhead)</option>
+                  <option value="">{jobsLoading ? 'Loading jobs...' : 'No job (overhead)'}</option>
                   {jobs.map((j) => <option key={j.id} value={j.id}>{j.name}</option>)}
                 </select>
               </div>
