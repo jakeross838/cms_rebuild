@@ -1,5 +1,43 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 43 — Fix Vendors/Clients/Jobs API Nonexistent Column Queries (2026-03-01)
+
+### Vendors API + Schema (2 files)
+| File | What Changed |
+|------|-------------|
+| `app/api/v1/vendors/route.ts` (GET) | Search `.or()` filter removed `dba_name.ilike.%...%` (column does not exist). Replaced with `email.ilike.%...%` so search covers name + email. |
+| `lib/validation/schemas/vendors.ts` | Removed 13 nonexistent DB columns: `dba_name`, `website`, `mobile_phone`, `trades` (array), `license_number`, `license_expiration`, `insurance_expiration`, `gl_coverage_amount`, `workers_comp_expiration`, `payment_terms`, `default_cost_code_id`, `is_1099`, `w9_on_file`. Removed unused imports (`moneySchema`, `uuidSchema`). Kept only: `name`, `email`, `phone`, address fields, `trade`, `tax_id`, `is_active`, `notes`. |
+
+### Clients API + Schema (2 files)
+| File | What Changed |
+|------|-------------|
+| `app/api/v1/clients/route.ts` (GET) | Removed `lead_source` query param parsing and `.eq('lead_source', ...)` filter (column does not exist in clients table). |
+| `lib/validation/schemas/clients.ts` | Removed 8 nonexistent DB columns: `company_name`, `mobile_phone`, `spouse_name`, `spouse_email`, `spouse_phone`, `lead_source`, `referred_by`, `portal_enabled`. Kept only: `name`, `email`, `phone`, address fields, `notes`. Removed `lead_source` from `listClientsSchema`. |
+
+### Jobs API + Schema (2 files)
+| File | What Changed |
+|------|-------------|
+| `app/api/v1/jobs/route.ts` (GET) | Removed `project_type` query param parsing and `.eq('project_type', ...)` filter (column does not exist in jobs table). |
+| `lib/validation/schemas/jobs.ts` | Removed `projectTypeEnum` export and `project_type` field from `createJobSchema` and `listJobsSchema`. Jobs table has no `project_type` column. |
+
+### Acceptance Tests (1 file)
+| File | What Changed |
+|------|-------------|
+| `tests/acceptance/03-core-data-model.acceptance.test.ts` | Removed `projectTypeEnum` import + test block. Updated "valid full client" test to only use DB columns. Updated "valid full vendor" test to only use DB columns. Replaced vendor `website`/`gl_coverage_amount` rejection tests with `email` validation test. Removed `project_type` rejection test from job schema tests. |
+
+## Session 42 — Fix Submittals API Schema Column Mismatch (2026-03-01)
+
+### Submittals Validation Schema + API Routes (4 files)
+Fixed nonexistent DB columns in submittals validation schema and API routes. The `submittals` table has NO columns: `submittal_type`, `submitted_date`, `returned_date`, `assigned_to`, `vendor_id`. It DOES have: `priority`, `submitted_to`, `submission_date`, `submitted_by`, `spec_section`.
+
+| File | What Changed |
+|------|-------------|
+| `lib/validation/schemas/submittals.ts` | Removed `submittal_type`, `submitted_date`, `returned_date`, `assigned_to`, `vendor_id`. Added `priority` (enum: low/normal/high/urgent), `submission_date` (correct name), `submitted_by` (UUID), `submitted_to` (string). New `submittalPriorityEnum` export. |
+| `app/api/v2/submittals/route.ts` (GET) | Replaced `submittal_type` filter param + `.eq('submittal_type', ...)` with `priority` filter + `.eq('priority', ...)` |
+| `app/api/v2/submittals/route.ts` (POST) | Insert now uses correct columns: `priority`, `submission_date`, `submitted_by`, `submitted_to` instead of nonexistent ones |
+| `app/api/v2/submittals/[id]/route.ts` (PATCH) | No direct column refs in PATCH (uses dynamic `updates` object from validated schema), so schema fix propagates automatically |
+| `hooks/use-submittals.ts` | `SubmittalListParams.submittal_type` replaced with `priority` |
+
 ## Session 41 — MEDIUM-Severity Status Dropdown Alignment (2026-03-01)
 
 ### Status/Priority Dropdown Fixes (8 pages)

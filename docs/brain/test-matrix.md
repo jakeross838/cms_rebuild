@@ -1,5 +1,61 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 43 — Fix Vendors/Clients/Jobs API Nonexistent Column Queries (2026-03-01)
+
+### Vendors API + Schema Column Alignment
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Vendors GET search `.or()` has NO `dba_name` | Only `name.ilike` + `email.ilike` | PASS |
+| `createVendorSchema` has NO `dba_name`, `website`, `trades`, `license_number`, `license_expiration`, `insurance_expiration`, `gl_coverage_amount`, `workers_comp_expiration`, `payment_terms`, `default_cost_code_id`, `is_1099`, `w9_on_file` | All 13 removed | PASS |
+| `createVendorSchema` keeps `name`, `email`, `phone`, address, `trade`, `tax_id`, `is_active`, `notes` | Valid DB columns retained | PASS |
+| `updateVendorSchema` mirrors create (partial) | Schema fix propagates | PASS |
+
+### Clients API + Schema Column Alignment
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Clients GET handler has NO `lead_source` param or `.eq('lead_source', ...)` | Filter removed | PASS |
+| `listClientsSchema` has NO `lead_source` field | Field removed | PASS |
+| `createClientSchema` has NO `company_name`, `mobile_phone`, `spouse_name`, `spouse_email`, `spouse_phone`, `lead_source`, `referred_by`, `portal_enabled` | All 8 removed | PASS |
+| `createClientSchema` keeps `name`, `email`, `phone`, address, `notes` | Valid DB columns retained | PASS |
+| `updateClientSchema` mirrors create (partial) | Schema fix propagates | PASS |
+
+### Jobs API + Schema Column Alignment
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Jobs GET handler has NO `project_type` param or `.eq('project_type', ...)` | Filter removed | PASS |
+| `listJobsSchema` has NO `project_type` field | Field removed | PASS |
+| `createJobSchema` has NO `project_type` field | Field removed | PASS |
+| `projectTypeEnum` no longer exported from jobs.ts | Export removed | PASS |
+
+### Acceptance Test Updates
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `03-core-data-model` has NO `projectTypeEnum` import or test block | Removed | PASS |
+| "valid full client" test uses only DB columns | No company_name, mobile_phone, spouse_*, lead_source, referred_by, portal_enabled | PASS |
+| "valid full vendor" test uses only DB columns | No dba_name, website, trades, license_*, insurance_*, gl_coverage, workers_comp, payment_terms, is_1099, w9_on_file | PASS |
+| Vendor rejection tests target valid schema fields | `email` validation test replaces `website`/`gl_coverage_amount` tests | PASS |
+| `tsc --noEmit` — zero errors after 7 files changed | 0 errors | PASS |
+
+## Session 42 — Fix Submittals API Schema Column Mismatch (2026-03-01)
+
+### Submittals Schema Column Alignment
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `listSubmittalsSchema` has NO `submittal_type` field | Field removed | PASS |
+| `listSubmittalsSchema` has `priority` field (enum) | low, normal, high, urgent | PASS |
+| `createSubmittalSchema` has NO `submittal_type`, `submitted_date`, `returned_date`, `assigned_to`, `vendor_id` | All 5 removed | PASS |
+| `createSubmittalSchema` has `priority` (enum) | low, normal, high, urgent | PASS |
+| `createSubmittalSchema` has `submission_date` (not `submitted_date`) | dateString nullable optional | PASS |
+| `createSubmittalSchema` has `submitted_by` (UUID) | z.string().uuid().nullable().optional() | PASS |
+| `createSubmittalSchema` has `submitted_to` (string) | z.string().trim().max(255).nullable().optional() | PASS |
+| `updateSubmittalSchema` mirrors create (minus job_id) | Same column fixes applied | PASS |
+| GET handler filters by `priority` not `submittal_type` | `.eq('priority', ...)` | PASS |
+| POST handler inserts `priority`, `submission_date`, `submitted_by`, `submitted_to` | Correct DB columns | PASS |
+| POST handler does NOT insert `submittal_type`, `submitted_date`, `returned_date`, `assigned_to`, `vendor_id` | Nonexistent columns removed | PASS |
+| PATCH handler uses dynamic `updates` from validated schema | Schema fix propagates | PASS |
+| `use-submittals.ts` SubmittalListParams has `priority` not `submittal_type` | Type updated | PASS |
+| `tsc --noEmit` — zero new errors after 4 files changed | 0 new errors | PASS |
+
 ## Session 41 — MEDIUM-Severity Status Dropdown Alignment (2026-03-01)
 
 ### Status/Priority Dropdown Values (8 pages)

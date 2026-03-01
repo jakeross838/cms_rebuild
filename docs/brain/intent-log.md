@@ -1,5 +1,27 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 43 — Fix Vendors/Clients/Jobs API Nonexistent Column Queries
+
+### Why
+- The vendors API GET handler included `dba_name` in its search `.or()` clause, but the `vendors` table has no `dba_name` column. Any search query would fail at runtime with a Supabase/PostgREST error.
+- The clients API GET handler filtered by `lead_source`, but the `clients` table has no `lead_source` column. Passing a `lead_source` query param would cause a runtime error.
+- The jobs API GET handler filtered by `project_type`, but the `jobs` table has no `project_type` column. Passing a `project_type` query param would cause a runtime error.
+- The vendors validation schema (`createVendorSchema`) included 13 fields that don't exist in the DB (`dba_name`, `website`, `trades`, `license_number`, `license_expiration`, `insurance_expiration`, `gl_coverage_amount`, `workers_comp_expiration`, `payment_terms`, `default_cost_code_id`, `is_1099`, `w9_on_file`, `mobile_phone`). Any POST request with these fields would either fail or silently drop data.
+- The clients validation schema included 8 fields that don't exist in the DB (`company_name`, `mobile_phone`, `spouse_name`, `spouse_email`, `spouse_phone`, `lead_source`, `referred_by`, `portal_enabled`). Same issue.
+- The jobs validation schema included `project_type` and exported `projectTypeEnum`, neither of which corresponds to an actual DB column.
+- Root cause: schemas were written from spec drafts before DB migrations were finalized, and never validated against actual table columns.
+- Acceptance tests also needed updating to match the corrected schemas.
+
+## 2026-03-01: Session 42 — Fix Submittals API Schema Column Mismatch
+
+### Why
+- The submittals validation schema and API routes referenced 5 columns that do not exist in the `submittals` DB table: `submittal_type`, `submitted_date`, `returned_date`, `assigned_to`, `vendor_id`
+- Any POST/PATCH request including these fields would fail at the database level since Supabase would reject unknown columns
+- The schema was also missing 4 columns that DO exist: `priority`, `submission_date` (correct spelling), `submitted_by`, `submitted_to`
+- The GET handler was filtering by `submittal_type` which would always return zero results or error
+- The React Query hook `SubmittalListParams` type also had the bad `submittal_type` field
+- Root cause: schema was likely generated from a draft spec before the DB migration was finalized, and never validated against actual table columns
+
 ## 2026-03-01: Session 41 — MEDIUM-Severity Status Dropdown Alignment
 
 ### Why
