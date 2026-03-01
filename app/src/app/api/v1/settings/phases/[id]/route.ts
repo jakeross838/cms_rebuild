@@ -248,7 +248,7 @@ async function handleDelete(_req: NextRequest, ctx: ApiContext, { params }: Rout
   // Soft delete
   const { error } = await supabase
     .from('project_phases')
-    .update({ deleted_at: new Date().toISOString() })
+    .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq('id', id)
     .eq('company_id', companyId)
 

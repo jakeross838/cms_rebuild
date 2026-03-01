@@ -181,7 +181,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('bid_comparisons')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', compId)
       .eq('bid_package_id', bidPackageId)
       .is('deleted_at', null)

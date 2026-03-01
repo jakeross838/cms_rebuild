@@ -170,7 +170,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('migration_field_mappings')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', mappingId)
       .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)

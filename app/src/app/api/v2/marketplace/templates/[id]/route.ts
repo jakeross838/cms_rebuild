@@ -220,7 +220,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('marketplace_templates')
-      .update({ deleted_at: new Date().toISOString(), is_active: false })
+      .update({ deleted_at: new Date().toISOString(), is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
 
     if (error) {

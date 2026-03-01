@@ -57,7 +57,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('punch_item_photos')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', photoId)
       .eq('punch_item_id', punchItemId)
       .eq('company_id', ctx.companyId!)

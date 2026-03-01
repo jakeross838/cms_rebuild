@@ -131,7 +131,7 @@ export const DELETE = createApiHandler(
 
     const { data, error } = await supabase
       .from('case_studies')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', id)
       .is('deleted_at', null)
       .select('id')

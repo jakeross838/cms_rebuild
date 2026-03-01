@@ -128,7 +128,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('quality_checklist_template_items')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', itemId)
       .eq('template_id', templateId)
       .eq('company_id', ctx.companyId!)

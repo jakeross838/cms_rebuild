@@ -112,7 +112,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('training_path_items')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', itemId)
       .eq('path_id', pathId)
       .eq('company_id', ctx.companyId!)

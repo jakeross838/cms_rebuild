@@ -118,7 +118,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('custom_report_widgets')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', widgetId)
       .eq('report_id', reportId)
       .eq('company_id', ctx.companyId!)
