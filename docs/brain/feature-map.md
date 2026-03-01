@@ -1,5 +1,14 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 45 — Fix Lien-Waivers Detail + Permits Dropdown Values (2026-03-01)
+
+### Dropdown Value Fixes (3 files)
+| File | Field | What Changed |
+|------|-------|-------------|
+| `lien-waivers/[id]/page.tsx` | waiver_type | WAIVER_TYPES array: Title Case → snake_case. Default form values: `'Conditional Progress'` → `'conditional_progress'`. Added `formatStatus()` for display. |
+| `permits/[id]/page.tsx` | permit_type | Title Case → snake_case. Added 4 missing DB enum values: `grading`, `fire`, `environmental`, `zoning`. Added `formatStatus()` for display. |
+| `permits/new/page.tsx` | permit_type | Same as above. Added `formatStatus` import. Fixed fallback `'Other'` → `'other'`. |
+
 ## Session 44 — Align 3 Create Form Dropdowns with DB CHECK Constraints (2026-03-01)
 
 ### Create Form Dropdown Fixes (3 files)

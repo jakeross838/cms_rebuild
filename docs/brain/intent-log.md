@@ -1,5 +1,14 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 45 — Fix Lien-Waivers Detail + Permits Dropdown Values
+
+### Why
+- Audit of edit-mode dropdowns found 3 more pages with Title Case `<option>` values that would fail DB CHECK constraints
+- `lien-waivers/[id]` detail page still had Title Case WAIVER_TYPES (`'Conditional Progress'` etc.) — the create form was fixed in Session 44 but the detail page was missed
+- Both `permits/[id]` and `permits/new` used Title Case (`'Building'`, `'Electrical'`, etc.) for permit_type values, but DB CHECK requires lowercase snake_case
+- Both permit pages were also missing 4 valid DB permit types: `grading`, `fire`, `environmental`, `zoning`
+- permits/new had a hardcoded fallback `'Other'` (Title Case) that would also fail the CHECK constraint
+
 ## 2026-03-01: Session 44 — Align 3 Create Form Dropdowns with DB CHECK Constraints
 
 ### Why

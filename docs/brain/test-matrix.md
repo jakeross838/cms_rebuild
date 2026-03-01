@@ -1,5 +1,18 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 45 — Fix Lien-Waivers Detail + Permits Dropdown Values (2026-03-01)
+
+### Lien-Waivers Detail + Permits Dropdown Alignment
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `lien-waivers/[id]` WAIVER_TYPES uses snake_case | 4 snake_case values | PASS |
+| `lien-waivers/[id]` default waiver_type is `'conditional_progress'` | Snake_case default | PASS |
+| `permits/[id]` permit_type uses all 10 DB snake_case values | building through other | PASS |
+| `permits/new` permit_type uses all 10 DB snake_case values | building through other | PASS |
+| `permits/new` has `formatStatus` import | Import added | PASS |
+| `permits/new` fallback is `'other'` not `'Other'` | Lowercase | PASS |
+| `tsc --noEmit` — zero errors | 0 errors | PASS |
+
 ## Session 44 — Align 3 Create Form Dropdowns with DB CHECK Constraints (2026-03-01)
 
 ### Create Form Dropdown Alignment
