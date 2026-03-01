@@ -1,5 +1,15 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 47 — Remove deleted_at Refs from 17 Tables Without the Column (2026-03-01)
+
+### deleted_at Column Alignment (27 files)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| No `.is('deleted_at', null)` on tables without the column | 0 remaining on 17 tables | PASS |
+| DELETE handlers on tables without `deleted_at` use `.delete()` not `.update({ deleted_at })` | 10 handlers converted | PASS |
+| Tables WITH `deleted_at` (employees, jobs, clients, vendors, etc.) untouched | Filters preserved | PASS |
+| `tsc --noEmit` — zero errors after 27 files changed | 0 errors | PASS |
+
 ## Session 46 — Fix HR API Routes Referencing Nonexistent deleted_at (2026-03-01)
 
 ### HR API Route Column Alignment

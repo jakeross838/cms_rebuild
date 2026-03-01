@@ -1,5 +1,15 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 47 — Remove deleted_at Refs from 17 Tables Without the Column
+
+### Why
+- Comprehensive API audit found 43 occurrences of `.is('deleted_at', null)` on tables that have no `deleted_at` column in the database
+- Every one of these would cause a PostgREST runtime error (400 "column does not exist") when the API route is called
+- 10 DELETE handlers were also writing `deleted_at` to tables without the column — these would also fail at runtime
+- Root cause: API routes were templated with a soft-delete pattern, but not all tables received a `deleted_at` column in their migration
+- Fix: removed all 43 filter lines and converted 10 DELETE handlers to hard `.delete()` since there's no soft-delete mechanism on these tables
+- Tables that DO have `deleted_at` (like `employees`, `jobs`, `clients`, `vendors`) were not touched
+
 ## 2026-03-01: Session 46 — Fix HR API Routes Referencing Nonexistent deleted_at
 
 ### Why

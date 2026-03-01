@@ -1,5 +1,12 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 47 — Remove deleted_at Refs from 17 Tables Without the Column (2026-03-01)
+
+### Systemic deleted_at Fix (27 API route files)
+Removed 43 `.is('deleted_at', null)` filter lines and converted 10 DELETE handlers from soft-delete to hard-delete across 17 tables that have no `deleted_at` column. Tables affected: `ap_payments`, `ar_receipts`, `bid_responses`, `builder_terminology`, `document_folders`, `gl_journal_entries`, `invoice_extractions`, `invoices`, `lien_waiver_templates`, `marketplace_reviews`, `offline_sync_queue`, `portal_messages`, `push_notification_tokens`, `quality_checklist_templates`, `report_schedules`, `schedule_baselines`, `sync_mappings`, `toolbox_talks`, `toolbox_talk_attendees`.
+
+All query chains remain intact. TypeScript passes clean.
+
 ## Session 46 — Fix HR API Routes Referencing Nonexistent deleted_at (2026-03-01)
 
 ### HR API Route Fixes (4 files)
