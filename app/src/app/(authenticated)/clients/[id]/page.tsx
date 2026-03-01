@@ -161,6 +161,7 @@ export default function ClientDetailPage() {
       </div>
 
       {fetchError && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{fetchError.message}</div>}
+      {error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}
 
       <div className="space-y-6">
         {!editing ? (
