@@ -17,10 +17,10 @@ import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/
 import { toast } from 'sonner'
 
 const WAIVER_TYPES = [
-  'Conditional Progress',
-  'Unconditional Progress',
-  'Conditional Final',
-  'Unconditional Final',
+  'conditional_progress',
+  'unconditional_progress',
+  'conditional_final',
+  'unconditional_final',
 ]
 
 interface LienWaiverData {
@@ -56,7 +56,7 @@ export default function LienWaiverDetailPage() {
 
   const [formData, setFormData] = useState({
     claimant_name: '',
-    waiver_type: 'Conditional Progress',
+    waiver_type: 'conditional_progress',
     amount: '',
     through_date: '',
     check_number: '',
@@ -67,7 +67,7 @@ export default function LienWaiverDetailPage() {
     if (waiver) {
       setFormData({
         claimant_name: waiver.claimant_name || '',
-        waiver_type: waiver.waiver_type || 'Conditional Progress',
+        waiver_type: waiver.waiver_type || 'conditional_progress',
         amount: waiver.amount != null ? String(waiver.amount) : '',
         through_date: waiver.through_date || '',
         check_number: waiver.check_number || '',
@@ -269,7 +269,7 @@ export default function LienWaiverDetailPage() {
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     >
                       {WAIVER_TYPES.map((type) => (
-                        <option key={type} value={type}>{type}</option>
+                        <option key={type} value={type}>{formatStatus(type)}</option>
                       ))}
                     </select>
                   </div>

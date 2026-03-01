@@ -268,8 +268,8 @@ export default function PermitDetailPage() {
                     <label htmlFor="permit_type" className="text-sm font-medium">Permit Type</label>
                     <select id="permit_type" name="permit_type" value={formData.permit_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                       <option value="">Select type...</option>
-                      {['Building', 'Electrical', 'Plumbing', 'Mechanical', 'Demolition', 'Other'].map((t) => (
-                        <option key={t} value={t}>{t}</option>
+                      {['building', 'electrical', 'plumbing', 'mechanical', 'demolition', 'grading', 'fire', 'environmental', 'zoning', 'other'].map((t) => (
+                        <option key={t} value={t}>{formatStatus(t)}</option>
                       ))}
                     </select>
                   </div>

@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { useCreatePermit } from '@/hooks/use-permitting'
 import { useJobs } from '@/hooks/use-jobs'
+import { formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
 export default function NewPermitPage() {
@@ -48,7 +49,7 @@ export default function NewPermitPage() {
       await createPermit.mutateAsync({
         job_id: formData.job_id,
         permit_number: formData.permit_number || null,
-        permit_type: formData.permit_type || 'Other',
+        permit_type: formData.permit_type || 'other',
         jurisdiction: formData.jurisdiction || null,
         applied_date: formData.applied_date || null,
         notes: formData.notes || null,
@@ -103,8 +104,8 @@ export default function NewPermitPage() {
                 <label htmlFor="permit_type" className="text-sm font-medium">Permit Type</label>
                 <select id="permit_type" name="permit_type" value={formData.permit_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
                   <option value="">Select type...</option>
-                  {['Building', 'Electrical', 'Plumbing', 'Mechanical', 'Demolition', 'Other'].map((t) => (
-                    <option key={t} value={t}>{t}</option>
+                  {['building', 'electrical', 'plumbing', 'mechanical', 'demolition', 'grading', 'fire', 'environmental', 'zoning', 'other'].map((t) => (
+                    <option key={t} value={t}>{formatStatus(t)}</option>
                   ))}
                 </select>
               </div>
