@@ -1,5 +1,26 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 41 — MEDIUM-Severity Status Dropdown Alignment
+
+### Why
+- 8 detail pages had status/priority dropdown `<option>` values that did not match their DB table CHECK constraints
+- These are MEDIUM-severity data integrity bugs: users could select a status/priority in the UI that the database would reject on save
+- `rejected` is not a valid punch item status (DB uses `disputed`); `medium` is not a valid priority (DB uses `normal`); `cancelled` is not a valid schedule task status (DB uses `delayed`); `waiting` is not a valid support ticket status (DB splits into `waiting_on_customer`/`waiting_on_agent`); `cost_of_goods_sold` is not a valid account type (DB uses `cogs`); `piece_rate` is not a valid pay type (DB only allows `hourly`/`salary`); `pending` is not a valid license status (DB uses `pending_renewal`); RFI status list was missing `pending_response` and `voided`
+- Default priority values (`'medium'`) in form state and view-mode fallbacks were also wrong; corrected to `'normal'`
+- Inline hardcoded option text migrated to `formatStatus()` for consistency
+
+## 2026-03-01: Session 40 — Status Dropdown DB CHECK Constraint Alignment
+
+### Why
+- 6 detail pages had status dropdown `<option>` values that did not match their DB table CHECK constraints
+- Attempting to save with a non-matching status value would cause a Supabase error (e.g., saving `paid` when DB only allows `funded`)
+- These are data integrity bugs: users could select a status in the UI that the database would reject on save
+- `draw-requests/[id]` additionally had hardcoded display text (`Draft`, `Pending`, etc.) instead of using `formatStatus()` — inconsistent with all other pages
+- 4 additional CRITICAL pages had ALL dropdown values failing DB constraints: permits/[id] used capitalized values (`Applied` etc.), change-orders/[coId] had wrong status (`pending` not `pending_approval`) and entirely wrong change_type enum (`addition/deduction/revision`), journal-entries/[id] had wrong source_type enum and `void` instead of `voided`, safety/[id] had wrong incident_type enum and `open` instead of `reported`
+- These were the worst-severity mismatches: every single option in the dropdown would fail on save, making those fields effectively broken
+- Batch 3: 5 more pages with 8 field mismatches — leads priority (`medium`/`urgent` not in DB), leads source (missing `advertising`/`trade_show`/`cold_call`/`partner`), receivables status (`viewed`/`partial`/`void` not in DB), payables status (`pending`/`partial`/`overdue`/`void` not in DB), insurance type (`workers_compensation`/`professional_liability`/`builders_risk`/`other` not in DB), insurance status (`pending`/`cancelled` not in DB), purchase-orders status (missing `pending_approval`/`approved`/`closed`/`voided`)
+- Also migrated receivables/payables/insurance inline option text from hardcoded strings to `formatStatus()` for display consistency
+
 ## 2026-02-28: Session 39 — Archive Button Safety + Budget Page Migration
 
 ### Why

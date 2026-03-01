@@ -1,5 +1,77 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 41 — MEDIUM-Severity Status Dropdown Alignment (2026-03-01)
+
+### Status/Priority Dropdown Values (8 pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `jobs/[id]/punch-list/[itemId]` STATUS_OPTIONS matches DB | open, in_progress, completed, verified, disputed | PASS |
+| `jobs/[id]/punch-list/[itemId]` PRIORITY_OPTIONS matches DB | low, normal, high, critical | PASS |
+| `punch-lists/[id]` inline status options match DB | open, in_progress, completed, verified, disputed | PASS |
+| `punch-lists/[id]` inline priority options match DB | low, normal, high, critical | PASS |
+| `punch-lists/[id]` uses formatStatus() for display text | All options use `{formatStatus(value)}` | PASS |
+| `jobs/[id]/rfis/[rfiId]` STATUS_OPTIONS matches DB | draft, open, pending_response, answered, closed, voided | PASS |
+| `jobs/[id]/schedule/[taskId]` STATUS_OPTIONS matches DB | not_started, in_progress, completed, delayed, on_hold | PASS |
+| `financial/chart-of-accounts/[id]` account_type options match DB | asset, liability, equity, revenue, expense, cogs | PASS |
+| `support/[id]` inline status options match DB | open, in_progress, waiting_on_customer, waiting_on_agent, resolved, closed | PASS |
+| `support/[id]` inline priority options match DB | low, normal, high, urgent | PASS |
+| `support/[id]` uses formatStatus() for display text | All options use `{formatStatus(value)}` | PASS |
+| `support/[id]` priority fallback is 'normal' not 'medium' | View mode + useEffect default = 'normal' | PASS |
+| `compliance/licenses/[id]` STATUS_OPTIONS matches DB | active, expired, pending_renewal, revoked | PASS |
+| `hr/[id]` pay_type options match DB | hourly, salary (no piece_rate) | PASS |
+| `hr/[id]` employment_status includes probation | active, inactive, terminated, on_leave, probation | PASS |
+| `hr/[id]` payTypeLabels cleaned up | No piece_rate entry | PASS |
+| `jobs/[id]/punch-list/[itemId]` priority default is 'normal' | Form init + useEffect fallback = 'normal' | PASS |
+| `tsc --noEmit` — zero errors after 8 files changed | 0 errors | PASS |
+
+## Session 40 — Status Dropdown DB CHECK Constraint Alignment (2026-03-01)
+
+### Status Dropdown Values — Batch 1 (6 pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `jobs/[id]/draws/[drawId]` STATUS_OPTIONS matches DB | draft, pending_review, approved, submitted_to_lender, funded, rejected | PASS |
+| `draw-requests/[id]` inline options match DB | draft, pending_review, approved, submitted_to_lender, funded, rejected | PASS |
+| `draw-requests/[id]` uses formatStatus() for display text | All 6 options use `{formatStatus(value)}` | PASS |
+| `jobs/[id]/warranties/[warrantyId]` STATUS_OPTIONS matches DB | active, expired, voided, transferred | PASS |
+| `jobs/[id]/inspections/[inspectionId]` STATUS_OPTIONS matches DB | scheduled, passed, failed, conditional, cancelled, no_show | PASS |
+| `jobs/[id]/selections/[selectionId]` STATUS_OPTIONS matches DB | pending, presented, selected, approved, ordered, received, installed, on_hold, cancelled | PASS |
+| `jobs/[id]/lien-waivers/[waiverId]` STATUS_OPTIONS matches DB | draft, pending, sent, received, approved, rejected | PASS |
+| `tsc --noEmit` — zero errors after 6 files changed | 0 errors | PASS |
+
+### Status Dropdown Values — Batch 2 (4 CRITICAL pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `permits/[id]` STATUS_OPTIONS matches DB | draft, applied, issued, active, expired, closed, revoked | PASS |
+| `permits/[id]` uses formatStatus() for display | All 7 options rendered via `formatStatus(s)` | PASS |
+| `jobs/[id]/change-orders/[coId]` STATUS_OPTIONS matches DB | draft, pending_approval, approved, rejected, voided | PASS |
+| `jobs/[id]/change-orders/[coId]` CHANGE_TYPE_OPTIONS matches DB | owner_requested, field_condition, design_change, regulatory, allowance, credit | PASS |
+| `jobs/[id]/change-orders/[coId]` default change_type is valid | `'owner_requested'` (not `'addition'`) | PASS |
+| `financial/journal-entries/[id]` source_type options match DB | manual, ap_payment, ar_receipt, payroll | PASS |
+| `financial/journal-entries/[id]` status options match DB | draft, posted, voided (not `void`) | PASS |
+| `financial/journal-entries/[id]` uses formatStatus() for display | All options use `{formatStatus('value')}` | PASS |
+| `compliance/safety/[id]` incident_type options match DB | fall, struck_by, caught_in, electrical, chemical, heat, vehicle, other | PASS |
+| `compliance/safety/[id]` status options match DB | reported, investigating, resolved, closed (not `open`) | PASS |
+| `compliance/safety/[id]` uses formatStatus() for display | All options use `{formatStatus('value')}` | PASS |
+| `tsc --noEmit` — zero errors after 4 files changed | 0 errors | PASS |
+
+### Status Dropdown Values — Batch 3 (5 pages, 8 field mismatches)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `leads/[id]` PRIORITY_OPTIONS matches DB | low, normal, high, hot | PASS |
+| `leads/[id]` SOURCE_OPTIONS matches DB | referral, website, social_media, advertising, trade_show, cold_call, partner, other | PASS |
+| `leads/new` source options match DB | referral, website, social_media, advertising, trade_show, cold_call, partner, other | PASS |
+| `leads/new` default source is valid DB value | `'referral'` (first option in corrected list) | PASS |
+| `financial/receivables/[id]` status options match DB | draft, sent, partially_paid, paid, overdue, voided | PASS |
+| `financial/receivables/[id]` uses formatStatus() for display | All 6 options use `{formatStatus('value')}` | PASS |
+| `financial/payables/[id]` status options match DB | draft, pending_approval, approved, partially_paid, paid, voided | PASS |
+| `financial/payables/[id]` uses formatStatus() for display | All 6 options use `{formatStatus('value')}` | PASS |
+| `compliance/insurance/[id]` insurance_type options match DB | general_liability, workers_comp, auto, umbrella, professional | PASS |
+| `compliance/insurance/[id]` insurance_type uses formatStatus() | All 5 options use `{formatStatus('value')}` | PASS |
+| `compliance/insurance/[id]` status options match DB | active, expiring_soon, expired, not_on_file | PASS |
+| `compliance/insurance/[id]` status uses formatStatus() | All 4 options use `{formatStatus('value')}` | PASS |
+| `jobs/[id]/purchase-orders/[poId]` STATUS_OPTIONS matches DB | draft, pending_approval, approved, sent, partially_received, received, closed, voided | PASS |
+| `tsc --noEmit` — zero errors after 6 files changed | 0 errors | PASS |
+
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
 ### Catch Block setError() (24 pages — 51 catch blocks)

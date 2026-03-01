@@ -1,5 +1,83 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 41 — MEDIUM-Severity Status Dropdown Alignment (2026-03-01)
+
+### Status/Priority Dropdown Fixes (8 pages)
+Fixed MEDIUM-severity status and priority dropdown mismatches where UI `<option>` values did not match DB CHECK constraints.
+
+| Page | Field | Old Values | New Values (DB-aligned) |
+|------|-------|-----------|------------------------|
+| `jobs/[id]/punch-list/[itemId]` | status | open, in_progress, completed, verified, rejected | open, in_progress, completed, verified, disputed |
+| `jobs/[id]/punch-list/[itemId]` | priority | low, medium, high, critical | low, normal, high, critical |
+| `punch-lists/[id]` | status (inline) | rejected | disputed |
+| `punch-lists/[id]` | priority (inline) | medium | normal |
+| `jobs/[id]/rfis/[rfiId]` | status | draft, open, answered, closed | draft, open, pending_response, answered, closed, voided |
+| `jobs/[id]/schedule/[taskId]` | status | not_started, in_progress, completed, on_hold, cancelled | not_started, in_progress, completed, delayed, on_hold |
+| `financial/chart-of-accounts/[id]` | account_type (inline) | cost_of_goods_sold | cogs (display: "COGS") |
+| `support/[id]` | status (inline) | waiting | waiting_on_customer, waiting_on_agent |
+| `support/[id]` | priority (inline) | medium | normal |
+| `compliance/licenses/[id]` | status | active, expired, revoked, pending | active, expired, pending_renewal, revoked |
+| `hr/[id]` | pay_type (inline) | hourly, salary, piece_rate | hourly, salary (removed piece_rate) |
+| `hr/[id]` | employment_status (inline) | active, inactive, terminated, on_leave | active, inactive, terminated, on_leave, probation |
+
+Additional fixes:
+- `punch-lists/[id]` inline options migrated from hardcoded text to `formatStatus()` for display
+- `support/[id]` inline options migrated from hardcoded text to `formatStatus()` for display
+- `support/[id]` priority fallback fixed from `'medium'` to `'normal'` (view mode + useEffect)
+- `jobs/[id]/punch-list/[itemId]` priority default fixed from `'medium'` to `'normal'`
+- `hr/[id]` payTypeLabels map cleaned up (removed `piece_rate` entry)
+
+## Session 40 — Status Dropdown DB CHECK Constraint Alignment (2026-03-01)
+
+### Status Dropdown Fixes — Batch 1 (6 pages)
+Fixed HIGH-severity status dropdown mismatches where UI `<option>` values did not match DB CHECK constraints. Incorrect values would cause Supabase insert/update failures.
+
+| Page | Old Values | New Values (DB-aligned) |
+|------|-----------|------------------------|
+| `jobs/[id]/draws/[drawId]` | draft, submitted, approved, rejected, paid | draft, pending_review, approved, submitted_to_lender, funded, rejected |
+| `draw-requests/[id]` | draft, pending, submitted, approved, rejected | draft, pending_review, approved, submitted_to_lender, funded, rejected |
+| `jobs/[id]/warranties/[warrantyId]` | active, expired, claimed, void | active, expired, voided, transferred |
+| `jobs/[id]/inspections/[inspectionId]` | scheduled, in_progress, passed, failed, cancelled, rescheduled | scheduled, passed, failed, conditional, cancelled, no_show |
+| `jobs/[id]/selections/[selectionId]` | pending, selected, confirmed, rejected | pending, presented, selected, approved, ordered, received, installed, on_hold, cancelled |
+| `jobs/[id]/lien-waivers/[waiverId]` | requested, received, approved, rejected, expired | draft, pending, sent, received, approved, rejected |
+
+- `draw-requests/[id]` also migrated from hardcoded `<option>` text to `formatStatus()` for display
+- All other 5 pages already used `STATUS_OPTIONS.map(s => formatStatus(s))` pattern
+
+### Status Dropdown Fixes — Batch 2 (4 CRITICAL pages)
+Fixed CRITICAL-severity mismatches where ALL dropdown values would fail DB CHECK constraints.
+
+| Page | Field | Old Values | New Values (DB-aligned) |
+|------|-------|-----------|------------------------|
+| `permits/[id]` | status | Applied, Under Review, Approved, Issued, Expired, Denied | draft, applied, issued, active, expired, closed, revoked |
+| `jobs/[id]/change-orders/[coId]` | status | draft, pending, approved, rejected | draft, pending_approval, approved, rejected, voided |
+| `jobs/[id]/change-orders/[coId]` | change_type | addition, deduction, revision | owner_requested, field_condition, design_change, regulatory, allowance, credit |
+| `financial/journal-entries/[id]` | source_type | manual, bill_payment, invoice, adjustment, closing | manual, ap_payment, ar_receipt, payroll |
+| `financial/journal-entries/[id]` | status | void (option value) | voided |
+| `compliance/safety/[id]` | incident_type | injury, near_miss, property_damage, environmental, equipment_failure, other | fall, struck_by, caught_in, electrical, chemical, heat, vehicle, other |
+| `compliance/safety/[id]` | status | open | reported |
+
+- All inline `<option>` display text in journal-entries and safety pages migrated to `{formatStatus('value')}` pattern
+- Change order default `change_type` in form state changed from `'addition'` to `'owner_requested'`
+
+### Status Dropdown Fixes — Batch 3 (5 pages, 8 field mismatches)
+Additional HIGH-severity status/type dropdown mismatches where UI `<option>` values did not match DB CHECK constraints.
+
+| Page | Field | Old Values | New Values (DB-aligned) |
+|------|-------|-----------|------------------------|
+| `leads/[id]` | priority | low, medium, high, urgent | low, normal, high, hot |
+| `leads/[id]` | source | other, referral, website, social_media, walk_in, phone | referral, website, social_media, advertising, trade_show, cold_call, partner, other |
+| `leads/new` | source | other, referral, website, social_media, walk_in, phone | referral, website, social_media, advertising, trade_show, cold_call, partner, other |
+| `financial/receivables/[id]` | status | draft, sent, viewed, partial, paid, overdue, void | draft, sent, partially_paid, paid, overdue, voided |
+| `financial/payables/[id]` | status | draft, pending, approved, paid, partial, overdue, void | draft, pending_approval, approved, partially_paid, paid, voided |
+| `compliance/insurance/[id]` | insurance_type | general_liability, workers_compensation, auto, umbrella, professional_liability, builders_risk, other | general_liability, workers_comp, auto, umbrella, professional |
+| `compliance/insurance/[id]` | status | active, expired, pending, cancelled | active, expiring_soon, expired, not_on_file |
+| `jobs/[id]/purchase-orders/[poId]` | status | draft, sent, acknowledged, partially_received, received, cancelled | draft, pending_approval, approved, sent, partially_received, received, closed, voided |
+
+- Receivables, payables, and insurance status options migrated from hardcoded display text to `{formatStatus('value')}` calls
+- Insurance type options also migrated to `{formatStatus('value')}` calls
+- `leads/new` default source changed from `'other'` to `'referral'` (first option in corrected list)
+
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
 ### Catch Block setError() Fix (24 pages total — 5 + 19)
