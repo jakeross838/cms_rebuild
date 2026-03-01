@@ -97,7 +97,9 @@ export default function ContractDetailPage() {
       toast.success('Contract updated')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save contract')
+      const errorMessage = (err as Error)?.message || 'Failed to save contract'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -110,6 +112,7 @@ export default function ContractDetailPage() {
       router.refresh()
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
       toast.error(msg)
       setArchiving(false)
     }

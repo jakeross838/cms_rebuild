@@ -104,7 +104,9 @@ export default function EstimateDetailPage() {
       toast.success('Estimate updated')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save estimate')
+      const errorMessage = (err as Error)?.message || 'Failed to save estimate'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -117,6 +119,7 @@ export default function EstimateDetailPage() {
       router.refresh()
     } catch (err) {
       const msg = (err as Error)?.message || 'Operation failed'
+      setError(msg)
       toast.error(msg)
       setArchiving(false)
     }

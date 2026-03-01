@@ -119,7 +119,9 @@ export default function LeadDetailPage() {
       toast.success('Lead updated')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -131,7 +133,9 @@ export default function LeadDetailPage() {
       router.push('/leads')
       router.refresh()
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }

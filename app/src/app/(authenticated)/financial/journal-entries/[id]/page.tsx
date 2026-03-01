@@ -100,7 +100,9 @@ export default function JournalEntryDetailPage() {
       router.push('/financial/journal-entries')
       router.refresh()
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }
@@ -122,7 +124,9 @@ export default function JournalEntryDetailPage() {
       toast.success('Saved')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 

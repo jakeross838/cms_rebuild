@@ -90,7 +90,9 @@ export default function SupportTicketDetailPage() {
       toast.success('Saved')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -102,7 +104,9 @@ export default function SupportTicketDetailPage() {
       router.push('/support')
       router.refresh()
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }

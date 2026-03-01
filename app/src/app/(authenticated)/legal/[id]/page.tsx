@@ -86,7 +86,9 @@ export default function ContractTemplateDetailPage() {
       router.push('/legal')
       router.refresh()
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }
@@ -107,7 +109,9 @@ export default function ContractTemplateDetailPage() {
       toast.success('Saved')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -120,7 +124,9 @@ export default function ContractTemplateDetailPage() {
       setFormData((prev) => ({ ...prev, is_active: newActive }))
       toast.success(`Template ${action}d`)
     } catch (err) {
-      toast.error((err as Error)?.message || `Failed to ${action} template`)
+      const errorMessage = (err as Error)?.message || `Failed to ${action} template`
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 

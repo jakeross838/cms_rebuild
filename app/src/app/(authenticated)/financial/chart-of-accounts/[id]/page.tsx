@@ -89,7 +89,9 @@ export default function ChartOfAccountsDetailPage() {
       router.push('/financial/chart-of-accounts')
       router.refresh()
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }
@@ -114,7 +116,9 @@ export default function ChartOfAccountsDetailPage() {
       toast.success('Saved')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -127,7 +131,9 @@ export default function ChartOfAccountsDetailPage() {
       setFormData((prev) => ({ ...prev, is_active: newActive }))
       toast.success(`Account ${action}d`)
     } catch (err) {
-      toast.error((err as Error)?.message || `Failed to ${action} account`)
+      const errorMessage = (err as Error)?.message || `Failed to ${action} account`
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
