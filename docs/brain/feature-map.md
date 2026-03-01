@@ -1,5 +1,15 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 48 — Add Ownership Guards to Marketplace API Routes (2026-03-01)
+
+### Marketplace Security Fixes (4 files)
+| File | What Changed |
+|------|-------------|
+| `marketplace/reviews/[id]/route.ts` | Added `.eq('company_id', ctx.companyId!)` to GET, PUT existence check, PUT update, DELETE existence check, DELETE query |
+| `marketplace/publishers/[id]/route.ts` | Added `.eq('user_id', ctx.user!.id)` to PUT update query — prevents modifying other users' publisher profiles |
+| `marketplace/publishers/route.ts` | POST: changed `user_id: input.user_id` → `user_id: ctx.user!.id` — prevents impersonation |
+| `marketplace/templates/[id]/route.ts` | PUT + DELETE: added publisher ownership verification (template → publisher → user_id chain). Returns 403 if user doesn't own the publisher. |
+
 ## Session 47 — Remove deleted_at Refs from 17 Tables Without the Column (2026-03-01)
 
 ### Systemic deleted_at Fix (27 API route files)

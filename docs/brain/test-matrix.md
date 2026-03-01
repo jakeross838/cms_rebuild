@@ -1,5 +1,19 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 48 — Add Ownership Guards to Marketplace API Routes (2026-03-01)
+
+### Marketplace Ownership Guards
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `reviews/[id]` GET filters by `company_id` | Guard added | PASS |
+| `reviews/[id]` PUT filters by `company_id` on both existence check and update | Guards added | PASS |
+| `reviews/[id]` DELETE filters by `company_id` on existence check and delete | Guards added | PASS |
+| `publishers/[id]` PUT filters by `user_id` | Guard added | PASS |
+| `publishers/route` POST uses `ctx.user!.id` not `input.user_id` | Impersonation prevented | PASS |
+| `templates/[id]` PUT verifies publisher ownership chain | Returns 403 for non-owners | PASS |
+| `templates/[id]` DELETE verifies publisher ownership chain | Returns 403 for non-owners | PASS |
+| `tsc --noEmit` — zero errors | 0 errors | PASS |
+
 ## Session 47 — Remove deleted_at Refs from 17 Tables Without the Column (2026-03-01)
 
 ### deleted_at Column Alignment (27 files)

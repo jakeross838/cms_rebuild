@@ -1,5 +1,15 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 48 — Add Ownership Guards to Marketplace API Routes
+
+### Why
+- API route audit found marketplace module had missing ownership guards
+- `marketplace_reviews` has a `company_id` column but none of the GET/PUT/DELETE queries filtered by it — any authenticated user could read/modify/delete any company's reviews
+- `marketplace_publishers` PUT handler had no `user_id` ownership check — any user could modify any publisher profile
+- `marketplace_publishers` POST handler accepted `user_id` from request body — allowed impersonation (creating a publisher profile for a different user)
+- `marketplace_templates` PUT and DELETE handlers had no ownership verification — any user could modify/delete any template regardless of publisher ownership
+- RLS provides DB-level protection, but API-layer guards are defense-in-depth
+
 ## 2026-03-01: Session 47 — Remove deleted_at Refs from 17 Tables Without the Column
 
 ### Why
