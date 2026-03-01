@@ -180,7 +180,7 @@ export default function SelectionCategoryDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (category) { setFormData({ name: category.name || '', room: category.room || '', sort_order: category.sort_order != null ? String(category.sort_order) : '', pricing_model: category.pricing_model || 'allowance', allowance_amount: category.allowance_amount != null ? String(category.allowance_amount) : '', deadline: category.deadline || '', lead_time_buffer_days: category.lead_time_buffer_days != null ? String(category.lead_time_buffer_days) : '', status: category.status || 'pending', designer_access: category.designer_access ?? false, notes: category.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateCategory.isPending}>
                   {updateCategory.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

@@ -200,7 +200,7 @@ export default function EmployeeDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (employee) { setFormData({ first_name: employee.first_name, last_name: employee.last_name, email: employee.email || '', phone: employee.phone || '', employment_status: employee.employment_status || '', employment_type: employee.employment_type || '', base_wage: employee.base_wage != null ? String(employee.base_wage) : '', pay_type: employee.pay_type || '', workers_comp_class: employee.workers_comp_class || '', emergency_contact_name: employee.emergency_contact_name || '', emergency_contact_phone: employee.emergency_contact_phone || '', address: employee.address || '', notes: employee.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateEmployee.isPending}>
                   {updateEmployee.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

@@ -166,7 +166,7 @@ export default function LienLawDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (record) { setFormData({ job_id: record.job_id || '', vendor_id: record.vendor_id || '', expected_amount: record.expected_amount != null ? String(record.expected_amount) : '', period_start: record.period_start || '', period_end: record.period_end || '', is_compliant: record.is_compliant, notes: record.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateTracking.isPending}>
                   {updateTracking.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

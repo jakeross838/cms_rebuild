@@ -214,7 +214,7 @@ export default function SafetyIncidentDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (incident) { setFormData({ incident_number: incident.incident_number, title: incident.title, description: incident.description || '', incident_type: incident.incident_type, severity: incident.severity, status: incident.status, incident_date: incident.incident_date, incident_time: incident.incident_time || '', job_id: incident.job_id, location: incident.location || '', injured_party: incident.injured_party || '', injury_description: incident.injury_description || '', root_cause: incident.root_cause || '', corrective_actions: incident.corrective_actions || '', preventive_actions: incident.preventive_actions || '', osha_recordable: incident.osha_recordable, osha_report_number: incident.osha_report_number || '', lost_work_days: String(incident.lost_work_days), restricted_days: String(incident.restricted_days), medical_treatment: incident.medical_treatment }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateIncident.isPending}>
                   {updateIncident.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

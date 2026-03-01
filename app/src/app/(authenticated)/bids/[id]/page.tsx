@@ -162,7 +162,7 @@ export default function BidPackageDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (bid) { setFormData({ title: bid.title, trade: bid.trade || '', description: bid.description || '', scope_of_work: bid.scope_of_work || '', bid_due_date: bid.bid_due_date || '', status: bid.status }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateBid.isPending}>
                   {updateBid.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

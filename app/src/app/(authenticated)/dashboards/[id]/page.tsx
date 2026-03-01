@@ -162,7 +162,7 @@ export default function DashboardDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (report) { setFormData({ name: report.name, description: report.description || '', report_type: report.report_type, visualization_type: report.visualization_type, status: report.status, audience: report.audience, refresh_frequency: report.refresh_frequency, is_template: report.is_template }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateReport.isPending}>
                   {updateReport.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

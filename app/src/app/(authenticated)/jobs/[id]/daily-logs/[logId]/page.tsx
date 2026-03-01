@@ -175,7 +175,7 @@ export default function DailyLogDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { if (log) { setFormData({ log_date: log.log_date || '', status: log.status || 'draft', weather_summary: log.weather_summary || '', high_temp: log.high_temp != null ? String(log.high_temp) : '', low_temp: log.low_temp != null ? String(log.low_temp) : '', notes: log.notes || '', conditions: log.conditions || '' }) } setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

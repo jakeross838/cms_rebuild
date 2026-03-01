@@ -184,7 +184,7 @@ export default function PunchItemDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (item) { setFormData({ title: item.title, description: item.description || '', job_id: item.job_id, location: item.location || '', room: item.room || '', category: item.category || '', priority: item.priority, status: item.status, due_date: item.due_date || '', cost_estimate: item.cost_estimate != null ? String(item.cost_estimate) : '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updatePunchItem.isPending}>
                   {updatePunchItem.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

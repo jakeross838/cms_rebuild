@@ -176,7 +176,7 @@ export default function SelectionDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (selection) { setFormData({ status: selection.status, room: selection.room || '', selected_at: selection.selected_at || '', confirmed_at: selection.confirmed_at || '', category_id: selection.category_id, option_id: selection.option_id }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

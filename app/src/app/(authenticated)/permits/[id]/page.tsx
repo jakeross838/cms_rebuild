@@ -160,7 +160,7 @@ export default function PermitDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (permit) { setFormData({ permit_number: permit.permit_number || '', permit_type: permit.permit_type || '', jurisdiction: permit.jurisdiction || '', status: permit.status || 'draft', applied_date: permit.applied_date || '', issued_date: permit.issued_date || '', expiration_date: permit.expiration_date || '', conditions: permit.conditions || '', notes: permit.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updatePermit.isPending}>
                   {updatePermit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

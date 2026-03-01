@@ -190,7 +190,7 @@ export default function SubmittalDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (submittal) { setFormData({ title: submittal.title, description: submittal.description || '', spec_section: submittal.spec_section || '', submitted_to: submittal.submitted_to || '', submission_date: submittal.submission_date || '', required_date: submittal.required_date || '', status: submittal.status, priority: submittal.priority, notes: submittal.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

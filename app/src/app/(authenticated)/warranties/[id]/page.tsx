@@ -177,7 +177,7 @@ export default function WarrantyDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { if (warranty) { setFormData({ title: warranty.title || '', warranty_type: warranty.warranty_type || '', start_date: warranty.start_date || '', end_date: warranty.end_date || '', coverage_details: warranty.coverage_details || '', exclusions: warranty.exclusions || '', contact_name: warranty.contact_name || '', contact_phone: warranty.contact_phone || '', contact_email: warranty.contact_email || '', description: warranty.description || '' }) } setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateWarranty.isPending}>
                   {updateWarranty.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

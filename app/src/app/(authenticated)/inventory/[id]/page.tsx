@@ -156,7 +156,7 @@ export default function InventoryItemDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (item) { setFormData({ name: item.name, sku: item.sku || '', description: item.description || '', category: item.category || '', unit_of_measure: item.unit_of_measure, unit_cost: item.unit_cost != null ? String(item.unit_cost) : '', reorder_point: item.reorder_point != null ? String(item.reorder_point) : '', reorder_quantity: item.reorder_quantity != null ? String(item.reorder_quantity) : '', is_active: item.is_active }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateItem.isPending}>
                   {updateItem.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

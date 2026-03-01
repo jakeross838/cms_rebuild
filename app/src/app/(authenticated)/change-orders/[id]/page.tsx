@@ -165,7 +165,7 @@ export default function ChangeOrderDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (changeOrder) { setFormData({ co_number: changeOrder.co_number || '', title: changeOrder.title, description: changeOrder.description || '', change_type: changeOrder.change_type || 'owner_requested', status: changeOrder.status || 'draft', amount: changeOrder.amount != null ? String(changeOrder.amount) : '', cost_impact: changeOrder.cost_impact != null ? String(changeOrder.cost_impact) : '', schedule_impact_days: changeOrder.schedule_impact_days != null ? String(changeOrder.schedule_impact_days) : '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateCO.isPending}>
                   {updateCO.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

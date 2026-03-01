@@ -200,7 +200,7 @@ export default function TrainingCourseDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { if (course) { setFormData({ title: course.title, description: course.description || '', course_type: course.course_type || '', category: course.category || '', difficulty: course.difficulty || '', duration_minutes: course.duration_minutes != null ? String(course.duration_minutes) : '', content_url: course.content_url || '', is_published: course.is_published }) } setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateCourse.isPending}>
                   {updateCourse.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

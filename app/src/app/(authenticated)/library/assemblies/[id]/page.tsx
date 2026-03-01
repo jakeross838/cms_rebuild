@@ -141,7 +141,7 @@ export default function AssemblyDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (assembly) { setFormData({ name: assembly.name, category: assembly.category || '', parameter_unit: assembly.parameter_unit || '', description: assembly.description || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateAssembly.isPending}>
                   {updateAssembly.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

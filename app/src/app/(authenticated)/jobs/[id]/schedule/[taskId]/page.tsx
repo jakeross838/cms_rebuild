@@ -193,7 +193,7 @@ export default function ScheduleTaskDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (task) { setFormData({ name: task.name, description: task.description || '', phase: task.phase || '', trade: task.trade || '', status: task.status || 'not_started', planned_start: task.planned_start || '', planned_end: task.planned_end || '', duration_days: task.duration_days != null ? String(task.duration_days) : '', progress_pct: task.progress_pct != null ? String(task.progress_pct) : '', notes: task.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

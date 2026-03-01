@@ -164,7 +164,7 @@ export default function ContractDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (contract) { setFormData({ title: contract.title || '', contract_number: contract.contract_number || '', contract_type: contract.contract_type || '', contract_value: contract.contract_value?.toString() || '', retention_pct: contract.retention_pct?.toString() || '', start_date: contract.start_date || '', end_date: contract.end_date || '', description: contract.description || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateContract.isPending}>
                   {updateContract.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

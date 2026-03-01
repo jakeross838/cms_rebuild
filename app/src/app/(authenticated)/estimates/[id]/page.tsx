@@ -176,7 +176,7 @@ export default function EstimateDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (estimate) { setFormData({ name: estimate.name || '', estimate_type: estimate.estimate_type || '', contract_type: estimate.contract_type || '', markup_pct: estimate.markup_pct?.toString() || '', overhead_pct: estimate.overhead_pct?.toString() || '', profit_pct: estimate.profit_pct?.toString() || '', valid_until: estimate.valid_until || '', description: estimate.description || '', notes: estimate.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateEstimate.isPending}>
                   {updateEstimate.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

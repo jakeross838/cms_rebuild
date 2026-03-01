@@ -182,7 +182,7 @@ export default function InsurancePolicyDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (policy) { setFormData({ vendor_id: policy.vendor_id, insurance_type: policy.insurance_type, carrier_name: policy.carrier_name, policy_number: policy.policy_number, coverage_amount: policy.coverage_amount != null ? String(policy.coverage_amount) : '', expiration_date: policy.expiration_date, status: policy.status }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

@@ -190,7 +190,7 @@ export default function ARInvoiceDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (invoice) { setFormData({ invoice_number: invoice.invoice_number, client_id: invoice.client_id, job_id: invoice.job_id || '', amount: String(invoice.amount), balance_due: String(invoice.balance_due), status: invoice.status, invoice_date: invoice.invoice_date, due_date: invoice.due_date, terms: invoice.terms || '', notes: invoice.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateInvoice.isPending}>
                   {updateInvoice.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

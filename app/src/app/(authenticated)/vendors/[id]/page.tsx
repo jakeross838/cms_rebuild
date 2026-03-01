@@ -167,7 +167,7 @@ export default function VendorDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { if (vendor) { setFormData({ name: vendor.name, trade: vendor.trade || '', email: vendor.email || '', phone: vendor.phone || '', address: vendor.address || '', city: vendor.city || '', state: vendor.state || '', zip: vendor.zip || '', tax_id: vendor.tax_id || '', notes: vendor.notes || '' }) } setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateVendor.isPending}>
                   {updateVendor.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

@@ -1,5 +1,27 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 53 — Fix Cancel Button Form Reset on 14 Job-Nested Detail Pages (2026-03-01)
+
+### Cancel Button Form Reset (Job-Nested Pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 14 Cancel buttons reset formData to API data | setFormData called with useEffect init values | PASS |
+| Each reset is guarded with `if (data)` | Null-safe (document, inspection, invoice, etc.) | PASS |
+| Field mapping matches useEffect exactly | Same null coalescing, String() casts, defaults | PASS |
+| Numeric fields use correct String() casts | amount, subtotal, tax_amount, shipping_amount, regular_hours, overtime_hours, break_minutes, duration_days, progress_pct | PASS |
+| Nullable number fields use `!= null` check | waiver.amount, task.duration_days, task.progress_pct, entry.break_minutes | PASS |
+| `tsc --noEmit` — zero errors | 0 errors | PASS |
+
+## Session 52 — Fix Cancel Button Form Reset on 15 Detail/Edit Pages (2026-03-01)
+
+### Cancel Button Form Reset
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 15 Cancel buttons reset formData to API data | setFormData called with useEffect init values | PASS |
+| Each reset is guarded with `if (data)` | Null-safe | PASS |
+| Field mapping matches useEffect exactly | Same null coalescing, String() casts, defaults | PASS |
+| `tsc --noEmit` — zero errors | 0 errors | PASS |
+
 ## Session 51 — Add Dropdown Loading States to 25 Create Pages (2026-03-01)
 
 ### Dropdown Loading States

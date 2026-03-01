@@ -188,7 +188,7 @@ export default function LeadDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (lead) { setFormData({ first_name: lead.first_name || '', last_name: lead.last_name || '', email: lead.email || '', phone: lead.phone || '', source: lead.source || '', source_detail: lead.source_detail || '', project_type: lead.project_type || '', expected_contract_value: lead.expected_contract_value?.toString() || '', priority: lead.priority || '', address: lead.address || '', lot_address: lead.lot_address || '', timeline: lead.timeline || '', budget_range_low: lead.budget_range_low?.toString() || '', budget_range_high: lead.budget_range_high?.toString() || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateLead.isPending}>
                   {updateLead.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

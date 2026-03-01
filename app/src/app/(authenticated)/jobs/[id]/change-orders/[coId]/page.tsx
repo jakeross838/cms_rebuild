@@ -177,7 +177,7 @@ export default function ChangeOrderDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { if (co) { setFormData({ co_number: co.co_number || '', title: co.title || '', description: co.description || '', amount: co.amount != null ? String(co.amount) : '', status: co.status || 'draft', change_type: co.change_type || 'addition', schedule_impact_days: co.schedule_impact_days != null ? String(co.schedule_impact_days) : '' }) } setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

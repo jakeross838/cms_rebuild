@@ -177,7 +177,7 @@ export default function RFIDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (rfi) { setFormData({ rfi_number: rfi.rfi_number || '', subject: rfi.subject || '', question: rfi.question || '', status: rfi.status || 'draft', priority: rfi.priority || 'normal', category: rfi.category || '', due_date: rfi.due_date || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

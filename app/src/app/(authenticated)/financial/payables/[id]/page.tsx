@@ -173,7 +173,7 @@ export default function BillDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (bill) { setFormData({ bill_number: bill.bill_number, vendor_id: bill.vendor_id, job_id: bill.job_id || '', amount: String(bill.amount), balance_due: String(bill.balance_due), status: bill.status, bill_date: bill.bill_date, due_date: bill.due_date, received_date: bill.received_date || '', terms: bill.terms || '', description: bill.description || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateBill.isPending}>
                   {updateBill.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

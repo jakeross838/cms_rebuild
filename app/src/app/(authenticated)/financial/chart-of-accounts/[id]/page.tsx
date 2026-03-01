@@ -183,7 +183,7 @@ export default function ChartOfAccountsDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (account) { setFormData({ account_number: account.account_number, name: account.name, account_type: account.account_type, sub_type: account.sub_type || '', normal_balance: account.normal_balance, is_active: account.is_active !== false, description: account.description || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateAccount.isPending}>
                   {updateAccount.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

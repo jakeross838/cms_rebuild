@@ -183,7 +183,7 @@ export default function TimeEntryDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (entry) { setFormData({ entry_date: entry.entry_date || '', clock_in: entry.clock_in || '', clock_out: entry.clock_out || '', regular_hours: String(entry.regular_hours), overtime_hours: String(entry.overtime_hours), break_minutes: String(entry.break_minutes ?? 0), status: entry.status, notes: entry.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

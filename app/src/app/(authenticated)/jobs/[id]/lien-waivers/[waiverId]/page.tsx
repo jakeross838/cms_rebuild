@@ -180,7 +180,7 @@ export default function LienWaiverDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (waiver) { setFormData({ waiver_type: waiver.waiver_type, amount: waiver.amount != null ? String(waiver.amount) : '', through_date: waiver.through_date || '', status: waiver.status, claimant_name: waiver.claimant_name || '', check_number: waiver.check_number || '', notes: waiver.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

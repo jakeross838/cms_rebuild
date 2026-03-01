@@ -153,7 +153,7 @@ export default function ContactDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (contact) { setFormData({ name: contact.name, title: contact.title || '', email: contact.email || '', phone: contact.phone || '', is_primary: contact.is_primary ? 'true' : 'false' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

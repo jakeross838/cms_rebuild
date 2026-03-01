@@ -174,7 +174,7 @@ export default function WarrantyClaimDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { if (claim) { setFormData({ title: claim.title, description: claim.description || '', priority: claim.priority || 'normal', status: claim.status || 'submitted', due_date: claim.due_date || '', resolution_notes: claim.resolution_notes || '', resolution_cost: claim.resolution_cost !== null ? String(claim.resolution_cost) : '' }) } setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

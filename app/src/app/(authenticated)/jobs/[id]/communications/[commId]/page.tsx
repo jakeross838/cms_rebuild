@@ -182,7 +182,7 @@ export default function CommunicationDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { if (comm) { setFormData({ subject: comm.subject, message_body: comm.message_body, communication_type: comm.communication_type, status: comm.status, priority: comm.priority, recipient: comm.recipient || '', notes: comm.notes || '' }) } setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

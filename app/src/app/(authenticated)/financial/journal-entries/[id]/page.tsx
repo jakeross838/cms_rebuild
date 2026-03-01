@@ -176,7 +176,7 @@ export default function JournalEntryDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (entry) { setFormData({ entry_date: entry.entry_date, reference_number: entry.reference_number || '', memo: entry.memo || '', status: entry.status, source_type: entry.source_type }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateEntry.isPending}>
                   {updateEntry.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

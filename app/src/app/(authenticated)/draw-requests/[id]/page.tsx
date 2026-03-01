@@ -204,7 +204,7 @@ export default function DrawRequestDetailPage() {
               </Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">
+                <Button onClick={() => { setEditing(false); setError(null); if (draw) { setFormData({ draw_number: draw.draw_number?.toString() || '', application_date: draw.application_date || '', period_to: draw.period_to || '', status: draw.status || '', contract_amount: draw.contract_amount?.toString() || '', total_completed: draw.total_completed?.toString() || '', retainage_pct: draw.retainage_pct?.toString() || '', retainage_amount: draw.retainage_amount?.toString() || '', total_earned: draw.total_earned?.toString() || '', less_previous: draw.less_previous?.toString() || '', current_due: draw.current_due?.toString() || '', balance_to_finish: draw.balance_to_finish?.toString() || '', lender_reference: draw.lender_reference || '', notes: draw.notes || '' }) } }} variant="outline">
                   Cancel
                 </Button>
                 <Button onClick={handleSave} disabled={updateDraw.isPending}>

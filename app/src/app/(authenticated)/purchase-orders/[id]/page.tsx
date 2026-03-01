@@ -224,7 +224,7 @@ export default function PurchaseOrderDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { if (po) { setFormData({ po_number: po.po_number || '', title: po.title || '', status: po.status || 'draft', job_id: po.job_id || '', vendor_id: po.vendor_id || '', subtotal: po.subtotal != null ? String(po.subtotal) : '', tax_amount: po.tax_amount != null ? String(po.tax_amount) : '', shipping_amount: po.shipping_amount != null ? String(po.shipping_amount) : '', delivery_date: po.delivery_date || '', shipping_address: po.shipping_address || '', terms: po.terms || '', notes: po.notes || '' }) } setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updatePo.isPending}>
                   {updatePo.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

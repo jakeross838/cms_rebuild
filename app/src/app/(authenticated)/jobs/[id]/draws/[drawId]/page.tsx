@@ -177,7 +177,7 @@ export default function DrawRequestDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { if (draw) { setFormData({ draw_number: draw.draw_number != null ? String(draw.draw_number) : '', status: draw.status || 'draft', contract_amount: draw.contract_amount != null ? String(draw.contract_amount) : '', total_earned: draw.total_earned != null ? String(draw.total_earned) : '', total_completed: draw.total_completed != null ? String(draw.total_completed) : '', current_due: draw.current_due != null ? String(draw.current_due) : '', retainage_amount: draw.retainage_amount != null ? String(draw.retainage_amount) : '', application_date: draw.application_date || '' }) } setEditing(false); setError(null) }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

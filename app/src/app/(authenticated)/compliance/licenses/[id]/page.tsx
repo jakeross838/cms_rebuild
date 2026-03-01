@@ -168,7 +168,7 @@ export default function LicenseDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (cert) { setFormData({ certification_name: cert.certification_name, certification_type: cert.certification_type || '', issuing_authority: cert.issuing_authority || '', certification_number: cert.certification_number || '', issued_date: cert.issued_date || '', expiration_date: cert.expiration_date || '', status: cert.status, employee_id: cert.employee_id }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateCert.isPending}>
                   {updateCert.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

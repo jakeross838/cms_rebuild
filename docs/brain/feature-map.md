@@ -1,5 +1,50 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 53 — Fix Cancel Button Form Reset on 14 Job-Nested Detail Pages (2026-03-01)
+
+### Cancel Button Form Data Reset (14 job-nested files)
+Same bug as Session 52 but on 14 job-nested detail/edit pages under `jobs/[id]/`. Clicking "Cancel" only called `setEditing(false); setError(null)` — the user's unsaved edits persisted. Now the Cancel handler also calls `setFormData(...)` with the exact same field mapping as the `useEffect` initialization, wrapped in an `if (data)` guard.
+
+| File | Data Variable | Fields Reset |
+|------|--------------|-------------|
+| `jobs/[id]/files/[fileId]` | `document` | filename, document_type |
+| `jobs/[id]/inspections/[inspectionId]` | `inspection` | inspection_type, status, scheduled_date, scheduled_time, inspector_name, inspector_phone, notes |
+| `jobs/[id]/invoices/[invoiceId]` | `invoice` | invoice_number, amount (String cast), status, invoice_date, due_date, vendor_id, notes |
+| `jobs/[id]/lien-waivers/[waiverId]` | `waiver` | waiver_type, amount (null-safe String cast), through_date, status, claimant_name, check_number, notes |
+| `jobs/[id]/permits/[permitId]` | `permit` | permit_number, permit_type, status, jurisdiction, applied_date, issued_date, expiration_date, conditions, notes |
+| `jobs/[id]/photos/[photoId]` | `photo` | title, description, category, taken_date, location, notes |
+| `jobs/[id]/punch-list/[itemId]` | `item` | title, description, status, priority, category, location, room, assigned_to, due_date |
+| `jobs/[id]/purchase-orders/[poId]` | `po` | title, status, subtotal (String cast), tax_amount (String cast), shipping_amount (String cast), delivery_date, shipping_address, terms, notes |
+| `jobs/[id]/rfis/[rfiId]` | `rfi` | rfi_number, subject, question, status, priority, category, due_date |
+| `jobs/[id]/schedule/[taskId]` | `task` | name, description, phase, trade, status, planned_start, planned_end, duration_days (null-safe String cast), progress_pct (null-safe String cast), notes |
+| `jobs/[id]/selections/[selectionId]` | `selection` | status, room, selected_at, confirmed_at, category_id, option_id |
+| `jobs/[id]/submittals/[submittalId]` | `submittal` | title, description, spec_section, submitted_to, submission_date, required_date, status, priority, notes |
+| `jobs/[id]/time-clock/[entryId]` | `entry` | entry_date, clock_in, clock_out, regular_hours (String cast), overtime_hours (String cast), break_minutes (null-coalesce 0 then String cast), status, notes |
+| `jobs/[id]/warranties/[warrantyId]` | `warranty` | title, status, warranty_type, start_date, end_date, description |
+
+## Session 52 — Fix Cancel Button Form Reset on 15 Detail/Edit Pages (2026-03-01)
+
+### Cancel Button Form Data Reset (15 files)
+Previously, clicking "Cancel" on edit mode in 15 detail pages only called `setEditing(false); setError(null)` — the user's unsaved edits persisted in the form state. Now the Cancel handler also calls `setFormData(...)` with the exact same field mapping as the `useEffect` that initializes form data from the API response, wrapped in an `if (data)` guard.
+
+| File | Data Variable | Fields Reset |
+|------|--------------|-------------|
+| `financial/chart-of-accounts/[id]` | `account` | account_number, name, account_type, sub_type, normal_balance, is_active, description |
+| `financial/journal-entries/[id]` | `entry` | entry_date, reference_number, memo, status, source_type |
+| `financial/payables/[id]` | `bill` | bill_number, vendor_id, job_id, amount, balance_due, status, bill_date, due_date, received_date, terms, description |
+| `financial/receivables/[id]` | `invoice` | invoice_number, client_id, job_id, amount, balance_due, status, invoice_date, due_date, terms, notes |
+| `hr/[id]` | `employee` | first_name, last_name, email, phone, employment_status, employment_type, base_wage, pay_type, workers_comp_class, emergency_contact_name, emergency_contact_phone, address, notes |
+| `inventory/[id]` | `item` | name, sku, description, category, unit_of_measure, unit_cost, reorder_point, reorder_quantity, is_active |
+| `invoices/[id]` | `invoice` | invoice_number, amount, invoice_date, due_date, notes |
+| `leads/[id]` | `lead` | first_name, last_name, email, phone, source, source_detail, project_type, expected_contract_value, priority, address, lot_address, timeline, budget_range_low, budget_range_high |
+| `legal/[id]` | `template` | name, contract_type, description, content, is_active |
+| `library/assemblies/[id]` | `assembly` | name, category, parameter_unit, description |
+| `library/selections/[id]` | `category` | name, room, sort_order, pricing_model, allowance_amount, deadline, lead_time_buffer_days, status, designer_access, notes |
+| `library/templates/[id]` | `template` | name, contract_type, description, content |
+| `lien-waivers/[id]` | `waiver` | claimant_name, waiver_type, amount, through_date, check_number, notes |
+| `permits/[id]` | `permit` | permit_number, permit_type, jurisdiction, status, applied_date, issued_date, expiration_date, conditions, notes |
+| `punch-lists/[id]` | `item` | title, description, job_id, location, room, category, priority, status, due_date, cost_estimate |
+
 ## Session 51 — Add Dropdown Loading States to 25 Create Pages (2026-03-01)
 
 ### Create Page Dropdown Loading (25 files)

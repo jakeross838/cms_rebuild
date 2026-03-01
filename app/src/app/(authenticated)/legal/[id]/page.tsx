@@ -176,7 +176,7 @@ export default function ContractTemplateDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (template) { setFormData({ name: template.name, contract_type: template.contract_type, description: template.description || '', content: template.content || '', is_active: template.is_active }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateTemplate.isPending}>
                   {updateTemplate.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

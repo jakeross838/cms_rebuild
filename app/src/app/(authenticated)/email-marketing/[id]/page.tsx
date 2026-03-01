@@ -166,7 +166,7 @@ export default function CampaignDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (campaign) { setFormData({ name: campaign.name, campaign_type: campaign.campaign_type || '', channel: campaign.channel || '', budget: campaign.budget?.toString() || '0', start_date: campaign.start_date || '', end_date: campaign.end_date || '', target_audience: campaign.target_audience || '', description: campaign.description || '', notes: campaign.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateCampaign.isPending}>
                   {updateCampaign.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

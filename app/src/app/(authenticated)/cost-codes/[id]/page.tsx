@@ -166,7 +166,7 @@ export default function CostCodeDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (costCode) { setFormData({ code: costCode.code, name: costCode.name, division: costCode.division, subdivision: costCode.subdivision || '', category: costCode.category || 'subcontractor', trade: costCode.trade || '', description: costCode.description || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateCostCode.isPending}>
                   {updateCostCode.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

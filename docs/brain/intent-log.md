@@ -1,5 +1,23 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 53 — Fix Cancel Button Form Reset on 14 Job-Nested Detail Pages
+
+### Why
+- Continuation of Session 52 fix: 14 more detail/edit pages under `jobs/[id]/` had Cancel buttons that only called `setEditing(false); setError(null)` without resetting formData
+- User could edit fields, click Cancel, click Edit again, and their unsaved edits would still be present in the form inputs
+- Fix: copied the exact `setFormData(...)` call from each file's `useEffect` initialization into the Cancel handler, guarded with `if (data)` to match the useEffect pattern
+- Each file uses a different API data variable name (document, inspection, invoice, waiver, permit, photo, item, po, rfi, task, selection, submittal, entry, warranty)
+- Special care taken to match exact type coercions: `String()` for numeric fields, `?? 0` for nullable break_minutes, `!= null` checks for nullable numbers
+
+## 2026-03-01: Session 52 — Fix Cancel Button Form Reset on 15 Detail/Edit Pages
+
+### Why
+- 15 detail/edit pages had a Cancel button that only called `setEditing(false); setError(null)` without resetting the form data back to the original API values
+- When a user edited fields, clicked Cancel, then clicked Edit again, their unsaved edits were still showing in the form inputs instead of the original data
+- This was confusing because Cancel should discard all unsaved changes
+- Fix: added `setFormData(...)` to each Cancel handler with the exact same field mapping used in the `useEffect` initialization, guarded with `if (data)` to match the useEffect pattern
+- Each file's data variable name differs (account, entry, bill, invoice, employee, item, lead, template, assembly, category, waiver, permit) so the fix was applied per-file, not via a shared utility
+
 ## 2026-03-01: Session 51 — Add Dropdown Loading States to 25 Create Pages
 
 ### Why

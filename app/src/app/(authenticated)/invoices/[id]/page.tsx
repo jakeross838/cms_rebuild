@@ -155,7 +155,7 @@ export default function InvoiceDetailPage() {
               </>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (invoice) { setFormData({ invoice_number: invoice.invoice_number || '', amount: invoice.amount?.toString() || '', invoice_date: invoice.invoice_date || '', due_date: invoice.due_date || '', notes: invoice.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={saving}>
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save

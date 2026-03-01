@@ -190,7 +190,7 @@ export default function EquipmentDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null) }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (equipment) { setFormData({ name: equipment.name, equipment_type: equipment.equipment_type || '', ownership_type: equipment.ownership_type || '', make: equipment.make || '', model: equipment.model || '', year: equipment.year != null ? String(equipment.year) : '', serial_number: equipment.serial_number || '', purchase_price: equipment.purchase_price != null ? String(equipment.purchase_price) : '', daily_rate: equipment.daily_rate != null ? String(equipment.daily_rate) : '', location: equipment.location || '', description: equipment.description || '', notes: equipment.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateEquipment.isPending}>
                   {updateEquipment.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
