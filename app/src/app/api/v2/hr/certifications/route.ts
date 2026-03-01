@@ -48,7 +48,7 @@ export const GET = createApiHandler(
       .from('employee_certifications')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
+      .neq('status', 'revoked')
 
     if (filters.employee_id) {
       query = query.eq('employee_id', filters.employee_id)

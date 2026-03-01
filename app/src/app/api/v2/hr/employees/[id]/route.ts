@@ -35,7 +35,6 @@ export const GET = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .is('employee_documents.deleted_at', null)
       .single()
 
     if (error) {
