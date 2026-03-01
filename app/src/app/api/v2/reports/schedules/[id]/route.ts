@@ -50,7 +50,6 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -85,7 +84,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('report_schedules')
-      .update({ deleted_at: new Date().toISOString() } as never)
+      .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 
@@ -99,5 +98,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'reports_schedule.archive' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'reports_schedule.delete' }
 )

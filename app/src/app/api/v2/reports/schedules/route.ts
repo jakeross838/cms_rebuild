@@ -49,7 +49,6 @@ export const GET = createApiHandler(
       .from('report_schedules')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
 
     if (filters.report_definition_id) {
       query = query.eq('report_definition_id', filters.report_definition_id)

@@ -49,7 +49,6 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -82,10 +81,9 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('lien_waiver_templates')
-      .update({ deleted_at: new Date().toISOString() } as never)
+      .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)
@@ -97,5 +95,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, requiredRoles: ['owner', 'admin', 'pm', 'office'], rateLimit: 'financial', auditAction: 'lien_waiver_template.archive' }
+  { requireAuth: true, requiredRoles: ['owner', 'admin', 'pm', 'office'], rateLimit: 'financial', auditAction: 'lien_waiver_template.delete' }
 )

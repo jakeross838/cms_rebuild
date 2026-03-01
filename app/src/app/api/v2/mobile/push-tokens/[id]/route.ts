@@ -30,10 +30,9 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('push_notification_tokens')
-      .select('id, company_id, user_id, device_id, provider, is_active, last_used_at, created_at, updated_at, deleted_at')
+      .select('id, company_id, user_id, device_id, provider, is_active, last_used_at, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -85,8 +84,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
-      .select('id, company_id, user_id, device_id, provider, is_active, last_used_at, created_at, updated_at, deleted_at')
+      .select('id, company_id, user_id, device_id, provider, is_active, last_used_at, created_at, updated_at')
       .single()
 
     if (error) {
@@ -103,7 +101,7 @@ export const PUT = createApiHandler(
 )
 
 // ============================================================================
-// DELETE /api/v2/mobile/push-tokens/:id — Soft delete (archive)
+// DELETE /api/v2/mobile/push-tokens/:id — Hard delete
 // ============================================================================
 
 export const DELETE = createApiHandler(
@@ -123,7 +121,6 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -135,7 +132,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('push_notification_tokens')
-      .update({ deleted_at: new Date().toISOString() } as never)
+      .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 
@@ -149,5 +146,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'superintendent', 'office', 'field'], auditAction: 'mobile_push_token.archive' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'superintendent', 'office', 'field'], auditAction: 'mobile_push_token.delete' }
 )

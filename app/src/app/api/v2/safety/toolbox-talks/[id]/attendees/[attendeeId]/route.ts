@@ -124,7 +124,6 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', talkId)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .single()
 
     if (talkError || !talk) {
@@ -136,11 +135,10 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('toolbox_talk_attendees')
-      .update({ deleted_at: new Date().toISOString() })
+      .delete()
       .eq('id', attendeeId)
       .eq('talk_id', talkId)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)
@@ -152,5 +150,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'superintendent'], auditAction: 'safety_toolbox_talks_attendee.archive' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'superintendent'], auditAction: 'safety_toolbox_talks_attendee.delete' }
 )

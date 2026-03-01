@@ -48,7 +48,6 @@ export const GET = createApiHandler(
       .from('ap_payments')
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
 
     if (filters.vendor_id) {
       query = query.eq('vendor_id', filters.vendor_id)

@@ -33,7 +33,6 @@ export const GET = createApiHandler(
       .from('marketplace_reviews')
       .select('*')
       .eq('id', id)
-      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -81,7 +80,6 @@ export const PUT = createApiHandler(
       .from('marketplace_reviews')
       .select('id')
       .eq('id', id)
-      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -105,7 +103,6 @@ export const PUT = createApiHandler(
       .from('marketplace_reviews')
       .update(updates)
       .eq('id', id)
-      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -143,7 +140,6 @@ export const DELETE = createApiHandler(
       .from('marketplace_reviews')
       .select('id')
       .eq('id', id)
-      .is('deleted_at', null)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {
@@ -163,7 +159,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('marketplace_reviews')
-      .update({ deleted_at: new Date().toISOString() } as never)
+      .delete()
       .eq('id', id)
 
     if (error) {
@@ -176,5 +172,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'marketplace_review.archive' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'marketplace_review.delete' }
 )

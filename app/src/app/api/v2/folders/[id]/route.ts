@@ -41,7 +41,6 @@ export const PUT = createApiHandler(
       .select('*')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .single()
 
     if (fetchError || !current) {
@@ -70,7 +69,6 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -106,7 +104,6 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -122,7 +119,6 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('parent_folder_id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .limit(1)
 
     if (childrenError) {
@@ -166,7 +162,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('document_folders')
-      .update({ deleted_at: new Date().toISOString() } as never)
+      .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 
@@ -180,5 +176,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'superintendent', 'office', 'field'], auditAction: 'folder.archive' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'superintendent', 'office', 'field'], auditAction: 'folder.delete' }
 )

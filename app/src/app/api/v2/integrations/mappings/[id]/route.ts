@@ -44,7 +44,6 @@ export const PUT = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {
@@ -74,7 +73,6 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .select('*')
       .single()
 
@@ -113,7 +111,6 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .single()
 
     if (checkError && checkError.code !== 'PGRST116') {
@@ -133,7 +130,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('sync_mappings')
-      .update({ deleted_at: new Date().toISOString() } as never)
+      .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 
@@ -147,5 +144,5 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'integrations_mapping.archive' }
+  { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm'], auditAction: 'integrations_mapping.delete' }
 )

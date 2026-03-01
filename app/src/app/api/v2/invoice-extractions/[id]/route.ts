@@ -97,7 +97,6 @@ export const PUT = createApiHandler(
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .single()
 
     if (fetchError || !existing) {
@@ -116,7 +115,6 @@ export const PUT = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .select('*')
       .single()
 

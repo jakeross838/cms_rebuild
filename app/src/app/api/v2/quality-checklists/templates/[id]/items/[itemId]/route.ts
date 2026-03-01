@@ -117,7 +117,6 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', templateId)
       .eq('company_id', ctx.companyId!)
-      .is('deleted_at', null)
       .single()
 
     if (tError || !template) {

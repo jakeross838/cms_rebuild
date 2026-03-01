@@ -131,7 +131,6 @@ export const GET = createApiHandler(
             .from('invoices')
             .select('id, invoice_number, amount, status', { count: 'exact' })
             .eq('company_id', companyId)
-            .is('deleted_at', null)
             .or(`invoice_number.ilike.${safeOrIlike(q)}`)
             .order('updated_at', { ascending: false })
             .limit(limit) as unknown as { data: InvoiceRow[] | null; count: number | null }
