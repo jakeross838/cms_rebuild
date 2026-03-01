@@ -1,5 +1,15 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 46 — Fix HR API Routes Referencing Nonexistent deleted_at
+
+### Why
+- Comprehensive API route audit found 6 references to `deleted_at` on `employee_certifications` and `employee_documents` tables — but neither table has that column
+- Every GET list/detail query on these tables would fail at runtime with a PostgREST error
+- The DELETE handler for documents was writing `deleted_at` to a nonexistent column (`as never` masked the compile error, but it would still fail at runtime)
+- `employee_certifications` uses `status='revoked'` as its archive mechanism, so filter changed to `.neq('status', 'revoked')`
+- `employee_documents` has no archive mechanism at all, so the DELETE handler was changed to a hard `.delete()` (only option since there's no soft-delete column)
+- Also removed a join filter on `employee_documents.deleted_at` in the employees detail GET handler
+
 ## 2026-03-01: Session 45 — Fix Lien-Waivers Detail + Permits Dropdown Values
 
 ### Why

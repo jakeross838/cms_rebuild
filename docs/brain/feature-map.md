@@ -1,5 +1,16 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 46 — Fix HR API Routes Referencing Nonexistent deleted_at (2026-03-01)
+
+### HR API Route Fixes (4 files)
+| File | What Changed |
+|------|-------------|
+| `api/v2/hr/certifications/route.ts` (GET) | `.is('deleted_at', null)` → `.neq('status', 'revoked')` — `employee_certifications` has no `deleted_at` column, uses `status='revoked'` for archiving |
+| `api/v2/hr/documents/route.ts` (GET) | Removed `.is('deleted_at', null)` — `employee_documents` has no `deleted_at` column |
+| `api/v2/hr/documents/[id]/route.ts` (GET, PUT) | Removed `.is('deleted_at', null)` from both handlers |
+| `api/v2/hr/documents/[id]/route.ts` (DELETE) | Changed from `.update({ deleted_at: ... })` to `.delete()` — hard delete since table has no soft-delete column |
+| `api/v2/hr/employees/[id]/route.ts` (GET) | Removed `.is('employee_documents.deleted_at', null)` join filter |
+
 ## Session 45 — Fix Lien-Waivers Detail + Permits Dropdown Values (2026-03-01)
 
 ### Dropdown Value Fixes (3 files)

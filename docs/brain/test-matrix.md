@@ -1,5 +1,18 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 46 — Fix HR API Routes Referencing Nonexistent deleted_at (2026-03-01)
+
+### HR API Route Column Alignment
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `certifications/route.ts` GET uses `.neq('status', 'revoked')` not `.is('deleted_at', null)` | No deleted_at ref | PASS |
+| `documents/route.ts` GET has no `.is('deleted_at', null)` | No deleted_at ref | PASS |
+| `documents/[id]/route.ts` GET has no `.is('deleted_at', null)` | No deleted_at ref | PASS |
+| `documents/[id]/route.ts` PUT has no `.is('deleted_at', null)` | No deleted_at ref | PASS |
+| `documents/[id]/route.ts` DELETE uses `.delete()` not `.update({ deleted_at })` | Hard delete | PASS |
+| `employees/[id]/route.ts` GET has no `employee_documents.deleted_at` join filter | No deleted_at ref | PASS |
+| `tsc --noEmit` — zero errors | 0 errors | PASS |
+
 ## Session 45 — Fix Lien-Waivers Detail + Permits Dropdown Values (2026-03-01)
 
 ### Lien-Waivers Detail + Permits Dropdown Alignment
