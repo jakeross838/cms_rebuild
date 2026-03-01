@@ -26,7 +26,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
   // Get company profile (exclude soft-deleted)
   const { data: companyData, error } = await supabase
     .from('companies')
-    .select('*')
+    .select('id, name, legal_name, email, phone, website, address, city, state, zip, logo_url, primary_color, subscription_tier, subscription_status, trial_ends_at, created_at, updated_at')
     .eq('id', companyId)
     .is('deleted_at', null)
     .single()
@@ -208,12 +208,19 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
   clearConfigCache(companyId)
 
   // Fetch updated company and settings (exclude soft-deleted)
-  const { data: updatedCompanyData } = await supabase
+  const { data: updatedCompanyData, error: refetchError } = await supabase
     .from('companies')
-    .select('*')
+    .select('id, name, legal_name, email, phone, website, address, city, state, zip, logo_url, primary_color, subscription_tier, subscription_status, trial_ends_at, created_at, updated_at')
     .eq('id', companyId)
     .is('deleted_at', null)
     .single()
+
+  if (refetchError || !updatedCompanyData) {
+    return NextResponse.json(
+      { error: 'Not Found', message: 'Company not found after update', requestId: ctx.requestId },
+      { status: 404 }
+    )
+  }
 
   const updatedCompany = updatedCompanyData as unknown as Company
 

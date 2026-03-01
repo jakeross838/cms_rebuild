@@ -48,6 +48,7 @@ export const POST = createApiHandler(
         .from('vendor_messages')
         .select('*')
         .eq('id', id)
+        .eq('company_id', ctx.companyId!)
         .single()
 
       return NextResponse.json({ data, requestId: ctx.requestId })

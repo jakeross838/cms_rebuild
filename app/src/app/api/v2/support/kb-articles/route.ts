@@ -48,6 +48,7 @@ export const GET = createApiHandler(
     let query = supabase
       .from('kb_articles')
       .select('*', { count: 'exact' })
+      .or(`company_id.eq.${ctx.companyId},company_id.is.null`)
       .is('deleted_at', null)
 
     if (filters.status) {

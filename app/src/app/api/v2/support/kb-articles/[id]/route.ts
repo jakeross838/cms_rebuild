@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .from('kb_articles')
       .select('*')
       .eq('id', id)
+      .or(`company_id.eq.${ctx.companyId},company_id.is.null`)
       .is('deleted_at', null)
       .single()
 
@@ -76,11 +77,12 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    // Verify existence
+    // Verify existence and ownership (only company's own articles can be updated)
     const { data: existing, error: existingError } = await supabase
       .from('kb_articles')
       .select('id')
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
 
@@ -111,6 +113,7 @@ export const PUT = createApiHandler(
       .from('kb_articles')
       .update(updates)
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .select('*')
       .single()
@@ -149,6 +152,7 @@ export const DELETE = createApiHandler(
       .from('kb_articles')
       .select('id')
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
 
@@ -171,6 +175,7 @@ export const DELETE = createApiHandler(
       .from('kb_articles')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
 
     if (error) {
       const mapped = mapDbError(error)
