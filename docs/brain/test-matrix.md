@@ -1,5 +1,18 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 44 — Align 3 Create Form Dropdowns with DB CHECK Constraints (2026-03-01)
+
+### Create Form Dropdown Alignment
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `change-orders/new` status dropdown includes `voided` | 5 options: draft, pending_approval, approved, rejected, voided | PASS |
+| `lien-waivers/new` WAIVER_TYPES array uses snake_case values | conditional_progress, unconditional_progress, conditional_final, unconditional_final | PASS |
+| `lien-waivers/new` default form value is `'conditional_progress'` (not Title Case) | Snake_case default | PASS |
+| `lien-waivers/new` dropdown display uses `formatStatus()` | Shows "Conditional Progress" but submits `conditional_progress` | PASS |
+| `lien-waivers/new` imports `formatStatus` from `@/lib/utils` | Import present | PASS |
+| `hr/new` employment_type dropdown includes `temp` | 5 options: full_time, part_time, contract, seasonal, temp | PASS |
+| `tsc --noEmit` — zero errors after 3 files changed | 0 errors | PASS |
+
 ## Session 43 — Fix Vendors/Clients/Jobs API Nonexistent Column Queries (2026-03-01)
 
 ### Vendors API + Schema Column Alignment

@@ -1,5 +1,14 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 44 — Align 3 Create Form Dropdowns with DB CHECK Constraints (2026-03-01)
+
+### Create Form Dropdown Fixes (3 files)
+| File | Field | What Changed |
+|------|-------|-------------|
+| `jobs/[id]/change-orders/new/page.tsx` | status | Added missing `<option value="voided">Voided</option>` — detail page had it, create form did not |
+| `lien-waivers/new/page.tsx` | waiver_type | Changed WAIVER_TYPES array from Title Case (`'Conditional Progress'`) to snake_case (`'conditional_progress'`). Changed default form value to `'conditional_progress'`. Added `formatStatus()` import + display call so dropdown shows "Conditional Progress" but submits `conditional_progress`. |
+| `hr/new/page.tsx` | employment_type | Added missing `<option value="temp">Temp</option>` — detail page had it, create form did not |
+
 ## Session 43 — Fix Vendors/Clients/Jobs API Nonexistent Column Queries (2026-03-01)
 
 ### Vendors API + Schema (2 files)

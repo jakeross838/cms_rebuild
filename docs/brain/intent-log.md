@@ -1,5 +1,14 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 44 — Align 3 Create Form Dropdowns with DB CHECK Constraints
+
+### Why
+- Previous session (40-41) fixed 36 status dropdowns on detail pages, but the corresponding create forms were not audited
+- 3 create forms had dropdown options that didn't match their detail page counterparts or were missing values the DB accepts
+- `change-orders/new` was missing `voided` status — user could not create a voided change order even though the DB and detail page support it
+- `lien-waivers/new` used Title Case values (`'Conditional Progress'`) as form values, but the DB CHECK constraint requires snake_case (`'conditional_progress'`) — every create would fail at the DB level
+- `hr/new` was missing `temp` employment type — user could not create a temp employee even though the DB and detail page support it
+
 ## 2026-03-01: Session 43 — Fix Vendors/Clients/Jobs API Nonexistent Column Queries
 
 ### Why
