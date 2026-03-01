@@ -48,7 +48,7 @@ export const createJobSchema = z.object({
   name: nameSchema,
   client_id: uuidSchema.optional().nullable(),
   job_number: z.string().trim().max(50).optional().nullable(),
-  description: descriptionSchema.nullable(),
+  notes: descriptionSchema.nullable(),
   ...addressSchema.shape,
   latitude: z.coerce.number().min(-90).max(90).optional().nullable(),
   longitude: z.coerce.number().min(-180).max(180).optional().nullable(),

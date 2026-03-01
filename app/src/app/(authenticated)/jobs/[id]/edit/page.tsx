@@ -117,7 +117,7 @@ export default function EditJobPage() {
       await updateJob.mutateAsync({
         name: formData.name,
         job_number: formData.job_number || null,
-        description: formData.notes || null,
+        notes: formData.notes || null,
         status: formData.status,
         contract_amount: formData.contract_amount ? Number(formData.contract_amount) : null,
         address: formData.address || null,

@@ -13,6 +13,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useArInvoice, useUpdateArInvoice, useDeleteArInvoice } from '@/hooks/use-accounting'
+import { useClients } from '@/hooks/use-clients'
+import { useJobs } from '@/hooks/use-jobs'
 import { formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -54,8 +56,12 @@ export default function ARInvoiceDetailPage() {
   const deleteInvoice = useDeleteArInvoice()
   const invoice = (response as { data: ARInvoiceData } | undefined)?.data ?? null
 
-  const [clients] = useState<ClientLookup[]>([])
-  const [jobs] = useState<JobLookup[]>([])
+  const { data: clientsResponse } = useClients({ limit: 500 } as never)
+  const clients = ((clientsResponse as { data: ClientLookup[] } | undefined)?.data ?? [])
+
+  const { data: jobsResponse } = useJobs({ limit: 500 } as never)
+  const jobs = ((jobsResponse as { data: JobLookup[] } | undefined)?.data ?? [])
+
   const [editing, setEditing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [archiving, setArchiving] = useState(false)
