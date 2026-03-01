@@ -1,5 +1,15 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 51 — Add Dropdown Loading States to 25 Create Pages (2026-03-01)
+
+### Dropdown Loading States
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 25 create pages show "Loading..." while dropdown data fetches | isLoading destructured + ternary on option | PASS |
+| purchase-orders/new vendor dropdown uses vendorsLoading not loadingOptions | Correct disabled state | PASS |
+| `tsc --noEmit` — zero errors | 0 errors | PASS |
+| 3260/3260 acceptance tests pass | All pass | PASS |
+
 ## Session 50 — Add Existence Checks to 37 DELETE Handlers (2026-03-01)
 
 ### DELETE Handler Existence Checks

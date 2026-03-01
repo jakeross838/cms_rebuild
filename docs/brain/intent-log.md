@@ -1,5 +1,13 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 51 — Add Dropdown Loading States to 25 Create Pages
+
+### Why
+- Audit found 25 create/new pages with dropdown `<select>` elements that showed a static placeholder while the API data was loading, giving no visual feedback
+- If the API call failed, users saw an empty dropdown with no error indication
+- Fix: destructured `isLoading` from each hook and added ternary to default `<option>` element
+- Also found and fixed a bug in purchase-orders/new where the vendor dropdown's `disabled` attribute was tied to the wrong loading state variable
+
 ## 2026-03-01: Session 50 — Add Existence Checks to 37 DELETE Handlers
 
 ### Why

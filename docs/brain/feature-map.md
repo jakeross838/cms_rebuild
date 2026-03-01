@@ -1,5 +1,10 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 51 — Add Dropdown Loading States to 25 Create Pages (2026-03-01)
+
+### Create Page Dropdown Loading (25 files)
+All create/new pages that use React Query hooks (useJobs, useVendors, useClients, useEmployees, useGlAccounts, useUsers, useWarranties, useSelectionCategories, useSelectionOptions, usePermits) now show "Loading [entity]..." while the dropdown data is being fetched, instead of a static "Select a [entity]..." placeholder. Also fixed purchase-orders/new where vendor dropdown `disabled` state was incorrectly tied to `loadingOptions` (jobs hook) instead of `vendorsLoading`.
+
 ## Session 50 — Add Existence Checks to 37 DELETE Handlers (2026-03-01)
 
 ### DELETE Handler 404 Fix (37 API route files)
