@@ -1,5 +1,14 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 50 — Add Existence Checks to 37 DELETE Handlers
+
+### Why
+- Audit of all API DELETE handlers found 37 that returned HTTP 200 `{ success: true }` even when the resource didn't exist
+- The delete/archive query silently succeeded on zero matching rows
+- Fix: added SELECT existence check before each delete operation, returning 404 if not found
+- Tables without `deleted_at` skip that filter in the existence check
+- Child table routes include parent ID filters to match delete scope
+
 ## 2026-03-01: Session 49 — Security Hardening: company_id Guards + select('*') + Null Checks
 
 ### Why

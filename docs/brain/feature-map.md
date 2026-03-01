@@ -1,5 +1,12 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 50 — Add Existence Checks to 37 DELETE Handlers (2026-03-01)
+
+### DELETE Handler 404 Fix (37 API route files)
+Previously 37 DELETE handlers returned HTTP 200 `{ success: true }` even when the target resource didn't exist (the delete/archive query silently matched zero rows). Each now has a SELECT existence check before the delete operation, returning 404 if not found.
+
+Files affected: `communications/[id]`, `contacts/[id]`, `inspections/[id]`, `invoices/[id]`, `job-photos/[id]`, `submittals/[id]`, `vendor-insurance/[id]`, `warranty-claims/[id]`, `portal/updates/[id]`, `project-user-roles/[id]`, `lien-waivers/[id]`, `budget-lines/[id]`, `schedule/tasks/[id]`, `inventory/items/[id]`, `inventory/locations/[id]`, `quality-checklists/[id]`, `quality-checklists/templates/[id]`, `reports/definitions/[id]`, `reports/schedules/[id]`, `rfis/templates/[id]`, `advanced-reports/*/widgets/[widgetId]`, `advanced-reports/saved-filters/[id]`, `lien-waiver-templates/[id]`, `hr/certifications/[id]`, `hr/documents/[id]`, `contracts/[id]/signers/[signerId]`, `crm/leads/[id]/activities/[activityId]`, `equipment/assignments/[assignmentId]`, `equipment/costs/[costId]`, `equipment/inspections/[inspectionId]`, `equipment/maintenance/[maintenanceId]`, `vendors/[id]/contacts/[contactId]`, `vendors/[id]/insurance/[insuranceId]`, `support/tickets/[id]/messages/[messageId]`, `v1/budgets/[id]/lines/[lineId]`, `v2/budgets/[id]/lines/[lineId]`.
+
 ## Session 49 — Security Hardening: company_id Guards + select('*') + Null Checks (2026-03-01)
 
 ### KB Articles Cross-Tenant Fix (2 files)

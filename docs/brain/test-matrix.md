@@ -1,5 +1,16 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 50 — Add Existence Checks to 37 DELETE Handlers (2026-03-01)
+
+### DELETE Handler Existence Checks
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 37 DELETE handlers have existence check before delete | SELECT + 404 if not found | PASS |
+| Hard-delete tables skip deleted_at filter in existence check | Correct | PASS |
+| Child table routes include parent ID in existence check | Correct | PASS |
+| `tsc --noEmit` — zero errors | 0 errors | PASS |
+| 3260/3260 acceptance tests pass | All pass | PASS |
+
 ## Session 49 — Security Hardening: company_id + select('*') + Null Checks (2026-03-01)
 
 ### KB Articles company_id Guards
