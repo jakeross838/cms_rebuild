@@ -10,6 +10,7 @@
 - 4 detail pages (contracts, permits, time-clock, warranties) missing JS validation in handleSave — added required field checks
 - 24 detail pages had redundant success state banner + toast.success() — removed banner, standardized on toast-only feedback (-119 lines)
 - 35 non-job detail pages declared error state but never rendered the error banner — errors from save/archive were invisible to users. Added error display JSX to all 35
+- 24 detail pages had catch blocks that called `toast.error()` but NOT `setError()` — error banners added in the previous fix would never populate. Added `setError(errorMessage)` to 51 catch blocks across 24 pages (5 + 19 in two batches)
 - Budget pages (last 2 client-side Supabase pages) migrated to React Query via new flat API routes (`/api/v2/budget-lines/`) that solve the budgetId problem
 - **Result: Zero client-side Supabase queries remain in authenticated pages**
 

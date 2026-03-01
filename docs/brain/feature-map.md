@@ -2,6 +2,9 @@
 
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
+### Catch Block setError() Fix (24 pages total — 5 + 19)
+All detail page catch blocks (handleSave + handleDelete/handleArchive) now populate both `setError()` and `toast.error()`. Previously many only called `toast.error()` — meaning error banners were never populated. Fixed 51 catch blocks total across 24 pages: vendors, clients, change-orders, rfis, permits, contracts, estimates, financial/receivables, financial/chart-of-accounts, financial/journal-entries, inventory, lien-waivers, warranties, support, leads, library/templates, hr, library/assemblies, library/selections, punch-lists, legal, training, purchase-orders, time-clock.
+
 ### Error Display Banners Added (35 pages)
 35 non-job detail pages had `const [error, setError]` but no error banner JSX — errors from save/archive were invisible (only toast). Added `{error && <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">{error}</div>}` to all 35 pages.
 

@@ -2,6 +2,13 @@
 
 ## Session 39 — Archive Button Safety + Budget Page Migration (2026-02-28)
 
+### Catch Block setError() (24 pages — 51 catch blocks)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All handleSave catch blocks call setError() + toast.error() | Both banner + toast show | PASS |
+| All handleDelete/Archive catch blocks call setError() + toast.error() | Both banner + toast show | PASS |
+| `tsc --noEmit` — zero errors after 24 files changed | 0 errors | PASS |
+
 ### Error Display Banners (35 pages)
 | Test Case | Expected | Status |
 |-----------|----------|--------|
