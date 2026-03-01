@@ -100,10 +100,10 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    // Verify existence
+    // Verify existence and ownership (template → publisher → user)
     const { data: existing, error: existError } = await supabase
       .from('marketplace_templates')
-      .select('id')
+      .select('id, publisher_id, marketplace_publishers!inner(user_id)')
       .eq('id', id)
       .is('deleted_at', null)
       .single()
@@ -112,6 +112,15 @@ export const PUT = createApiHandler(
       return NextResponse.json(
         { error: 'Not Found', message: 'Template not found', requestId: ctx.requestId },
         { status: 404 }
+      )
+    }
+
+    // Verify the current user owns the publisher profile
+    const publisher = (existing as Record<string, unknown>).marketplace_publishers as { user_id: string } | null
+    if (publisher?.user_id !== ctx.user!.id) {
+      return NextResponse.json(
+        { error: 'Forbidden', message: 'You can only modify your own templates', requestId: ctx.requestId },
+        { status: 403 }
       )
     }
 
@@ -180,7 +189,7 @@ export const DELETE = createApiHandler(
 
     const { data: existing, error: existingError } = await supabase
       .from('marketplace_templates')
-      .select('id')
+      .select('id, publisher_id, marketplace_publishers!inner(user_id)')
       .eq('id', id)
       .is('deleted_at', null)
       .single()
@@ -197,6 +206,15 @@ export const DELETE = createApiHandler(
       return NextResponse.json(
         { error: 'Not Found', message: 'Template not found', requestId: ctx.requestId },
         { status: 404 }
+      )
+    }
+
+    // Verify the current user owns the publisher profile
+    const publisher = (existing as Record<string, unknown>).marketplace_publishers as { user_id: string } | null
+    if (publisher?.user_id !== ctx.user!.id) {
+      return NextResponse.json(
+        { error: 'Forbidden', message: 'You can only delete your own templates', requestId: ctx.requestId },
+        { status: 403 }
       )
     }
 

@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .from('marketplace_reviews')
       .select('*')
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .single()
 
     if (error || !data) {
@@ -75,11 +76,12 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    // Verify existence
+    // Verify existence and ownership
     const { data: existing, error: existError } = await supabase
       .from('marketplace_reviews')
       .select('id')
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .single()
 
     if (existError || !existing) {
@@ -103,6 +105,7 @@ export const PUT = createApiHandler(
       .from('marketplace_reviews')
       .update(updates)
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .select('*')
       .single()
 
@@ -140,6 +143,7 @@ export const DELETE = createApiHandler(
       .from('marketplace_reviews')
       .select('id')
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {
@@ -161,6 +165,7 @@ export const DELETE = createApiHandler(
       .from('marketplace_reviews')
       .delete()
       .eq('id', id)
+      .eq('company_id', ctx.companyId!)
 
     if (error) {
       const mapped = mapDbError(error)

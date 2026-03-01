@@ -115,6 +115,7 @@ export const PUT = createApiHandler(
       .from('marketplace_publishers')
       .update(updates)
       .eq('id', id)
+      .eq('user_id', ctx.user!.id)
       .select('id, user_id, publisher_type, display_name, bio, website_url, profile_image, is_verified, total_installs, avg_rating, total_templates, revenue_share_pct, created_at, updated_at')
       .single()
 

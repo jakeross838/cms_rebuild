@@ -97,7 +97,7 @@ export const POST = createApiHandler(
     const { data, error } = await supabase
       .from('marketplace_publishers')
       .insert({
-        user_id: input.user_id,
+        user_id: ctx.user!.id,
         publisher_type: input.publisher_type,
         display_name: input.display_name,
         bio: input.bio ?? null,
