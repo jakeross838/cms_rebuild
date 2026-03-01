@@ -119,6 +119,7 @@ export default function NewChangeOrderPage() {
                   <option value="pending_approval">Pending Approval</option>
                   <option value="approved">Approved</option>
                   <option value="rejected">Rejected</option>
+                  <option value="voided">Voided</option>
                 </select>
               </div>
             </div>

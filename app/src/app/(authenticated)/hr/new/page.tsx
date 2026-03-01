@@ -147,6 +147,7 @@ export default function NewEmployeePage() {
                   <option value="part_time">Part Time</option>
                   <option value="contract">Contract</option>
                   <option value="seasonal">Seasonal</option>
+                  <option value="temp">Temp</option>
                 </select>
               </div>
               <div className="space-y-2">
