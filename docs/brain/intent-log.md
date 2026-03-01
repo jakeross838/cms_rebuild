@@ -1,16 +1,15 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
-## 2026-03-01: Session 54 — Add updated_at Timestamps to 37 API Route UPDATE Operations
+## 2026-03-01: Session 54 — Add updated_at Timestamps to 119 API Route Operations
 
 ### Why
-Many `.update()` calls on tenant tables were missing `updated_at`, causing stale timestamps when records were modified. This makes audit trails unreliable — you can't tell when a record was last changed if only the individual field timestamps update. Every mutation should refresh `updated_at` so that list views, sort-by-date, and audit queries reflect the true last-modified time.
+Many `.update()` calls on tenant tables were missing `updated_at`, causing stale timestamps when records were modified. This makes audit trails unreliable — you can't tell when a record was last changed if only the individual field timestamps update. Every mutation should refresh `updated_at` so that list views, sort-by-date, and audit queries reflect the true last-modified time. This applies to both regular updates AND soft-delete/archive operations.
 
 ### What
 - Audited all 281 `.update()` calls across API routes
-- Found 37 files missing `updated_at` in their update payloads
-- 48 files were already compliant (no changes needed)
-- Applied fix to all 37: either added to `updates` object init or inline `.update({})` call
-- Excluded soft-delete operations (`.update({ deleted_at })`) — those only mark deletion time
+- **Regular updates:** Found 37 files missing `updated_at` in their update payloads (48 already compliant)
+- **Soft-delete operations:** Found 82 files with `.update({ deleted_at })` missing `updated_at` — fixed all 82
+- **Total: 119 files fixed** across both commits
 
 ### Also audited (clean)
 - Missing `auditAction` on mutations: Only 4 auth endpoints missing it — all have manual `auth_audit_log` inserts, by design since `requireAuth: false`

@@ -1,14 +1,19 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
-## Session 54 — Add updated_at Timestamps to 37 API Route UPDATE Operations (2026-03-01)
+## Session 54 — Add updated_at Timestamps to 119 API Route Operations (2026-03-01)
 
-### updated_at on UPDATE Operations (37 files)
+### updated_at on Regular UPDATE Operations (37 files)
+- Added `updated_at: new Date().toISOString()` to 37 PUT/PATCH/action update calls
+- 48 files already compliant — verified and left unchanged
+
+### updated_at on Soft-Delete Operations (82 files)
 - **What changed:** 37 API route files with `.update()` calls now include `updated_at: new Date().toISOString()` in the update payload
 - **Pattern A (most files):** `const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }` — added to object initialization
 - **Pattern B (direct updates):** Added `updated_at` field to inline `.update({...})` calls (bid-package status transitions, contract signer actions, notification mark-read, feature request vote counts)
 - **Tables affected:** bid_packages, bid_invitations, bid_responses, contract_signers, contract_clauses, contract_templates, pipelines, pipeline_stages, lead_sources, marketing_campaigns, campaign_contacts, client_reviews, marketing_referrals, testimonials, marketplace_templates, onboarding_checklists, onboarding_milestones, onboarding_reminders, sample_data_sets, project_user_roles, data_migration validation_results, notifications, toolbox_talk_attendees, feature_requests, support_tickets, users, user_invitations, companies, project_phases, api_keys, budget_lines
-- **48 files already compliant** — verified and left unchanged
-- **Soft-delete `.update({ deleted_at })` calls not modified** — by design
+- **Soft-delete operations:** 82 files with `.update({ deleted_at })` now also set `updated_at` so the last-modified timestamp reflects the archive action
+- **Tables affected by soft-delete fix:** advanced-reports (5), permits (3), contracts (3), bid-packages (3), equipment (5), selections (3), safety (4), vendor-portal (4), vendor-performance (3), quality-checklists (3), change-orders (2), rfis (2), estimates (2), training (2), punch-list (2), support (4), marketing (3), branding (2), warranties (2), crm (2), maintenance-schedules (2), data-migration (2), plus 9 others
+- **Status-change archive patterns also fixed:** marketplace/templates (`is_active: false`), mobile/devices (`status: 'revoked'`), purchase-orders (`status: 'voided'`), ai-documents/templates (`is_active: false`)
 
 ## Session 53 — Fix Cancel Button Form Reset on 14 Job-Nested Detail Pages (2026-03-01)
 
