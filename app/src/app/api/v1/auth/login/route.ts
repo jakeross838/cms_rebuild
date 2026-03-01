@@ -109,7 +109,7 @@ export const POST = createApiHandler(
       // Update last_login_at on the users table
       admin
         .from('users')
-        .update({ last_login_at: new Date().toISOString() } as never)
+        .update({ last_login_at: new Date().toISOString(), updated_at: new Date().toISOString() } as never)
         .eq('id', authData.user.id),
 
       // Insert audit log entry

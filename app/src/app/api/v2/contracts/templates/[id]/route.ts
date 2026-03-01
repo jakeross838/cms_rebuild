@@ -74,7 +74,7 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const updates: Record<string, unknown> = {}
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.name !== undefined) updates.name = input.name
     if (input.description !== undefined) updates.description = input.description
     if (input.contract_type !== undefined) updates.contract_type = input.contract_type
@@ -122,7 +122,7 @@ export const DELETE = createApiHandler(
 
     const { data, error } = await supabase
       .from('contract_templates')
-      .update({ is_active: false })
+      .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .select('*')

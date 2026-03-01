@@ -161,6 +161,7 @@ export const DELETE = createApiHandler(
         status: 'revoked',
         revoked_at: new Date().toISOString(),
         revoked_by: ctx.user!.id,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)

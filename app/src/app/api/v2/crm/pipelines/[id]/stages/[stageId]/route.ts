@@ -88,7 +88,7 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const updates: Record<string, unknown> = {}
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.name !== undefined) updates.name = input.name
     if (input.stage_type !== undefined) updates.stage_type = input.stage_type
     if (input.sequence_order !== undefined) updates.sequence_order = input.sequence_order
@@ -137,7 +137,7 @@ export const DELETE = createApiHandler(
 
     const { data, error } = await supabase
       .from('pipeline_stages')
-      .update({ is_active: false })
+      .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', stageId)
       .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)

@@ -171,7 +171,7 @@ export const POST = createApiHandler(
     // Update the template's version field
     const { error: versionErr } = await supabase
       .from('marketplace_templates')
-      .update({ version: input.version })
+      .update({ version: input.version, updated_at: new Date().toISOString() })
       .eq('id', templateId)
     if (versionErr) logger.error('Failed to update template version', { error: versionErr.message })
 

@@ -89,7 +89,7 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const updates: Record<string, unknown> = {}
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.name !== undefined) updates.name = input.name
     if (input.description !== undefined) updates.description = input.description
     if (input.is_default !== undefined) updates.is_default = input.is_default
@@ -135,7 +135,7 @@ export const DELETE = createApiHandler(
 
     const { data, error } = await supabase
       .from('pipelines')
-      .update({ is_active: false })
+      .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .select('*')

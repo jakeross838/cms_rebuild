@@ -87,7 +87,7 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const updates: Record<string, unknown> = {}
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.is_resolved !== undefined) {
       updates.is_resolved = input.is_resolved
       if (input.is_resolved) {

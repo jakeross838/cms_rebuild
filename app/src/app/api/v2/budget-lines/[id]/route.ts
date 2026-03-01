@@ -89,7 +89,7 @@ export const PATCH = createApiHandler(
 
     const { data, error } = await supabase
       .from('budget_lines')
-      .update(parseResult.data as never)
+      .update({ ...parseResult.data, updated_at: new Date().toISOString() } as never)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .select('*')

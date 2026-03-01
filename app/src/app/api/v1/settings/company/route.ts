@@ -149,6 +149,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
 
   // Update company profile if there are changes
   if (Object.keys(profileUpdate).length > 0) {
+    profileUpdate.updated_at = new Date().toISOString()
     const { error } = await supabase
       .from('companies')
       .update(profileUpdate)

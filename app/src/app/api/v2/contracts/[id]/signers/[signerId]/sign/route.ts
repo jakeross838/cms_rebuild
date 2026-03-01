@@ -81,6 +81,7 @@ export const POST = createApiHandler(
         signed_at: now,
         ip_address: input.ip_address ?? null,
         user_agent: input.user_agent ?? null,
+        updated_at: now,
       })
       .eq('id', signerId)
       .eq('contract_id', contractId)

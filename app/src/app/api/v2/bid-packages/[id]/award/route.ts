@@ -149,7 +149,7 @@ export const POST = createApiHandler(
     // Update bid package status to awarded
     const { error: statusErr } = await supabase
       .from('bid_packages')
-      .update({ status: 'awarded' })
+      .update({ status: 'awarded', updated_at: new Date().toISOString() })
       .eq('id', bidPackageId)
       .eq('company_id', ctx.companyId!)
 

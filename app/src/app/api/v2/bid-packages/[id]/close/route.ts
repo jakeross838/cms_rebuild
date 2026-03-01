@@ -67,7 +67,7 @@ export const POST = createApiHandler(
 
     const { data, error } = await supabase
       .from('bid_packages')
-      .update({ status: 'closed' })
+      .update({ status: 'closed', updated_at: new Date().toISOString() })
       .eq('id', bidPackageId)
       .eq('company_id', ctx.companyId!)
       .select('*')

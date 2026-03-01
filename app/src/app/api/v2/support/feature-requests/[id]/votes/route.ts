@@ -191,7 +191,7 @@ export const POST = createApiHandler(
     // Increment vote_count on feature request
     const { error: voteCountError } = await supabase
       .from('feature_requests')
-      .update({ vote_count: (featureRequest.vote_count ?? 0) + 1 })
+      .update({ vote_count: (featureRequest.vote_count ?? 0) + 1, updated_at: new Date().toISOString() })
       .eq('id', featureRequestId)
       .eq('company_id', ctx.companyId!)
 
@@ -300,7 +300,7 @@ export const DELETE = createApiHandler(
     // Decrement vote_count on feature request
     const { error: voteCountError } = await supabase
       .from('feature_requests')
-      .update({ vote_count: Math.max(0, (featureRequest.vote_count ?? 0) - 1) })
+      .update({ vote_count: Math.max(0, (featureRequest.vote_count ?? 0) - 1), updated_at: new Date().toISOString() })
       .eq('id', featureRequestId)
       .eq('company_id', ctx.companyId!)
 

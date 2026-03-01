@@ -76,7 +76,7 @@ export const PATCH = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const updates: Record<string, unknown> = {}
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
     for (const [key, val] of Object.entries(input)) {
       if (val !== undefined) updates[key] = val
     }

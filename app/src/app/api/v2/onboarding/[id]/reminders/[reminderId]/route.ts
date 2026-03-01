@@ -90,7 +90,7 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const updateFields: Record<string, unknown> = {}
+    const updateFields: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.reminder_type !== undefined) updateFields.reminder_type = input.reminder_type
     if (input.subject !== undefined) updateFields.subject = input.subject
     if (input.message !== undefined) updateFields.message = input.message

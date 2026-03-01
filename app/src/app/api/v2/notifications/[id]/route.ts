@@ -39,6 +39,7 @@ export const PUT = createApiHandler(
       .update({
         read,
         read_at: read ? new Date().toISOString() : null,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
@@ -90,7 +91,7 @@ export const DELETE = createApiHandler(
 
     const { error } = await supabase
       .from('notifications')
-      .update({ archived: true })
+      .update({ archived: true, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .eq('user_id', ctx.user!.id)

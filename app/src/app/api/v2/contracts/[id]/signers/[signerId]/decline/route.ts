@@ -80,6 +80,7 @@ export const POST = createApiHandler(
         status: 'declined',
         declined_at: now,
         decline_reason: input.decline_reason ?? null,
+        updated_at: now,
       })
       .eq('id', signerId)
       .eq('contract_id', contractId)

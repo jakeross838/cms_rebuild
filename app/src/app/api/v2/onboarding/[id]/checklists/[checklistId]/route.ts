@@ -90,7 +90,7 @@ export const PUT = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const updateFields: Record<string, unknown> = {}
+    const updateFields: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.category !== undefined) updateFields.category = input.category
     if (input.title !== undefined) updateFields.title = input.title
     if (input.description !== undefined) updateFields.description = input.description

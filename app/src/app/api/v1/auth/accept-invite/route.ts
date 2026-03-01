@@ -214,7 +214,7 @@ export const POST = createApiHandler(
     // Mark invitation as accepted
     await admin
       .from('user_invitations')
-      .update({ accepted_at: new Date().toISOString() } as never)
+      .update({ accepted_at: new Date().toISOString(), updated_at: new Date().toISOString() } as never)
       .eq('id', invitation.id)
 
     // Log the event

@@ -155,7 +155,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
   }
 
   // Build update object
-  const update: Partial<ProjectPhase> = {}
+  const update: Partial<ProjectPhase> & { updated_at?: string } = { updated_at: new Date().toISOString() }
   if (body.name !== undefined) update.name = body.name
   if (body.description !== undefined) update.description = body.description
   if (body.color !== undefined) update.color = body.color

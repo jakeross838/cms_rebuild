@@ -176,6 +176,7 @@ export const POST = createApiHandler(
         .update({
           status: 'submitted',
           responded_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         })
         .eq('id', input.invitation_id)
       if (invErr) logger.error('Failed to update bid invitation status', { error: invErr.message })

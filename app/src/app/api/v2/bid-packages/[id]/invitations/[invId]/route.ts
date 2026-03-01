@@ -121,7 +121,7 @@ export const PUT = createApiHandler(
     }
 
     // Build update object
-    const updates: Record<string, unknown> = {}
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
     if (input.status !== undefined) updates.status = input.status
     if (input.viewed_at !== undefined) updates.viewed_at = input.viewed_at
     if (input.responded_at !== undefined) updates.responded_at = input.responded_at

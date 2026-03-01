@@ -14,7 +14,7 @@ export const PUT = createApiHandler(
 
     const { error } = await supabase
       .from('notifications')
-      .update({ read: true, read_at: new Date().toISOString() })
+      .update({ read: true, read_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('company_id', ctx.companyId!)
       .eq('user_id', ctx.user!.id)
       .eq('read', false)
