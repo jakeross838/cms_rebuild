@@ -1,5 +1,15 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-01: Session 49 — Security Hardening: company_id Guards + select('*') + Null Checks
+
+### Why
+- Parallel audit of all 468 API routes found 3 categories of issues:
+  1. **Missing company_id guards (HIGH):** `kb-articles/[id]` had zero company_id filtering on any of its 5 Supabase queries — any authenticated user could read, modify, or delete another company's KB articles. List route also lacked company_id scoping.
+  2. **select('*') on sensitive tables (MEDIUM):** `companies` table queried with `select('*')` exposes `settings` JSON blob. `employees` table queried with `select('*')` in 3 places returns all columns including `base_wage`, `emergency_contact_*`, `address`, `workers_comp_class`. Replaced with explicit 22-column select.
+  3. **Unchecked .single() refetch (LOW):** `settings/company` PATCH handler refetched company after update but didn't check for null — would crash with TypeError if company was deleted between update and refetch. `vendor-portal/messages/[id]/read` refetch lacked company_id filter.
+- Also added redundant company_id guard to `draw-requests/[id]/lines` totals update for defense-in-depth (ownership verified earlier in same handler, but the UPDATE itself lacked the guard).
+- KB articles support platform-level articles (company_id IS NULL) — read queries use `.or()` to show both company-specific and platform articles, but write queries restrict to company's own.
+
 ## 2026-03-01: Session 48 — Add Ownership Guards to Marketplace API Routes
 
 ### Why

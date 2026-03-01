@@ -1,5 +1,35 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 49 — Security Hardening: company_id + select('*') + Null Checks (2026-03-01)
+
+### KB Articles company_id Guards
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `kb-articles/[id]` GET scopes to company + platform articles | `.or(company_id.eq.X,company_id.is.null)` | PASS |
+| `kb-articles/[id]` PUT existence check includes company_id | `.eq('company_id', ctx.companyId!)` | PASS |
+| `kb-articles/[id]` PUT update includes company_id | Guard added | PASS |
+| `kb-articles/[id]` DELETE existence check includes company_id | Guard added | PASS |
+| `kb-articles/[id]` DELETE mutation includes company_id | Guard added | PASS |
+| `kb-articles/route.ts` GET list scopes to company + platform | `.or(company_id.eq.X,company_id.is.null)` | PASS |
+
+### select('*') Replacements
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `settings/company` GET uses explicit columns (no `settings` blob) | 17 columns listed | PASS |
+| `settings/company` PATCH refetch uses explicit columns + null check | Error returns 404 | PASS |
+| `hr/employees/route.ts` GET list uses explicit 22 columns | No `select('*')` | PASS |
+| `hr/employees/route.ts` POST return uses explicit columns | No `select('*')` | PASS |
+| `hr/employees/[id]` GET detail uses explicit columns + joins | No `select('*')` | PASS |
+| `hr/employees/[id]` PUT return uses explicit columns | No `select('*')` | PASS |
+
+### Defense-in-Depth
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `draw-requests/[id]/lines` totals update includes company_id | Guard added | PASS |
+| `vendor-portal/messages/[id]/read` refetch includes company_id | Guard added | PASS |
+| `tsc --noEmit` — zero errors | 0 errors | PASS |
+| 3260/3260 acceptance tests pass | All pass | PASS |
+
 ## Session 48 — Add Ownership Guards to Marketplace API Routes (2026-03-01)
 
 ### Marketplace Ownership Guards

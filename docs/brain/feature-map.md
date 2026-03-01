@@ -1,5 +1,26 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 49 — Security Hardening: company_id Guards + select('*') + Null Checks (2026-03-01)
+
+### KB Articles Cross-Tenant Fix (2 files)
+| File | What Changed |
+|------|-------------|
+| `support/kb-articles/[id]/route.ts` | GET: added `.or(company_id.eq.X,company_id.is.null)` for read. PUT existence+update+DELETE existence+delete: added `.eq('company_id', ctx.companyId!)` — prevents cross-tenant mutations |
+| `support/kb-articles/route.ts` | GET list: added `.or(company_id.eq.X,company_id.is.null)` — scopes to company articles + platform articles |
+
+### select('*') → Explicit Columns (3 files)
+| File | What Changed |
+|------|-------------|
+| `settings/company/route.ts` | GET + PATCH refetch: `select('*')` → explicit column list (excludes `settings` JSON blob). PATCH refetch: added null check after `.single()` to prevent crash |
+| `hr/employees/route.ts` | GET list + POST: `select('*')` → explicit column list (22 columns) |
+| `hr/employees/[id]/route.ts` | GET detail + PUT: `select('*')` → explicit column list (22 columns + joins) |
+
+### Defense-in-Depth Fixes (2 files)
+| File | What Changed |
+|------|-------------|
+| `draw-requests/[id]/lines/route.ts` | Added `.eq('company_id', ctx.companyId!)` to draw_requests totals update |
+| `vendor-portal/messages/[id]/read/route.ts` | Added `.eq('company_id', ctx.companyId!)` to refetch query for already-read messages |
+
 ## Session 48 — Add Ownership Guards to Marketplace API Routes (2026-03-01)
 
 ### Marketplace Security Fixes (4 files)
