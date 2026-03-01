@@ -158,6 +158,30 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify the budget line exists before deleting
+    const { data: existing, error: existError } = await supabase
+      .from('budget_lines')
+      .select('id')
+      .eq('id', lineId)
+      .eq('budget_id', budgetId)
+      .eq('company_id', ctx.companyId!)
+      .single()
+
+    if (existError && existError.code !== 'PGRST116') {
+      const mapped = mapDbError(existError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Budget line not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     // Budget lines are detail rows — hard delete is appropriate
     const { error } = await supabase
       .from('budget_lines')

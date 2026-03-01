@@ -118,6 +118,29 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify report definition exists before deactivating
+    const { data: existing, error: existError } = await supabase
+      .from('report_definitions')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .single()
+
+    if (existError && existError.code !== 'PGRST116') {
+      const mapped = mapDbError(existError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Report definition not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     const { error } = await supabase
       .from('report_definitions')
       .update({ is_active: false, updated_at: new Date().toISOString() })

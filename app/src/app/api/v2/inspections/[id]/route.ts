@@ -119,6 +119,28 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    const { data: existing, error: existError } = await supabase
+      .from('permit_inspections')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .single()
+
+    if (existError && existError.code !== 'PGRST116') {
+      const mapped = mapDbError(existError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Inspection not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     const { error } = await supabase
       .from('permit_inspections')
       .delete()

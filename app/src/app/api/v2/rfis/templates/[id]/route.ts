@@ -120,6 +120,29 @@ export const DELETE = createApiHandler(
 
     const supabase = await createClient()
 
+    // Verify template exists before deactivating
+    const { data: existing, error: existError } = await supabase
+      .from('rfi_templates')
+      .select('id')
+      .eq('id', id)
+      .eq('company_id', ctx.companyId!)
+      .single()
+
+    if (existError && existError.code !== 'PGRST116') {
+      const mapped = mapDbError(existError)
+      return NextResponse.json(
+        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+        { status: mapped.status }
+      )
+    }
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'RFI template not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
     const { error } = await supabase
       .from('rfi_templates')
       .update({ is_active: false, updated_at: new Date().toISOString() })
