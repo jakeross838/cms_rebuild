@@ -15,17 +15,9 @@ import {
 
 export const createClientSchema = z.object({
   name: nameSchema,
-  company_name: z.string().trim().max(255).optional().nullable(),
   email: emailSchema.optional().nullable(),
   phone: phoneSchema.optional().nullable(),
-  mobile_phone: phoneSchema.optional().nullable(),
   ...addressSchema.shape,
-  spouse_name: z.string().trim().max(255).optional().nullable(),
-  spouse_email: emailSchema.optional().nullable(),
-  spouse_phone: phoneSchema.optional().nullable(),
-  lead_source: z.string().trim().max(255).optional().nullable(),
-  referred_by: z.string().trim().max(255).optional().nullable(),
-  portal_enabled: z.boolean().default(false),
   notes: z.string().trim().max(5000).optional().nullable(),
 })
 
@@ -49,7 +41,6 @@ export const listClientsSchema = paginationSchema
   .merge(clientSortSchema)
   .extend({
     search: z.string().optional(),
-    lead_source: z.string().optional(),
   })
 
 // ============================================================================

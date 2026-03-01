@@ -11,7 +11,6 @@ import {
   listJobsSchema,
   jobStatusEnum,
   contractTypeEnum,
-  projectTypeEnum,
 } from '@/lib/validation/schemas/jobs'
 
 import {
@@ -33,7 +32,7 @@ import {
   costCodeCategoryEnum,
 } from '@/lib/validation/schemas/cost-codes'
 
-import type { Job, Client, Vendor, CostCode, JobStatus, ProjectType, CostCodeCategory } from '@/types/database'
+import type { Job, Client, Vendor, CostCode, JobStatus, CostCodeCategory } from '@/types/database'
 
 // ============================================================================
 // Spec: Type coverage — deleted_at exists on all 4 entity types
@@ -86,26 +85,6 @@ describe('Spec: JobStatus enum completeness', () => {
 })
 
 // ============================================================================
-// Spec: ProjectType enum matches DB CHECK constraint
-// ============================================================================
-
-describe('Spec: ProjectType enum completeness', () => {
-  it('includes all 6 project types', () => {
-    const types: ProjectType[] = [
-      'new_construction',
-      'renovation',
-      'addition',
-      'remodel',
-      'commercial',
-      'other',
-    ]
-    for (const t of types) {
-      expect(projectTypeEnum.safeParse(t).success).toBe(true)
-    }
-  })
-})
-
-// ============================================================================
 // Spec: CostCodeCategory enum matches DB CHECK constraint
 // ============================================================================
 
@@ -146,7 +125,6 @@ describe('Spec: createJobSchema validates correctly', () => {
       zip: '78701',
       latitude: 30.2672,
       longitude: -97.7431,
-      project_type: 'new_construction',
       status: 'pre_construction',
       contract_type: 'fixed_price',
       contract_amount: 500000,
@@ -175,11 +153,6 @@ describe('Spec: createJobSchema validates correctly', () => {
 
   it('rejects invalid contract_type', () => {
     const result = createJobSchema.safeParse({ name: 'Test', contract_type: 'bogus' })
-    expect(result.success).toBe(false)
-  })
-
-  it('rejects invalid project_type', () => {
-    const result = createJobSchema.safeParse({ name: 'Test', project_type: 'bogus' })
     expect(result.success).toBe(false)
   })
 
@@ -242,20 +215,12 @@ describe('Spec: createClientSchema validates correctly', () => {
   it('accepts valid full client', () => {
     const result = createClientSchema.safeParse({
       name: 'John Smith',
-      company_name: 'Smith Industries',
       email: 'john@smith.com',
       phone: '555-123-4567',
-      mobile_phone: '555-987-6543',
       address: '456 Oak Ave',
       city: 'Dallas',
       state: 'TX',
       zip: '75001',
-      spouse_name: 'Jane Smith',
-      spouse_email: 'jane@smith.com',
-      spouse_phone: '555-222-3333',
-      lead_source: 'referral',
-      referred_by: 'Bob Jones',
-      portal_enabled: true,
       notes: 'VIP client',
     })
     expect(result.success).toBe(true)
@@ -292,26 +257,15 @@ describe('Spec: createVendorSchema validates correctly', () => {
   it('accepts valid full vendor', () => {
     const result = createVendorSchema.safeParse({
       name: 'ABC Electric LLC',
-      dba_name: 'ABC Electric',
       email: 'contact@abcelectric.com',
       phone: '555-456-7890',
-      website: 'https://abcelectric.com',
       address: '789 Industrial Blvd',
       city: 'Houston',
       state: 'TX',
       zip: '77001',
       trade: 'Electrical',
-      trades: ['Electrical', 'Low Voltage'],
       tax_id: '12-3456789',
-      license_number: 'ELEC-123',
-      license_expiration: '2027-01-01',
-      insurance_expiration: '2026-12-31',
-      gl_coverage_amount: 1000000,
-      workers_comp_expiration: '2026-12-31',
-      payment_terms: 'Net 30',
       is_active: true,
-      is_1099: true,
-      w9_on_file: true,
       notes: 'Preferred electrical vendor',
     })
     expect(result.success).toBe(true)
@@ -322,13 +276,8 @@ describe('Spec: createVendorSchema validates correctly', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects invalid website URL', () => {
-    const result = createVendorSchema.safeParse({ name: 'Test', website: 'not-a-url' })
-    expect(result.success).toBe(false)
-  })
-
-  it('rejects negative gl_coverage_amount', () => {
-    const result = createVendorSchema.safeParse({ name: 'Test', gl_coverage_amount: -500 })
+  it('rejects invalid email', () => {
+    const result = createVendorSchema.safeParse({ name: 'Test', email: 'not-an-email' })
     expect(result.success).toBe(false)
   })
 })

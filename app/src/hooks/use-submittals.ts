@@ -15,7 +15,7 @@ type SubmittalListParams = {
   limit?: number
   job_id?: string
   status?: string
-  submittal_type?: string
+  priority?: string
   q?: string
 }
 

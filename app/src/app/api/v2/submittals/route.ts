@@ -30,7 +30,7 @@ export const GET = createApiHandler(
       limit: url.searchParams.get('limit') ?? undefined,
       job_id: url.searchParams.get('job_id') ?? undefined,
       status: url.searchParams.get('status') ?? undefined,
-      submittal_type: url.searchParams.get('submittal_type') ?? undefined,
+      priority: url.searchParams.get('priority') ?? undefined,
       q: url.searchParams.get('q') ?? undefined,
     })
 
@@ -57,8 +57,8 @@ export const GET = createApiHandler(
     if (filters.status) {
       query = query.eq('status', filters.status)
     }
-    if (filters.submittal_type) {
-      query = query.eq('submittal_type', filters.submittal_type)
+    if (filters.priority) {
+      query = query.eq('priority', filters.priority)
     }
     if (filters.q) {
       query = query.or(`title.ilike.${safeOrIlike(filters.q)},submittal_number.ilike.${safeOrIlike(filters.q)}`)
@@ -107,15 +107,14 @@ export const POST = createApiHandler(
         job_id: input.job_id,
         title: input.title,
         submittal_number: input.submittal_number ?? null,
-        submittal_type: input.submittal_type ?? null,
         spec_section: input.spec_section ?? null,
         status: input.status,
+        priority: input.priority ?? null,
         description: input.description ?? null,
         required_date: input.required_date ?? null,
-        submitted_date: input.submitted_date ?? null,
-        returned_date: input.returned_date ?? null,
-        assigned_to: input.assigned_to ?? null,
-        vendor_id: input.vendor_id ?? null,
+        submission_date: input.submission_date ?? null,
+        submitted_by: input.submitted_by ?? null,
+        submitted_to: input.submitted_to ?? null,
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
       } as never)

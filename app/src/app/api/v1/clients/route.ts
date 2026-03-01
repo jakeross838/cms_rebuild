@@ -35,7 +35,6 @@ export const GET = createApiHandler(
       sortBy: url.searchParams.get('sortBy') ?? undefined,
       sortOrder: url.searchParams.get('sortOrder') ?? undefined,
       search: url.searchParams.get('search') ?? undefined,
-      lead_source: url.searchParams.get('lead_source') ?? undefined,
     })
 
     if (!parseResult.success) {
@@ -68,9 +67,6 @@ export const GET = createApiHandler(
       }
 
     // Filters
-    if (filters.lead_source) {
-      query = query.eq('lead_source', filters.lead_source) as typeof query
-    }
     if (filters.search) {
       query = query.or(`name.ilike.${safeOrIlike(filters.search)},email.ilike.${safeOrIlike(filters.search)}`) as typeof query
     }

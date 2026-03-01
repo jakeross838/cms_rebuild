@@ -31,15 +31,6 @@ export const contractTypeEnum = z.enum([
   'time_materials',
 ])
 
-export const projectTypeEnum = z.enum([
-  'new_construction',
-  'renovation',
-  'addition',
-  'remodel',
-  'commercial',
-  'other',
-])
-
 // ============================================================================
 // Create Job
 // ============================================================================
@@ -52,7 +43,6 @@ export const createJobSchema = z.object({
   ...addressSchema.shape,
   latitude: z.coerce.number().min(-90).max(90).optional().nullable(),
   longitude: z.coerce.number().min(-180).max(180).optional().nullable(),
-  project_type: projectTypeEnum.default('new_construction'),
   status: jobStatusEnum.default('pre_construction'),
   contract_type: contractTypeEnum.default('fixed_price'),
   contract_amount: moneySchema.optional().nullable(),
@@ -93,7 +83,6 @@ export const listJobsSchema = paginationSchema
   .extend({
     status: jobStatusEnum.optional(),
     contract_type: contractTypeEnum.optional(),
-    project_type: projectTypeEnum.optional(),
     client_id: uuidSchema.optional(),
     search: z.string().optional(),
     startDate: z.string().optional(),

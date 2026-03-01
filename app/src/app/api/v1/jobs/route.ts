@@ -36,7 +36,6 @@ export const GET = createApiHandler(
       sortOrder: url.searchParams.get('sortOrder') ?? undefined,
       status: url.searchParams.get('status') ?? undefined,
       contract_type: url.searchParams.get('contract_type') ?? undefined,
-      project_type: url.searchParams.get('project_type') ?? undefined,
       client_id: url.searchParams.get('client_id') ?? undefined,
       search: url.searchParams.get('search') ?? undefined,
       startDate: url.searchParams.get('startDate') ?? undefined,
@@ -81,9 +80,6 @@ export const GET = createApiHandler(
     }
     if (filters.contract_type) {
       query = query.eq('contract_type', filters.contract_type) as typeof query
-    }
-    if (filters.project_type) {
-      query = query.eq('project_type', filters.project_type) as typeof query
     }
     if (filters.client_id) {
       query = query.eq('client_id', filters.client_id) as typeof query

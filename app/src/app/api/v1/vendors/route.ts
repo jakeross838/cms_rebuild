@@ -72,7 +72,7 @@ export const GET = createApiHandler(
       query = query.eq('trade', filters.trade) as typeof query
     }
     if (filters.search) {
-      query = query.or(`name.ilike.${safeOrIlike(filters.search)},dba_name.ilike.${safeOrIlike(filters.search)}`) as typeof query
+      query = query.or(`name.ilike.${safeOrIlike(filters.search)},email.ilike.${safeOrIlike(filters.search)}`) as typeof query
     }
 
     // Sort and paginate
