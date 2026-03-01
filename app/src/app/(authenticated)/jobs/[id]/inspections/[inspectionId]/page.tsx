@@ -43,7 +43,7 @@ interface InspectionFormData {
   notes: string
 }
 
-const STATUS_OPTIONS = ['scheduled', 'in_progress', 'passed', 'failed', 'cancelled', 'rescheduled']
+const STATUS_OPTIONS = ['scheduled', 'passed', 'failed', 'conditional', 'cancelled', 'no_show']
 
 // ── Component ──────────────────────────────────────────────────
 

@@ -41,8 +41,8 @@ interface ChangeOrderFormData {
   schedule_impact_days: string
 }
 
-const STATUS_OPTIONS = ['draft', 'pending', 'approved', 'rejected'] as const
-const CHANGE_TYPE_OPTIONS = ['addition', 'deduction', 'revision'] as const
+const STATUS_OPTIONS = ['draft', 'pending_approval', 'approved', 'rejected', 'voided'] as const
+const CHANGE_TYPE_OPTIONS = ['owner_requested', 'field_condition', 'design_change', 'regulatory', 'allowance', 'credit'] as const
 
 // -- Component --------------------------------------------------------------
 
@@ -70,7 +70,7 @@ export default function ChangeOrderDetailPage() {
     description: '',
     amount: '',
     status: 'draft',
-    change_type: 'addition',
+    change_type: 'owner_requested',
     schedule_impact_days: '',
   })
 

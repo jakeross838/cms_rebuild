@@ -36,8 +36,8 @@ interface LeadData {
   created_at: string | null
 }
 
-const SOURCE_OPTIONS = ['other', 'referral', 'website', 'social_media', 'walk_in', 'phone']
-const PRIORITY_OPTIONS = ['low', 'medium', 'high', 'urgent']
+const SOURCE_OPTIONS = ['referral', 'website', 'social_media', 'advertising', 'trade_show', 'cold_call', 'partner', 'other']
+const PRIORITY_OPTIONS = ['low', 'normal', 'high', 'hot']
 
 export default function LeadDetailPage() {
   const params = useParams()

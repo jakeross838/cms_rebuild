@@ -45,8 +45,8 @@ interface PunchItemFormData {
   due_date: string
 }
 
-const STATUS_OPTIONS = ['open', 'in_progress', 'completed', 'verified', 'rejected'] as const
-const PRIORITY_OPTIONS = ['low', 'medium', 'high', 'critical'] as const
+const STATUS_OPTIONS = ['open', 'in_progress', 'completed', 'verified', 'disputed'] as const
+const PRIORITY_OPTIONS = ['low', 'normal', 'high', 'critical'] as const
 
 // -- Component --------------------------------------------------------------
 
@@ -72,7 +72,7 @@ export default function JobPunchItemDetailPage() {
     title: '',
     description: '',
     status: 'open',
-    priority: 'medium',
+    priority: 'normal',
     category: '',
     location: '',
     room: '',

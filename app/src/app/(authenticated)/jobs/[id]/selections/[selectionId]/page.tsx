@@ -38,7 +38,7 @@ interface SelectionFormData {
   option_id: string
 }
 
-const STATUS_OPTIONS = ['pending', 'selected', 'confirmed', 'rejected']
+const STATUS_OPTIONS = ['pending', 'presented', 'selected', 'approved', 'ordered', 'received', 'installed', 'on_hold', 'cancelled']
 
 // ── Component ──────────────────────────────────────────────────
 

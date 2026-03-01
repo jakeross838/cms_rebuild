@@ -284,7 +284,7 @@ export default function ChartOfAccountsDetailPage() {
                       <option value="equity">Equity</option>
                       <option value="revenue">Revenue</option>
                       <option value="expense">Expense</option>
-                      <option value="cost_of_goods_sold">Cost of Goods Sold</option>
+                      <option value="cogs">COGS</option>
                     </select>
                   </div>
                   <div className="space-y-2">

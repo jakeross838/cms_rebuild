@@ -41,7 +41,7 @@ interface RFIFormData {
   due_date: string
 }
 
-const STATUS_OPTIONS = ['draft', 'open', 'answered', 'closed'] as const
+const STATUS_OPTIONS = ['draft', 'open', 'pending_response', 'answered', 'closed', 'voided'] as const
 const PRIORITY_OPTIONS = ['low', 'normal', 'high', 'urgent'] as const
 
 // -- Component --------------------------------------------------------------

@@ -48,7 +48,7 @@ interface POFormData {
   notes: string
 }
 
-const STATUS_OPTIONS = ['draft', 'sent', 'acknowledged', 'partially_received', 'received', 'cancelled']
+const STATUS_OPTIONS = ['draft', 'pending_approval', 'approved', 'sent', 'partially_received', 'received', 'closed', 'voided']
 
 // ── Component ──────────────────────────────────────────────────
 

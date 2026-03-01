@@ -42,7 +42,7 @@ interface CertificationFormData {
   employee_id: string
 }
 
-const STATUS_OPTIONS = ['active', 'expired', 'revoked', 'pending'] as const
+const STATUS_OPTIONS = ['active', 'expired', 'pending_renewal', 'revoked'] as const
 
 // ── Component ──────────────────────────────────────────────────
 

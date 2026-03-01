@@ -173,7 +173,6 @@ export default function EmployeeDetailPage() {
   const payTypeLabels: Record<string, string> = {
     hourly: 'Hourly',
     salary: 'Salary',
-    piece_rate: 'Piece Rate',
   }
 
   return (
@@ -350,6 +349,7 @@ export default function EmployeeDetailPage() {
                       <option value="inactive">Inactive</option>
                       <option value="terminated">Terminated</option>
                       <option value="on_leave">On Leave</option>
+                      <option value="probation">Probation</option>
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -374,7 +374,6 @@ export default function EmployeeDetailPage() {
                       <option value="">Select...</option>
                       <option value="hourly">Hourly</option>
                       <option value="salary">Salary</option>
-                      <option value="piece_rate">Piece Rate</option>
                     </select>
                   </div>
                   <div className="space-y-2">

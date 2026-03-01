@@ -61,7 +61,7 @@ export default function SupportTicketDetailPage() {
       setFormData({
         subject: ticket.subject,
         description: ticket.description || '',
-        priority: ticket.priority || 'medium',
+        priority: ticket.priority || 'normal',
         category: ticket.category || '',
         status: ticket.status,
       })
@@ -183,7 +183,7 @@ export default function SupportTicketDetailPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium w-20">Priority</span>
-                  <Badge className={getStatusColor(ticket.priority || 'medium')}>{formatStatus(ticket.priority || 'medium')}</Badge>
+                  <Badge className={getStatusColor(ticket.priority || 'normal')}>{formatStatus(ticket.priority || 'normal')}</Badge>
                 </div>
                 {ticket.category && (
                   <div className="flex items-center gap-2">
@@ -255,11 +255,12 @@ export default function SupportTicketDetailPage() {
                       onChange={handleChange}
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     >
-                      <option value="open">Open</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="waiting">Waiting</option>
-                      <option value="resolved">Resolved</option>
-                      <option value="closed">Closed</option>
+                      <option value="open">{formatStatus('open')}</option>
+                      <option value="in_progress">{formatStatus('in_progress')}</option>
+                      <option value="waiting_on_customer">{formatStatus('waiting_on_customer')}</option>
+                      <option value="waiting_on_agent">{formatStatus('waiting_on_agent')}</option>
+                      <option value="resolved">{formatStatus('resolved')}</option>
+                      <option value="closed">{formatStatus('closed')}</option>
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -271,10 +272,10 @@ export default function SupportTicketDetailPage() {
                       onChange={handleChange}
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="urgent">Urgent</option>
+                      <option value="low">{formatStatus('low')}</option>
+                      <option value="normal">{formatStatus('normal')}</option>
+                      <option value="high">{formatStatus('high')}</option>
+                      <option value="urgent">{formatStatus('urgent')}</option>
                     </select>
                   </div>
                   <div className="space-y-2">

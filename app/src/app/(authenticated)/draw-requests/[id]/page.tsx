@@ -427,11 +427,12 @@ export default function DrawRequestDetailPage() {
                       onChange={handleChange}
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     >
-                      <option value="draft">Draft</option>
-                      <option value="pending">Pending</option>
-                      <option value="submitted">Submitted</option>
-                      <option value="approved">Approved</option>
-                      <option value="rejected">Rejected</option>
+                      <option value="draft">{formatStatus('draft')}</option>
+                      <option value="pending_review">{formatStatus('pending_review')}</option>
+                      <option value="approved">{formatStatus('approved')}</option>
+                      <option value="submitted_to_lender">{formatStatus('submitted_to_lender')}</option>
+                      <option value="funded">{formatStatus('funded')}</option>
+                      <option value="rejected">{formatStatus('rejected')}</option>
                     </select>
                   </div>
                   <div className="space-y-2">

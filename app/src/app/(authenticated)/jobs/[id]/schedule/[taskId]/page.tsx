@@ -47,7 +47,7 @@ interface ScheduleFormData {
   notes: string
 }
 
-const STATUS_OPTIONS = ['not_started', 'in_progress', 'completed', 'on_hold', 'cancelled']
+const STATUS_OPTIONS = ['not_started', 'in_progress', 'completed', 'delayed', 'on_hold']
 
 // ── Component ──────────────────────────────────────────────────
 

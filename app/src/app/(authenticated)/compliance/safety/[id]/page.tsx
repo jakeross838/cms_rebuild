@@ -377,12 +377,14 @@ export default function SafetyIncidentDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="incident_type" className="text-sm font-medium">Type <span className="text-red-500">*</span></label>
                     <select id="incident_type" name="incident_type" value={formData.incident_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="injury">Injury</option>
-                      <option value="near_miss">Near Miss</option>
-                      <option value="property_damage">Property Damage</option>
-                      <option value="environmental">Environmental</option>
-                      <option value="equipment_failure">Equipment Failure</option>
-                      <option value="other">Other</option>
+                      <option value="fall">{formatStatus('fall')}</option>
+                      <option value="struck_by">{formatStatus('struck_by')}</option>
+                      <option value="caught_in">{formatStatus('caught_in')}</option>
+                      <option value="electrical">{formatStatus('electrical')}</option>
+                      <option value="chemical">{formatStatus('chemical')}</option>
+                      <option value="heat">{formatStatus('heat')}</option>
+                      <option value="vehicle">{formatStatus('vehicle')}</option>
+                      <option value="other">{formatStatus('other')}</option>
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -397,10 +399,10 @@ export default function SafetyIncidentDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="open">Open</option>
-                      <option value="investigating">Investigating</option>
-                      <option value="resolved">Resolved</option>
-                      <option value="closed">Closed</option>
+                      <option value="reported">{formatStatus('reported')}</option>
+                      <option value="investigating">{formatStatus('investigating')}</option>
+                      <option value="resolved">{formatStatus('resolved')}</option>
+                      <option value="closed">{formatStatus('closed')}</option>
                     </select>
                   </div>
                 </div>

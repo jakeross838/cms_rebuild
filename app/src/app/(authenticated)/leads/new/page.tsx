@@ -24,7 +24,7 @@ export default function NewLeadPage() {
     last_name: '',
     email: '',
     phone: '',
-    source: 'other',
+    source: 'referral',
     source_detail: '',
     project_type: '',
     expected_contract_value: '',
@@ -109,12 +109,14 @@ export default function NewLeadPage() {
               <div className="space-y-2">
                 <label htmlFor="source" className="text-sm font-medium">Lead Source</label>
                 <select id="source" name="source" value={formData.source} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="other">Other</option>
                   <option value="referral">Referral</option>
                   <option value="website">Website</option>
                   <option value="social_media">Social Media</option>
-                  <option value="walk_in">Walk-In</option>
-                  <option value="phone">Phone</option>
+                  <option value="advertising">Advertising</option>
+                  <option value="trade_show">Trade Show</option>
+                  <option value="cold_call">Cold Call</option>
+                  <option value="partner">Partner</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
               <div className="space-y-2">

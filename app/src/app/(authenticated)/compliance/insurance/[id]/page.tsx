@@ -262,13 +262,11 @@ export default function InsurancePolicyDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="insurance_type" className="text-sm font-medium">Insurance Type <span className="text-red-500">*</span></label>
                     <select id="insurance_type" name="insurance_type" value={formData.insurance_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="general_liability">General Liability</option>
-                      <option value="workers_compensation">Workers Compensation</option>
-                      <option value="auto">Auto</option>
-                      <option value="umbrella">Umbrella</option>
-                      <option value="professional_liability">Professional Liability</option>
-                      <option value="builders_risk">Builders Risk</option>
-                      <option value="other">Other</option>
+                      <option value="general_liability">{formatStatus('general_liability')}</option>
+                      <option value="workers_comp">{formatStatus('workers_comp')}</option>
+                      <option value="auto">{formatStatus('auto')}</option>
+                      <option value="umbrella">{formatStatus('umbrella')}</option>
+                      <option value="professional">{formatStatus('professional')}</option>
                     </select>
                   </div>
                 </div>
@@ -294,10 +292,10 @@ export default function InsurancePolicyDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="active">Active</option>
-                      <option value="expired">Expired</option>
-                      <option value="pending">Pending</option>
-                      <option value="cancelled">Cancelled</option>
+                      <option value="active">{formatStatus('active')}</option>
+                      <option value="expiring_soon">{formatStatus('expiring_soon')}</option>
+                      <option value="expired">{formatStatus('expired')}</option>
+                      <option value="not_on_file">{formatStatus('not_on_file')}</option>
                     </select>
                   </div>
                 </div>

@@ -300,13 +300,12 @@ export default function ARInvoiceDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="draft">Draft</option>
-                      <option value="sent">Sent</option>
-                      <option value="viewed">Viewed</option>
-                      <option value="partial">Partial</option>
-                      <option value="paid">Paid</option>
-                      <option value="overdue">Overdue</option>
-                      <option value="void">Void</option>
+                      <option value="draft">{formatStatus('draft')}</option>
+                      <option value="sent">{formatStatus('sent')}</option>
+                      <option value="partially_paid">{formatStatus('partially_paid')}</option>
+                      <option value="paid">{formatStatus('paid')}</option>
+                      <option value="overdue">{formatStatus('overdue')}</option>
+                      <option value="voided">{formatStatus('voided')}</option>
                     </select>
                   </div>
                 </div>

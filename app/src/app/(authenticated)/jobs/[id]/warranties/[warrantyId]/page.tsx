@@ -38,7 +38,7 @@ interface WarrantyFormData {
   description: string
 }
 
-const STATUS_OPTIONS = ['active', 'expired', 'claimed', 'void']
+const STATUS_OPTIONS = ['active', 'expired', 'voided', 'transferred']
 
 // ── Component ──────────────────────────────────────────────────
 

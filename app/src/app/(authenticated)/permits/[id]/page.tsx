@@ -32,7 +32,7 @@ interface PermitData {
   created_at: string | null
 }
 
-const STATUS_OPTIONS = ['Applied', 'Under Review', 'Approved', 'Issued', 'Expired', 'Denied'] as const
+const STATUS_OPTIONS = ['draft', 'applied', 'issued', 'active', 'expired', 'closed', 'revoked'] as const
 
 // ── Component ──────────────────────────────────────────────────
 

@@ -43,7 +43,7 @@ interface LienWaiverFormData {
 }
 
 const WAIVER_TYPES = ['conditional_progress', 'unconditional_progress', 'conditional_final', 'unconditional_final']
-const STATUS_OPTIONS = ['requested', 'received', 'approved', 'rejected', 'expired']
+const STATUS_OPTIONS = ['draft', 'pending', 'sent', 'received', 'approved', 'rejected']
 
 // ── Component ──────────────────────────────────────────────────
 

@@ -44,7 +44,7 @@ interface DrawRequestFormData {
   application_date: string
 }
 
-const STATUS_OPTIONS = ['draft', 'submitted', 'approved', 'rejected', 'paid'] as const
+const STATUS_OPTIONS = ['draft', 'pending_review', 'approved', 'submitted_to_lender', 'funded', 'rejected'] as const
 
 // -- Component --------------------------------------------------------------
 

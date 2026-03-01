@@ -311,20 +311,20 @@ export default function PunchItemDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="open">Open</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="completed">Completed</option>
-                      <option value="verified">Verified</option>
-                      <option value="rejected">Rejected</option>
+                      <option value="open">{formatStatus('open')}</option>
+                      <option value="in_progress">{formatStatus('in_progress')}</option>
+                      <option value="completed">{formatStatus('completed')}</option>
+                      <option value="verified">{formatStatus('verified')}</option>
+                      <option value="disputed">{formatStatus('disputed')}</option>
                     </select>
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="priority" className="text-sm font-medium">Priority <span className="text-red-500">*</span></label>
                     <select id="priority" name="priority" value={formData.priority} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="critical">Critical</option>
+                      <option value="low">{formatStatus('low')}</option>
+                      <option value="normal">{formatStatus('normal')}</option>
+                      <option value="high">{formatStatus('high')}</option>
+                      <option value="critical">{formatStatus('critical')}</option>
                     </select>
                   </div>
                 </div>

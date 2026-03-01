@@ -299,19 +299,18 @@ export default function JournalEntryDetailPage() {
                   <div className="space-y-2">
                     <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
                     <select id="status" name="status" value={formData.status} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="draft">Draft</option>
-                      <option value="posted">Posted</option>
-                      <option value="void">Void</option>
+                      <option value="draft">{formatStatus('draft')}</option>
+                      <option value="posted">{formatStatus('posted')}</option>
+                      <option value="voided">{formatStatus('voided')}</option>
                     </select>
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="source_type" className="text-sm font-medium">Source Type <span className="text-red-500">*</span></label>
                     <select id="source_type" name="source_type" value={formData.source_type} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                      <option value="manual">Manual</option>
-                      <option value="bill_payment">Bill Payment</option>
-                      <option value="invoice">Invoice</option>
-                      <option value="adjustment">Adjustment</option>
-                      <option value="closing">Closing</option>
+                      <option value="manual">{formatStatus('manual')}</option>
+                      <option value="ap_payment">{formatStatus('ap_payment')}</option>
+                      <option value="ar_receipt">{formatStatus('ar_receipt')}</option>
+                      <option value="payroll">{formatStatus('payroll')}</option>
                     </select>
                   </div>
                 </div>
