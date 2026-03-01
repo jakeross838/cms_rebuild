@@ -1,5 +1,15 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 54 — Add updated_at Timestamps to 37 API Route UPDATE Operations (2026-03-01)
+
+### updated_at on UPDATE Operations (37 files)
+- **What changed:** 37 API route files with `.update()` calls now include `updated_at: new Date().toISOString()` in the update payload
+- **Pattern A (most files):** `const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }` — added to object initialization
+- **Pattern B (direct updates):** Added `updated_at` field to inline `.update({...})` calls (bid-package status transitions, contract signer actions, notification mark-read, feature request vote counts)
+- **Tables affected:** bid_packages, bid_invitations, bid_responses, contract_signers, contract_clauses, contract_templates, pipelines, pipeline_stages, lead_sources, marketing_campaigns, campaign_contacts, client_reviews, marketing_referrals, testimonials, marketplace_templates, onboarding_checklists, onboarding_milestones, onboarding_reminders, sample_data_sets, project_user_roles, data_migration validation_results, notifications, toolbox_talk_attendees, feature_requests, support_tickets, users, user_invitations, companies, project_phases, api_keys, budget_lines
+- **48 files already compliant** — verified and left unchanged
+- **Soft-delete `.update({ deleted_at })` calls not modified** — by design
+
 ## Session 53 — Fix Cancel Button Form Reset on 14 Job-Nested Detail Pages (2026-03-01)
 
 ### Cancel Button Form Data Reset (14 job-nested files)

@@ -1,5 +1,17 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 54 — Add updated_at Timestamps to 37 API Route UPDATE Operations (2026-03-01)
+
+### updated_at Timestamp Correctness
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| PUT/PATCH on any tenant entity sets `updated_at` | `updated_at` included in update payload | PASS (37 fixed + 48 already compliant) |
+| Soft-delete `.update({ deleted_at })` does NOT require `updated_at` | Only `deleted_at` set | PASS (not modified) |
+| POST status code for create endpoints | Returns 201 | PASS (100% compliant) |
+| Mutation endpoints have `auditAction` | All non-auth mutations have it | PASS (4 auth endpoints use manual logging) |
+| TypeScript compilation | 0 errors | PASS |
+| Acceptance tests | 3260/3260 pass | PASS |
+
 ## Session 53 — Fix Cancel Button Form Reset on 14 Job-Nested Detail Pages (2026-03-01)
 
 ### Cancel Button Form Reset (Job-Nested Pages)
