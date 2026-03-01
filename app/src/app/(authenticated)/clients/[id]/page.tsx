@@ -94,7 +94,9 @@ export default function ClientDetailPage() {
       toast.success('Client updated')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save client')
+      const errorMessage = (err as Error)?.message || 'Failed to save client'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -106,8 +108,9 @@ export default function ClientDetailPage() {
       router.push('/clients')
       router.refresh()
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      toast.error(msg)
+      const errorMessage = (err as Error)?.message || 'Failed to archive client'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }

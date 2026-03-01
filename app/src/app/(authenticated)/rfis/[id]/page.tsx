@@ -106,7 +106,9 @@ export default function RfiDetailPage() {
       toast.success('RFI updated')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save RFI'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -118,7 +120,9 @@ export default function RfiDetailPage() {
       router.push('/rfis')
       router.refresh()
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive RFI'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }

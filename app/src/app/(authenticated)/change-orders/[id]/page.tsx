@@ -102,7 +102,9 @@ export default function ChangeOrderDetailPage() {
       toast.success('Change order updated')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save change order')
+      const errorMessage = (err as Error)?.message || 'Failed to save change order'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -114,8 +116,9 @@ export default function ChangeOrderDetailPage() {
       router.push('/change-orders')
       router.refresh()
     } catch (err) {
-      const msg = (err as Error)?.message || 'Operation failed'
-      toast.error(msg)
+      const errorMessage = (err as Error)?.message || 'Failed to archive change order'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }

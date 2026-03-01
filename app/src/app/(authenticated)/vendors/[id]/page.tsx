@@ -104,7 +104,9 @@ export default function VendorDetailPage() {
       toast.success('Vendor updated')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save vendor')
+      const errorMessage = (err as Error)?.message || 'Failed to save vendor'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -116,7 +118,9 @@ export default function VendorDetailPage() {
       router.push('/vendors')
       router.refresh()
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to archive vendor')
+      const errorMessage = (err as Error)?.message || 'Failed to archive vendor'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }

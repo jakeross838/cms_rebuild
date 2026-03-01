@@ -102,7 +102,9 @@ export default function PermitDetailPage() {
       toast.success('Permit updated')
       setEditing(false)
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to save')
+      const errorMessage = (err as Error)?.message || 'Failed to save permit'
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 
@@ -114,7 +116,9 @@ export default function PermitDetailPage() {
       router.push('/permits')
       router.refresh()
     } catch (err) {
-      toast.error((err as Error)?.message || 'Failed to archive')
+      const errorMessage = (err as Error)?.message || 'Failed to archive permit'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setArchiving(false)
     }
   }
