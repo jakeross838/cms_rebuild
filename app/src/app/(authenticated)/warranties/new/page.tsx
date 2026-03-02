@@ -21,13 +21,13 @@ export default function NewWarrantyPage() {
 
   const [error, setError] = useState<string | null>(null)
 
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 })
+  const { data: jobsResponse, isLoading: jobsLoading, isError: jobsError } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string; job_number: string | null }[] } | undefined)?.data ?? []).map((j) => ({
     id: j.id,
     label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,
   }))
 
-  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 })
+  const { data: vendorsResponse, isLoading: vendorsLoading, isError: vendorsError } = useVendors({ limit: 500 })
   const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? []).map((v) => ({
     id: v.id,
     label: v.name,
@@ -147,14 +147,14 @@ export default function NewWarrantyPage() {
               <div className="space-y-2">
                 <label htmlFor="job_id" className="text-sm font-medium">Job <span className="text-red-500">*</span></label>
                 <select id="job_id" name="job_id" value={formData.job_id} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">{jobsLoading ? 'Loading jobs...' : 'Select a job...'}</option>
+                  <option value="">{jobsLoading ? 'Loading jobs...' : jobsError ? 'Failed to load jobs' : 'Select a job...'}</option>
                   {jobs.map((j) => <option key={j.id} value={j.id}>{j.label}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
                 <label htmlFor="vendor_id" className="text-sm font-medium">Vendor</label>
                 <select id="vendor_id" name="vendor_id" value={formData.vendor_id} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">{vendorsLoading ? 'Loading vendors...' : 'No vendor'}</option>
+                  <option value="">{vendorsLoading ? 'Loading vendors...' : vendorsError ? 'Failed to load vendors' : 'No vendor'}</option>
                   {vendors.map((v) => <option key={v.id} value={v.id}>{v.label}</option>)}
                 </select>
               </div>

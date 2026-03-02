@@ -33,7 +33,7 @@ export default function NewTeamMemberPage() {
   const createMutation = useCreateProjectUserRole()
 
   // ── Dropdown data ──────────────────────────────────────────────
-  const { data: usersResponse, isLoading: loadingUsers } = useUsers({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const { data: usersResponse, isLoading: loadingUsers, isError: usersError } = useUsers({ limit: 500 } as Record<string, string | number | boolean | undefined>)
   const users: UserRow[] = ((usersResponse as { data: UserRow[] } | undefined)?.data ?? [])
 
   const [error, setError] = useState<string | null>(null)
@@ -98,7 +98,7 @@ export default function NewTeamMemberPage() {
                 </div>
               ) : (
                 <select id="user_id" name="user_id" value={formData.user_id} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">Select a user...</option>
+                  <option value="">{usersError ? 'Failed to load users' : 'Select a user...'}</option>
                   {users.map((u) => (
                     <option key={u.id} value={u.id}>
                       {u.name || u.email || u.id.slice(0, 8)}{u.role ? ` (${u.role})` : ''}

@@ -24,10 +24,10 @@ export default function NewPurchaseOrderPage() {
 
   const [error, setError] = useState<string | null>(null)
 
-  const { data: jobsResponse, isLoading: loadingOptions } = useJobs({ limit: 500 })
+  const { data: jobsResponse, isLoading: loadingOptions, isError: jobsError } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string; job_number: string | null }[] } | undefined)?.data ?? [])
 
-  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 })
+  const { data: vendorsResponse, isLoading: vendorsLoading, isError: vendorsError } = useVendors({ limit: 500 })
   const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
@@ -141,7 +141,7 @@ export default function NewPurchaseOrderPage() {
                   required
                   disabled={loadingOptions}
                 >
-                  <option value="">{loadingOptions ? 'Loading jobs...' : 'Select a job'}</option>
+                  <option value="">{loadingOptions ? 'Loading jobs...' : jobsError ? 'Failed to load jobs' : 'Select a job'}</option>
                   {jobs.map((job) => (
                     <option key={job.id} value={job.id}>
                       {job.job_number ? `${job.job_number} - ` : ''}{job.name}
@@ -160,7 +160,7 @@ export default function NewPurchaseOrderPage() {
                   required
                   disabled={vendorsLoading}
                 >
-                  <option value="">{vendorsLoading ? 'Loading vendors...' : 'Select a vendor'}</option>
+                  <option value="">{vendorsLoading ? 'Loading vendors...' : vendorsError ? 'Failed to load vendors' : 'Select a vendor'}</option>
                   {vendors.map((vendor) => (
                     <option key={vendor.id} value={vendor.id}>
                       {vendor.name}

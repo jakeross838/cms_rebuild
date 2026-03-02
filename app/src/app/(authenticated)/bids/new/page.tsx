@@ -21,7 +21,7 @@ export default function NewBidPackagePage() {
   const createBidPackage = useCreateBidPackage()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 })
+  const { data: jobsResponse, isLoading: jobsLoading, isError: jobsError } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
@@ -101,7 +101,7 @@ export default function NewBidPackagePage() {
                   required
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 >
-                  <option value="">{jobsLoading ? 'Loading jobs...' : 'Select a job'}</option>
+                  <option value="">{jobsLoading ? 'Loading jobs...' : jobsError ? 'Failed to load jobs' : 'Select a job'}</option>
                   {jobs.map((job) => (
                     <option key={job.id} value={job.id}>{job.name}</option>
                   ))}

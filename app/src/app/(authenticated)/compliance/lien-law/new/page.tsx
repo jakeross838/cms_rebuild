@@ -23,10 +23,10 @@ export default function NewLienLawRecordPage() {
   const createMutation = useCreateLienWaiverTracking()
 
   // ── Dropdown data ──────────────────────────────────────────────
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const { data: jobsResponse, isLoading: jobsLoading, isError: jobsError } = useJobs({ limit: 500 } as Record<string, string | number | boolean | undefined>)
   const jobs: JobRow[] = ((jobsResponse as { data: JobRow[] } | undefined)?.data ?? [])
 
-  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const { data: vendorsResponse, isLoading: vendorsLoading, isError: vendorsError } = useVendors({ limit: 500 } as Record<string, string | number | boolean | undefined>)
   const vendors: VendorRow[] = ((vendorsResponse as { data: VendorRow[] } | undefined)?.data ?? [])
 
   const [error, setError] = useState<string | null>(null)
@@ -106,7 +106,7 @@ export default function NewLienLawRecordPage() {
                 onChange={handleChange}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <option value="">{jobsLoading ? 'Loading jobs...' : 'Select a job...'}</option>
+                <option value="">{jobsLoading ? 'Loading jobs...' : jobsError ? 'Failed to load jobs' : 'Select a job...'}</option>
                 {jobs.map((j) => (
                   <option key={j.id} value={j.id}>{j.name}</option>
                 ))}
@@ -122,7 +122,7 @@ export default function NewLienLawRecordPage() {
                 onChange={handleChange}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <option value="">{vendorsLoading ? 'Loading vendors...' : 'Select a vendor...'}</option>
+                <option value="">{vendorsLoading ? 'Loading vendors...' : vendorsError ? 'Failed to load vendors' : 'Select a vendor...'}</option>
                 {vendors.map((v) => (
                   <option key={v.id} value={v.id}>{v.name}</option>
                 ))}

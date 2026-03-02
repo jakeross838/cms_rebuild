@@ -1,5 +1,13 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 55 — Remove as any Casts + Add Dropdown Error States (2026-03-02)
+
+### Remove 31 `as any` Casts (23 files)
+All `as any` casts on React Query hook parameters were unnecessary — hook param types already accept the passed objects. Removed from: bids/new, change-orders/new, compliance/insurance/[id], compliance/licenses/new, compliance/safety/new, compliance/safety/[id], contracts/new, draw-requests/new, financial/journal-entries/new, financial/payables/new, financial/receivables/new, lien-waivers/new, library/selections/new, permits/new, punch-lists/new, purchase-orders/new, rfis/new, submittals/new, time-clock/new, warranties/new, jobs/[id]/inventory/new, jobs/[id]/purchase-orders/new, jobs/[id]/selections/new.
+
+### Add Dropdown Error States (29 "new" form pages, ~46 hooks)
+Added `isError` destructuring to all React Query dropdown hooks. When API fails, dropdown shows "Failed to load [resource]" instead of empty list. Pages: all 23 above plus communications/new, compliance/insurance/new, compliance/lien-law/new, contacts/new, invoices/new, jobs/[id]/inspections/new, jobs/[id]/team/new, warranty-claims/new.
+
 ## Session 54c — select('*') → Explicit Columns on All 468 API Routes (2026-03-02)
 
 ### What Changed

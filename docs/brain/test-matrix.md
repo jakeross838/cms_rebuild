@@ -1,5 +1,21 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 55 — Remove as any + Dropdown Error States (2026-03-02)
+
+### as any Removal
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero `as any` in `app/src/` | `grep "as any" app/src/` returns 0 | PASS |
+| Hook params accepted without casting | All 31 call sites compile clean | PASS |
+
+### Dropdown Error State Feedback
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All ~46 dropdown hooks destructure `isError` | `isError: <name>Error` present | PASS |
+| All dropdown `<option>` defaults include error ternary | `error ? 'Failed to load...'` present | PASS |
+| TypeScript compilation | 0 errors | PASS |
+| Acceptance tests | 3260/3260 pass | PASS |
+
 ## Session 54c — select('*') → Explicit Columns on All API Routes (2026-03-02)
 
 ### select('*') Elimination

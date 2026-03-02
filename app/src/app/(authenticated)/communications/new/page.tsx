@@ -21,7 +21,7 @@ export default function NewCommunicationPage() {
   const createMutation = useCreateCommunication()
 
   // ── Dropdown data ──────────────────────────────────────────────
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as Record<string, string | number | boolean | undefined>)
+  const { data: jobsResponse, isLoading: jobsLoading, isError: jobsError } = useJobs({ limit: 500 } as Record<string, string | number | boolean | undefined>)
   const jobs: JobRow[] = ((jobsResponse as { data: JobRow[] } | undefined)?.data ?? [])
 
   const [error, setError] = useState<string | null>(null)
@@ -93,7 +93,7 @@ export default function NewCommunicationPage() {
             <div className="space-y-2">
               <label htmlFor="job_id" className="text-sm font-medium">Job <span className="text-red-500">*</span></label>
               <select id="job_id" name="job_id" value={formData.job_id} onChange={handleChange} className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" required>
-                <option value="">{jobsLoading ? 'Loading jobs...' : 'Select a job'}</option>
+                <option value="">{jobsLoading ? 'Loading jobs...' : jobsError ? 'Failed to load jobs' : 'Select a job'}</option>
                 {jobs.map((job) => (
                   <option key={job.id} value={job.id}>
                     {job.job_number ? `${job.job_number} - ` : ''}{job.name}

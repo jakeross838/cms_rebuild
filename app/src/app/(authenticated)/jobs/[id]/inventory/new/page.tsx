@@ -21,7 +21,7 @@ export default function NewInventoryTransactionPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { data: itemsResponse, isLoading: loadingItems } = useInventoryItems({ limit: 500, is_active: true })
+  const { data: itemsResponse, isLoading: loadingItems, isError: itemsError } = useInventoryItems({ limit: 500, is_active: true })
   const items = ((itemsResponse as { data: { id: string; name: string; sku: string | null; unit_of_measure: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
@@ -100,7 +100,7 @@ export default function NewInventoryTransactionPage() {
                 </div>
               ) : (
                 <select id="item_id" name="item_id" value={formData.item_id} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring">
-                  <option value="">Select an item...</option>
+                  <option value="">{itemsError ? 'Failed to load items' : 'Select an item...'}</option>
                   {items.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item.name}{item.sku ? ` (${item.sku})` : ''} &mdash; {item.unit_of_measure}

@@ -1,5 +1,16 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-02: Session 55 — Remove as any Casts + Add Dropdown Error States
+
+### Why
+- 31 `as any` casts on hook parameters violated the project's "Zero as any" standard. All were unnecessary — the hook TParams types have all-optional fields, so `{ limit: 500 }` is a valid argument without casting.
+- 29 "new" form pages loaded dropdown data via React Query hooks but only handled the loading state. When API fails, users saw an empty dropdown with no error indication.
+
+### What
+- Removed 31 `as any` casts across 23 files (hook params already typed correctly)
+- Added `isError` destructuring + "Failed to load" fallback to ~46 dropdown hooks across 29 pages
+- Zero `as any` now in entire `app/src/` directory
+
 ## 2026-03-02: Session 54c — select('*') → Explicit Columns on All API Routes
 
 ### Why
