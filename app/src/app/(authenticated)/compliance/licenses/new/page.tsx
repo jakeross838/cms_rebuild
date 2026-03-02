@@ -19,7 +19,7 @@ export default function NewCertificationPage() {
   const createCertification = useCreateHrCertification()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: employeesResponse, isLoading: employeesLoading } = useEmployees({ limit: 500 } as any)
+  const { data: employeesResponse, isLoading: employeesLoading } = useEmployees({ limit: 500 })
   const employees = ((employeesResponse as { data: { id: string; first_name: string; last_name: string }[] } | undefined)?.data ?? []).map((e) => ({
     id: e.id,
     name: `${e.first_name} ${e.last_name}`,

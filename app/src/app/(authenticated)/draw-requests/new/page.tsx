@@ -26,7 +26,7 @@ export default function NewDrawRequestPage() {
   const createDrawRequest = useCreateDrawRequest()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({

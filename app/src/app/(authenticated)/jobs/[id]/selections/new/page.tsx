@@ -25,10 +25,10 @@ export default function NewSelectionPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { data: categoriesResponse, isLoading: categoriesLoading } = useSelectionCategories({ limit: 500, job_id: jobId } as any)
+  const { data: categoriesResponse, isLoading: categoriesLoading } = useSelectionCategories({ limit: 500, job_id: jobId })
   const categories = ((categoriesResponse as { data: Category[] } | undefined)?.data ?? [])
 
-  const { data: optionsResponse, isLoading: optionsLoading } = useSelectionOptions({ limit: 500 } as any)
+  const { data: optionsResponse, isLoading: optionsLoading } = useSelectionOptions({ limit: 500 })
   const options = ((optionsResponse as { data: Option[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({

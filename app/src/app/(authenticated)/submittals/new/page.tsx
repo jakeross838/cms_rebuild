@@ -20,7 +20,7 @@ export default function NewSubmittalPage() {
   const createSubmittal = useCreateSubmittal()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string; job_number: string | null }[] } | undefined)?.data ?? []).map((j) => ({
     id: j.id,
     label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,

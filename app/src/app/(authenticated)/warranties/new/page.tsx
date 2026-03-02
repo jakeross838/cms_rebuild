@@ -21,13 +21,13 @@ export default function NewWarrantyPage() {
 
   const [error, setError] = useState<string | null>(null)
 
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string; job_number: string | null }[] } | undefined)?.data ?? []).map((j) => ({
     id: j.id,
     label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,
   }))
 
-  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 } as any)
+  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 })
   const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? []).map((v) => ({
     id: v.id,
     label: v.name,

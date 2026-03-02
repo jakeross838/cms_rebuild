@@ -23,7 +23,7 @@ export default function NewPurchaseOrderPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 } as any)
+  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 })
   const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({

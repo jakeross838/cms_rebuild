@@ -24,10 +24,10 @@ export default function NewPurchaseOrderPage() {
 
   const [error, setError] = useState<string | null>(null)
 
-  const { data: jobsResponse, isLoading: loadingOptions } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse, isLoading: loadingOptions } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string; job_number: string | null }[] } | undefined)?.data ?? [])
 
-  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 } as any)
+  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 })
   const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({

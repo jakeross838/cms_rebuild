@@ -50,7 +50,7 @@ export default function InsurancePolicyDetailPage() {
 
   const policy = (response as { data: InsurancePolicyData } | undefined)?.data ?? null
 
-  const { data: vendorsResponse } = useVendors({ limit: 500 } as any)
+  const { data: vendorsResponse } = useVendors({ limit: 500 })
   const vendors = ((vendorsResponse as { data: VendorLookup[] } | undefined)?.data ?? [])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)

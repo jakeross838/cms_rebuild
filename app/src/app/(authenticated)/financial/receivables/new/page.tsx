@@ -22,10 +22,10 @@ export default function NewReceivablePage() {
 
   const [error, setError] = useState<string | null>(null)
 
-  const { data: clientsResponse, isLoading: clientsLoading } = useClients({ limit: 500 } as any)
+  const { data: clientsResponse, isLoading: clientsLoading } = useClients({ limit: 500 })
   const clients = ((clientsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({

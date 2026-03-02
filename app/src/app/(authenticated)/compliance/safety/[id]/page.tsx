@@ -59,7 +59,7 @@ export default function SafetyIncidentDetailPage() {
   const deleteIncident = useDeleteSafetyIncident()
   const incident = (response as { data: SafetyIncidentData } | undefined)?.data ?? null
 
-  const { data: jobsResponse } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [editing, setEditing] = useState(false)

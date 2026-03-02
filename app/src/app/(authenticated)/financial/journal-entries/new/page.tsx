@@ -32,7 +32,7 @@ export default function NewJournalEntryPage() {
   const createJournalEntry = useCreateJournalEntry()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: accountsResponse, isLoading: accountsLoading } = useGlAccounts({ limit: 500 } as any)
+  const { data: accountsResponse, isLoading: accountsLoading } = useGlAccounts({ limit: 500 })
   const accounts = ((accountsResponse as { data: { id: string; name: string; account_number: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({

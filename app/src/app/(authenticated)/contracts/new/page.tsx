@@ -21,13 +21,13 @@ export default function NewContractPage() {
   const createContract = useCreateContract()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string; job_number: string | null }[] } | undefined)?.data ?? []).map((j) => ({
     id: j.id,
     label: j.job_number ? `${j.job_number} — ${j.name}` : j.name,
   }))
 
-  const { data: clientsResponse, isLoading: clientsLoading } = useClients({ limit: 500 } as any)
+  const { data: clientsResponse, isLoading: clientsLoading } = useClients({ limit: 500 })
   const clients = ((clientsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? []).map((c) => ({
     id: c.id,
     label: c.name,

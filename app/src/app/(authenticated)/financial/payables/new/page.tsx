@@ -22,10 +22,10 @@ export default function NewPayablePage() {
   const createApBill = useCreateApBill()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 } as any)
+  const { data: vendorsResponse, isLoading: vendorsLoading } = useVendors({ limit: 500 })
   const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({

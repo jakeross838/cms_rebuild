@@ -25,10 +25,10 @@ export default function NewTimeEntryPage() {
   const [error, setError] = useState<string | null>(null)
   const currentUserId = authUser?.id || ''
 
-  const { data: employeesResponse, isLoading: employeesLoading } = useUsers({ limit: 500 } as any)
+  const { data: employeesResponse, isLoading: employeesLoading } = useUsers({ limit: 500 })
   const employees = ((employeesResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
-  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 } as any)
+  const { data: jobsResponse, isLoading: jobsLoading } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({

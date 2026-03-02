@@ -21,7 +21,7 @@ export default function NewInventoryTransactionPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { data: itemsResponse, isLoading: loadingItems } = useInventoryItems({ limit: 500, is_active: true } as any)
+  const { data: itemsResponse, isLoading: loadingItems } = useInventoryItems({ limit: 500, is_active: true })
   const items = ((itemsResponse as { data: { id: string; name: string; sku: string | null; unit_of_measure: string }[] } | undefined)?.data ?? [])
 
   const [formData, setFormData] = useState({
