@@ -1,5 +1,16 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 54b — deleted_at Filters + Pagination Normalization (2026-03-02)
+
+### Query Correctness
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| All list handlers on tables with `deleted_at` filter soft-deleted records | `.is('deleted_at', null)` present | PASS (2 fixed, all others clean) |
+| All list handlers have `.order()` | Deterministic ordering | PASS (all clean) |
+| All v1 list handlers use standard `paginatedResponse()` format | No spread pattern | PASS (24 fixed) |
+| TypeScript compilation | 0 errors | PASS |
+| Acceptance tests | 3260/3260 pass | PASS |
+
 ## Session 54 — Add updated_at Timestamps to 119 API Route Operations (2026-03-01)
 
 ### updated_at Timestamp Correctness

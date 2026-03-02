@@ -1,5 +1,17 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-02: Session 54b — deleted_at Filters + Pagination Normalization
+
+### Why
+- `cost_transactions` and `gl_accounts` v1 list handlers were returning soft-deleted records because they lacked `.is('deleted_at', null)` filters
+- 24 v1 routes used a spread pattern `{ ...paginatedResponse(), requestId }` instead of the standard `paginatedResponse(..., requestId)` — functionally identical but inconsistent with all v2 routes
+
+### Also audited (clean)
+- List endpoint ordering (`.order()`): ALL CLEAN — every list handler has deterministic ordering
+- Remaining `select('*')` usage: 585 instances across 468 files — too large for this session, noted for future
+- V1/V2 route duplication: 28 duplicated routes, all actively referenced by frontend — needs coordinated hook migration
+- Auth response format: 8 auth endpoints use legacy non-`{ data }` wrapper — breaking to fix without frontend coordination
+
 ## 2026-03-01: Session 54 — Add updated_at Timestamps to 119 API Route Operations
 
 ### Why

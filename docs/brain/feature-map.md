@@ -1,5 +1,13 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 54b — deleted_at Filters + Pagination Normalization (2026-03-02)
+
+### deleted_at Filters (2 files)
+- `v1/cost-transactions/route.ts` and `v1/gl-accounts/route.ts` — added `.is('deleted_at', null)` to GET list queries so soft-deleted records are excluded
+
+### Pagination Response Normalization (24 v1 files)
+- All 24 v1 list endpoints normalized from `{ ...paginatedResponse(...), requestId }` spread pattern to `paginatedResponse(..., ctx.requestId)` using the function's built-in 5th parameter
+
 ## Session 54 — Add updated_at Timestamps to 119 API Route Operations (2026-03-01)
 
 ### updated_at on Regular UPDATE Operations (37 files)
