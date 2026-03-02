@@ -57,7 +57,7 @@ export default function NewPermitPage() {
         expiration_date: formData.expiration_date || null,
         conditions: formData.conditions || null,
         notes: formData.notes || null,
-      } as never)
+      })
 
       toast.success('Permit created')
       router.push(`/jobs/${jobId}/permits`)

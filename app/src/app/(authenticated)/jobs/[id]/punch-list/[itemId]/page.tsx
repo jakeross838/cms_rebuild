@@ -119,7 +119,7 @@ export default function JobPunchItemDetailPage() {
         room: formData.room || null,
         assigned_to: formData.assigned_to || null,
         due_date: formData.due_date || null,
-      } as never)
+      })
       setEditing(false)
       toast.success('Updated')
     } catch (err) {

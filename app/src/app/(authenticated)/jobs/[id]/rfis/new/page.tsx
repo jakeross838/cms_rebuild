@@ -51,7 +51,7 @@ export default function NewRfiPage() {
         priority: formData.priority,
         category: formData.category,
         status: formData.status,
-      } as never)
+      })
 
       toast.success('RFI created')
       router.push(`/jobs/${jobId}/rfis`)

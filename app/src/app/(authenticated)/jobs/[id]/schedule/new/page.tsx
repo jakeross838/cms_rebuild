@@ -61,7 +61,7 @@ export default function NewScheduleTaskPage() {
         duration_days: formData.duration_days ? parseInt(formData.duration_days) : null,
         status: formData.status,
         notes: formData.notes || null,
-      } as never)
+      })
 
       toast.success('Schedule task created')
       router.push(`/jobs/${jobId}/schedule`)

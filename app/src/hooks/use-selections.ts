@@ -54,6 +54,8 @@ type SelectionCreateInput = {
   job_id: string
   room?: string | null
   status?: string
+  selected_at?: string | null
+  confirmed_at?: string | null
   change_reason?: string | null
 }
 

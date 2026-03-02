@@ -29,11 +29,11 @@ type LogCreateInput = {
   job_id: string
   log_date: string
   status?: string
-  weather_summary?: string
-  high_temp?: number
-  low_temp?: number
-  conditions?: string
-  notes?: string
+  weather_summary?: string | null
+  high_temp?: number | null
+  low_temp?: number | null
+  conditions?: string | null
+  notes?: string | null
 }
 
 const logHooks = createApiHooks<LogListParams, LogCreateInput>(

@@ -53,7 +53,7 @@ export default function NewTimeEntryPage() {
         notes: formData.notes || null,
         status: 'pending',
         entry_method: 'manual',
-      } as never)
+      })
 
       toast.success('Time entry created')
       router.push(`/jobs/${jobId}/time-clock`)

@@ -74,7 +74,7 @@ export default function NewDrawRequestPage() {
         current_due: totalEarned,
         balance_to_finish: balanceToFinish,
         notes: formData.notes || null,
-      } as never)
+      })
 
       toast.success('Draw request created')
       router.push(`/jobs/${jobId}/draws`)

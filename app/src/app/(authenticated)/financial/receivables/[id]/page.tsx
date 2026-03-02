@@ -56,10 +56,10 @@ export default function ARInvoiceDetailPage() {
   const deleteInvoice = useDeleteArInvoice()
   const invoice = (response as { data: ARInvoiceData } | undefined)?.data ?? null
 
-  const { data: clientsResponse } = useClients({ limit: 500 } as never)
+  const { data: clientsResponse } = useClients({ limit: 500 })
   const clients = ((clientsResponse as { data: ClientLookup[] } | undefined)?.data ?? [])
 
-  const { data: jobsResponse } = useJobs({ limit: 500 } as never)
+  const { data: jobsResponse } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: JobLookup[] } | undefined)?.data ?? [])
 
   const [editing, setEditing] = useState(false)

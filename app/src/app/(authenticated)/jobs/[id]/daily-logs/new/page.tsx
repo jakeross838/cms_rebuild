@@ -55,7 +55,7 @@ export default function NewDailyLogPage() {
         low_temp: formData.low_temp ? parseFloat(formData.low_temp) : null,
         conditions: formData.conditions || null,
         notes: formData.notes || null,
-      } as never)
+      })
 
       toast.success('Daily log created')
       router.push(`/jobs/${jobId}/daily-logs`)

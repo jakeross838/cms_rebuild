@@ -64,7 +64,7 @@ export default function NewWarrantyPage() {
         contact_name: formData.contact_name || null,
         contact_phone: formData.contact_phone || null,
         contact_email: formData.contact_email || null,
-      } as never)
+      })
 
       toast.success('Warranty created')
       router.push(`/jobs/${jobId}/warranties`)

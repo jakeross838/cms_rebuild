@@ -106,7 +106,7 @@ export default function DrawRequestDetailPage() {
         draw_number: formData.draw_number ? Number(formData.draw_number) : undefined,
         contract_amount: formData.contract_amount ? Number(formData.contract_amount) : undefined,
         application_date: formData.application_date || undefined,
-      } as never)
+      })
       toast.success('Saved')
       setEditing(false)
     } catch (err) {

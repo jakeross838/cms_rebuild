@@ -53,7 +53,7 @@ export default function NewLienWaiverPage() {
         through_date: formData.through_date || null,
         check_number: formData.check_number || null,
         notes: formData.notes || null,
-      } as never)
+      })
 
       toast.success('Lien waiver created')
       router.push(`/jobs/${jobId}/lien-waivers`)

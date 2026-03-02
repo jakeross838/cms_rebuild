@@ -32,14 +32,17 @@ type DrawRequestListParams = {
 
 type DrawRequestCreateInput = {
   job_id: string
-  draw_number?: number
+  draw_number?: number | null
   application_date: string
   period_to: string
   status?: string
   contract_amount?: number | null
   retainage_pct?: number | null
+  retainage_amount?: number | null
   total_completed?: number | null
+  total_earned?: number | null
   current_due?: number | null
+  balance_to_finish?: number | null
   notes?: string | null
   lender_reference?: string | null
 }

@@ -56,11 +56,11 @@ type RfiCreateInput = {
   question: string
   status?: string
   priority?: string
-  category?: string
+  category?: string | null
   assigned_to?: string | null
   due_date?: string | null
-  cost_impact?: number
-  schedule_impact_days?: number
+  cost_impact?: number | null
+  schedule_impact_days?: number | null
   related_document_id?: string | null
 }
 

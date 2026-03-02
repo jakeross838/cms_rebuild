@@ -124,7 +124,7 @@ export default function PurchaseOrderDetailPage() {
         shipping_address: formData.shipping_address || null,
         terms: formData.terms || null,
         notes: formData.notes || null,
-      } as never)
+      })
       setEditing(false)
       toast.success('Updated')
     } catch (err) {

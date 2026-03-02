@@ -100,7 +100,7 @@ export default function WarrantyDetailPage() {
         start_date: formData.start_date || undefined,
         end_date: formData.end_date || undefined,
         description: formData.description || undefined,
-      } as never)
+      })
       setEditing(false)
       toast.success('Updated')
     } catch (err) {

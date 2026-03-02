@@ -111,7 +111,7 @@ export default function BillDetailPage() {
         received_date: formData.received_date || null,
         terms: formData.terms || null,
         description: formData.description || null,
-      } as never)
+      })
 
       setEditing(false)
       toast.success('Saved')

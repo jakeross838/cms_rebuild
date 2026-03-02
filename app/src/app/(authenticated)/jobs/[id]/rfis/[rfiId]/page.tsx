@@ -107,7 +107,7 @@ export default function RFIDetailPage() {
         priority: formData.priority || 'normal',
         category: formData.category || undefined,
         due_date: formData.due_date || undefined,
-      } as never)
+      })
       setEditing(false)
       toast.success('Updated')
     } catch (err) {

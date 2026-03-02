@@ -126,7 +126,7 @@ export default function EditJobPage() {
         zip: formData.zip || null,
         start_date: formData.start_date || null,
         target_completion: formData.target_completion || null,
-      } as never)
+      })
 
       toast.success('Job updated')
       setTimeout(() => {

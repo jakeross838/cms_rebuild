@@ -121,7 +121,7 @@ export default function ScheduleTaskDetailPage() {
         duration_days: formData.duration_days ? Number(formData.duration_days) : null,
         progress_pct: formData.progress_pct ? Number(formData.progress_pct) : null,
         notes: formData.notes || null,
-      } as never)
+      })
       setEditing(false)
       toast.success('Updated')
     } catch (err) {

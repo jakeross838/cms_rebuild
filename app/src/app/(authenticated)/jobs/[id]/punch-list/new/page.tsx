@@ -52,7 +52,7 @@ export default function NewPunchItemPage() {
         priority: formData.priority,
         category: formData.category || null,
         status: 'open',
-      } as never)
+      })
 
       toast.success('Punch item created')
       router.push(`/jobs/${jobId}/punch-list`)

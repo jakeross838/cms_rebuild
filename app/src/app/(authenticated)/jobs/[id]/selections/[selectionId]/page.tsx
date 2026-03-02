@@ -101,7 +101,7 @@ export default function SelectionDetailPage() {
         confirmed_at: formData.confirmed_at || null,
         category_id: formData.category_id,
         option_id: formData.option_id,
-      } as never)
+      })
       setEditing(false)
       toast.success('Updated')
     } catch (err) {

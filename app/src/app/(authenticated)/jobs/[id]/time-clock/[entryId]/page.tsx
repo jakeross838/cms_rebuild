@@ -116,7 +116,7 @@ export default function TimeEntryDetailPage() {
         break_minutes: breakMins,
         status: formData.status,
         notes: formData.notes || null,
-      } as never)
+      })
       setEditing(false)
       toast.success('Updated')
     } catch (err) {

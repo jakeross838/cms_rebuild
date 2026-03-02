@@ -53,7 +53,7 @@ export default function NewChangeOrderPage() {
         amount: formData.amount ? parseFloat(formData.amount) : 0,
         change_type: formData.change_type,
         status: formData.status,
-      } as never)
+      })
 
       toast.success('Change order created')
       router.push(`/jobs/${jobId}/change-orders`)

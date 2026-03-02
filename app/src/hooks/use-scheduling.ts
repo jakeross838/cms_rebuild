@@ -35,8 +35,8 @@ type TaskCreateInput = {
   actual_start?: string | null
   actual_end?: string | null
   duration_days?: number | null
-  progress_pct?: number
-  status?: string
+  progress_pct?: number | null
+  status?: string | null
   assigned_to?: string | null
   assigned_vendor_id?: string | null
   is_critical_path?: boolean
