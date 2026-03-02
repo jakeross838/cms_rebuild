@@ -10,6 +10,9 @@
 - Removed 31 `as any` casts across 23 files (hook params already typed correctly)
 - Added `isError` destructuring + "Failed to load" fallback to ~46 dropdown hooks across 29 pages
 - Zero `as any` now in entire `app/src/` directory
+- Removed 23 `as never` from UI mutation calls by updating 7 hook input types to accept `| null` for nullable DB fields
+- Added missing fields to DrawRequestCreateInput and SelectionCreateInput that the call sites used but types lacked
+- Zero `as never` in all authenticated UI pages (128 remain in API routes — Supabase client type mismatches)
 
 ## 2026-03-02: Session 54c — select('*') → Explicit Columns on All API Routes
 

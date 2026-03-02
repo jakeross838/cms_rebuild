@@ -8,6 +8,9 @@ All `as any` casts on React Query hook parameters were unnecessary — hook para
 ### Add Dropdown Error States (29 "new" form pages, ~46 hooks)
 Added `isError` destructuring to all React Query dropdown hooks. When API fails, dropdown shows "Failed to load [resource]" instead of empty list. Pages: all 23 above plus communications/new, compliance/insurance/new, compliance/lien-law/new, contacts/new, invoices/new, jobs/[id]/inspections/new, jobs/[id]/team/new, warranty-claims/new.
 
+### Remove 23 `as never` Casts from UI Mutations (21 pages + 2 hook params)
+Updated 7 hook `*CreateInput` types to accept `| null` for nullable DB fields (use-rfis, use-scheduling, use-draw-requests, use-daily-logs, use-selections). Added missing fields to DrawRequestCreateInput (retainage_amount, total_earned, balance_to_finish) and SelectionCreateInput (selected_at, confirmed_at). Removed `as never` from all 21 mutation call sites + 2 hook param casts in financial/receivables/[id]. Zero `as never` in all authenticated UI pages. 128 remain in API routes (Supabase client type mismatches).
+
 ## Session 54c — select('*') → Explicit Columns on All 468 API Routes (2026-03-02)
 
 ### What Changed

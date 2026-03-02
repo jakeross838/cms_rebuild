@@ -16,6 +16,12 @@
 | TypeScript compilation | 0 errors | PASS |
 | Acceptance tests | 3260/3260 pass | PASS |
 
+### as never Removal (UI Pages)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero `as never` in authenticated UI pages | `grep "as never" (authenticated)/` returns 0 | PASS |
+| Hook input types accept null for nullable fields | 7 hooks updated, tsc clean | PASS |
+
 ## Session 54c — select('*') → Explicit Columns on All API Routes (2026-03-02)
 
 ### select('*') Elimination
