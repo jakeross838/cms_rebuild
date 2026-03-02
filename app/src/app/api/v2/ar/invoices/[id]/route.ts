@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('ar_invoices')
-      .select('*, ar_invoice_lines(*), ar_receipt_applications(id, receipt_id, amount, created_at)')
+      .select('id, company_id, client_id, job_id, invoice_number, invoice_date, due_date, amount, balance_due, status, terms, notes, created_by, created_at, updated_at, ar_invoice_lines(*), ar_receipt_applications(id, receipt_id, amount, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -137,7 +137,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .eq('status', existing.status)
-      .select('*')
+      .select('id, company_id, client_id, job_id, invoice_number, invoice_date, due_date, amount, balance_due, status, terms, notes, created_by, created_at, updated_at')
       .single()
 
     if (invoiceError) {

@@ -43,7 +43,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('payroll_exports')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, payroll_period_id, export_format, file_path, total_hours, total_amount, employee_count, exported_by, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.payroll_period_id) {
@@ -138,7 +138,7 @@ export const POST = createApiHandler(
         employee_count: uniqueEmployees.size,
         exported_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, payroll_period_id, export_format, file_path, total_hours, total_amount, employee_count, exported_by, created_at')
       .single()
 
     if (error) {

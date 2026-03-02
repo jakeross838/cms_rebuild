@@ -26,7 +26,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('gl_accounts')
-      .select('*')
+      .select('id, company_id, account_number, name, account_type, sub_type, parent_account_id, is_active, is_system, description, normal_balance, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -109,7 +109,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, account_number, name, account_type, sub_type, parent_account_id, is_active, is_system, description, normal_balance, created_at, updated_at')
       .single()
 
     if (error) {

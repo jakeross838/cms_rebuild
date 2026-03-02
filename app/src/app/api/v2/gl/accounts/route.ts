@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('gl_accounts')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, account_number, name, account_type, sub_type, parent_account_id, is_active, is_system, description, normal_balance, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.account_type) {
@@ -113,7 +113,7 @@ export const POST = createApiHandler(
         description: input.description ?? null,
         normal_balance: input.normal_balance,
       })
-      .select('*')
+      .select('id, company_id, account_number, name, account_type, sub_type, parent_account_id, is_active, is_system, description, normal_balance, created_at, updated_at')
       .single()
 
     if (error) {

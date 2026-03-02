@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('ar_receipts')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, client_id, receipt_date, amount, payment_method, reference_number, memo, status, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.client_id) {
@@ -122,7 +122,7 @@ export const POST = createApiHandler(
         status: 'pending',
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, client_id, receipt_date, amount, payment_method, reference_number, memo, status, created_by, created_at, updated_at')
       .single()
 
     if (receiptError) {

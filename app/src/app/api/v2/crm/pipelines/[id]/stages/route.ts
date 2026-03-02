@@ -70,7 +70,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('pipeline_stages')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, pipeline_id, name, stage_type, sequence_order, probability_default, color, is_active, created_at, updated_at', { count: 'exact' })
       .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
 
@@ -155,7 +155,7 @@ export const POST = createApiHandler(
         color: input.color ?? null,
         is_active: input.is_active,
       })
-      .select('*')
+      .select('id, company_id, pipeline_id, name, stage_type, sequence_order, probability_default, color, is_active, created_at, updated_at')
       .single()
 
     if (error) {

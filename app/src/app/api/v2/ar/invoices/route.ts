@@ -49,7 +49,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('ar_invoices')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, client_id, job_id, invoice_number, invoice_date, due_date, amount, balance_due, status, terms, notes, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -137,7 +137,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, client_id, job_id, invoice_number, invoice_date, due_date, amount, balance_due, status, terms, notes, created_by, created_at, updated_at')
       .single()
 
     if (invoiceError) {

@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('ap_bills')
-      .select('*, ap_bill_lines(*), ap_payment_applications(id, payment_id, amount, created_at)')
+      .select('id, company_id, vendor_id, bill_number, bill_date, due_date, amount, balance_due, status, job_id, description, received_date, terms, created_by, created_at, updated_at, ap_bill_lines(*), ap_payment_applications(id, payment_id, amount, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -138,7 +138,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .eq('status', existing.status)
-      .select('*')
+      .select('id, company_id, vendor_id, bill_number, bill_date, due_date, amount, balance_due, status, job_id, description, received_date, terms, created_by, created_at, updated_at')
       .single()
 
     if (billError) {

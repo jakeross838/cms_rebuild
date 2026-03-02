@@ -48,7 +48,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('gl_journal_entries')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, entry_date, reference_number, memo, status, source_type, source_id, posted_by, posted_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.status) {
@@ -128,7 +128,7 @@ export const POST = createApiHandler(
         source_id: input.source_id ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, entry_date, reference_number, memo, status, source_type, source_id, posted_by, posted_at, created_by, created_at, updated_at')
       .single()
 
     if (entryError) {
@@ -155,7 +155,7 @@ export const POST = createApiHandler(
     const { data: lines, error: linesError } = await supabase
       .from('gl_journal_lines')
       .insert(lineRecords)
-      .select('*')
+      .select('id, journal_entry_id, account_id, debit_amount, credit_amount, memo, job_id, cost_code_id, vendor_id, client_id, created_at')
 
     if (linesError) {
       const mapped2 = mapDbError(linesError)

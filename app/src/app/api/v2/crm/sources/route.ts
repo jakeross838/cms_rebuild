@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('lead_sources')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, source_type, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.source_type) {
@@ -104,7 +104,7 @@ export const POST = createApiHandler(
         source_type: input.source_type,
         is_active: input.is_active,
       })
-      .select('*')
+      .select('id, company_id, name, description, source_type, is_active, created_at, updated_at')
       .single()
 
     if (error) {

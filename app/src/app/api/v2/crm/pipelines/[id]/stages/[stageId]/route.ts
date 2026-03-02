@@ -41,7 +41,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('pipeline_stages')
-      .select('*')
+      .select('id, company_id, pipeline_id, name, stage_type, sequence_order, probability_default, color, is_active, created_at, updated_at')
       .eq('id', stageId)
       .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
@@ -102,7 +102,7 @@ export const PUT = createApiHandler(
       .eq('id', stageId)
       .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, pipeline_id, name, stage_type, sequence_order, probability_default, color, is_active, created_at, updated_at')
       .single()
 
     if (error) {
@@ -141,7 +141,7 @@ export const DELETE = createApiHandler(
       .eq('id', stageId)
       .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, pipeline_id, name, stage_type, sequence_order, probability_default, color, is_active, created_at, updated_at')
       .single()
 
     if (error) {

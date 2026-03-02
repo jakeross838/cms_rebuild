@@ -26,7 +26,7 @@ export const GET = createApiHandler(
 
     const { data: entry, error } = await supabase
       .from('gl_journal_entries')
-      .select('*')
+      .select('id, company_id, entry_date, reference_number, memo, status, source_type, source_id, posted_by, posted_at, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -41,7 +41,7 @@ export const GET = createApiHandler(
     // Fetch lines
     const { data: lines } = await supabase
       .from('gl_journal_lines')
-      .select('*')
+      .select('id, journal_entry_id, account_id, debit_amount, credit_amount, memo, job_id, cost_code_id, vendor_id, client_id, created_at')
       .eq('journal_entry_id', id)
       .order('created_at', { ascending: true })
 
@@ -132,7 +132,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .eq('status', 'draft')
-      .select('*')
+      .select('id, company_id, entry_date, reference_number, memo, status, source_type, source_id, posted_by, posted_at, created_by, created_at, updated_at')
       .single()
 
     if (entryError) {
@@ -188,7 +188,7 @@ export const PUT = createApiHandler(
     // Fetch updated lines
     const { data: lines } = await supabase
       .from('gl_journal_lines')
-      .select('*')
+      .select('id, journal_entry_id, account_id, debit_amount, credit_amount, memo, job_id, cost_code_id, vendor_id, client_id, created_at')
       .eq('journal_entry_id', id)
       .order('created_at', { ascending: true })
 

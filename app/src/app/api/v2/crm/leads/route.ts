@@ -50,7 +50,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('leads')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, first_name, last_name, email, phone, address, lot_address, source, source_detail, utm_source, utm_medium, utm_campaign, project_type, budget_range_low, budget_range_high, timeline, lot_status, financing_status, preconstruction_type, status, priority, pipeline_id, stage_id, score, assigned_to, expected_contract_value, probability_pct, lost_reason, lost_competitor, won_project_id, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -144,7 +144,7 @@ export const POST = createApiHandler(
         probability_pct: input.probability_pct,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, first_name, last_name, email, phone, address, lot_address, source, source_detail, utm_source, utm_medium, utm_campaign, project_type, budget_range_low, budget_range_high, timeline, lot_status, financing_status, preconstruction_type, status, priority, pipeline_id, stage_id, score, assigned_to, expected_contract_value, probability_pct, lost_reason, lost_competitor, won_project_id, created_by, created_at, updated_at')
       .single()
 
     if (error) {

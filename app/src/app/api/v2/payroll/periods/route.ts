@@ -43,7 +43,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('payroll_periods')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, period_start, period_end, status, exported_at, exported_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.status) {
@@ -118,7 +118,7 @@ export const POST = createApiHandler(
         period_end: input.period_end,
         status: 'open',
       })
-      .select('*')
+      .select('id, company_id, period_start, period_end, status, exported_at, exported_by, created_at, updated_at')
       .single()
 
     if (error) {

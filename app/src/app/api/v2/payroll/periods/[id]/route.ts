@@ -26,7 +26,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('payroll_periods')
-      .select('*')
+      .select('id, company_id, period_start, period_end, status, exported_at, exported_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -41,7 +41,7 @@ export const GET = createApiHandler(
     // Fetch associated exports
     const { data: exports } = await supabase
       .from('payroll_exports')
-      .select('*')
+      .select('id, company_id, payroll_period_id, export_format, file_path, total_hours, total_amount, employee_count, exported_by, created_at')
       .eq('payroll_period_id', id)
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: false })
@@ -121,7 +121,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, period_start, period_end, status, exported_at, exported_by, created_at, updated_at')
       .single()
 
     if (error) {
