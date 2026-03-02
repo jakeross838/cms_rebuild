@@ -164,7 +164,7 @@ export const POST = createApiHandler(
       const { data: lines, error: linesError } = await supabase
         .from('ar_invoice_lines')
         .insert(lineRecords)
-        .select('*')
+        .select('id, invoice_id, description, quantity, unit_price, amount, gl_account_id, job_id, cost_code_id, created_at')
 
       if (linesError) {
         const mapped2 = mapDbError(linesError)

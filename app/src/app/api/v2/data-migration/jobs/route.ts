@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('migration_jobs')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, source_platform, status, source_file_url, source_file_name, total_records, processed_records, failed_records, skipped_records, error_log, started_at, completed_at, rolled_back_at, rolled_back_by, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -109,7 +109,7 @@ export const POST = createApiHandler(
         total_records: input.total_records,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, name, description, source_platform, status, source_file_url, source_file_name, total_records, processed_records, failed_records, skipped_records, error_log, started_at, completed_at, rolled_back_at, rolled_back_by, created_by, created_at, updated_at')
       .single()
 
     if (error) {

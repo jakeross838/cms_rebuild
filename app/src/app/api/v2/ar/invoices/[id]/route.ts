@@ -192,7 +192,7 @@ export const PUT = createApiHandler(
     // Fetch updated lines
     const { data: lines } = await supabase
       .from('ar_invoice_lines')
-      .select('*')
+      .select('id, invoice_id, description, quantity, unit_price, amount, gl_account_id, job_id, cost_code_id, created_at')
       .eq('invoice_id', id)
       .order('created_at', { ascending: true })
 

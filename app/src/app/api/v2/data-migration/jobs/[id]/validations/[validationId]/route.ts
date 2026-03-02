@@ -42,7 +42,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('migration_validation_results')
-      .select('*')
+      .select('id, company_id, job_id, validation_type, severity, field_name, record_index, source_value, message, is_resolved, resolved_at, resolved_by, created_at, updated_at')
       .eq('id', validationId)
       .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
@@ -107,7 +107,7 @@ export const PUT = createApiHandler(
       .eq('id', validationId)
       .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, job_id, validation_type, severity, field_name, record_index, source_value, message, is_resolved, resolved_at, resolved_by, created_at, updated_at')
       .single()
 
     if (error) {

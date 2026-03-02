@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('migration_mapping_templates')
-      .select('*')
+      .select('id, company_id, name, description, source_platform, mappings, is_system, is_active, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -88,7 +88,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, name, description, source_platform, mappings, is_system, is_active, created_by, created_at, updated_at')
       .single()
 
     if (error || !data) {

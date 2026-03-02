@@ -143,7 +143,7 @@ export const POST = createApiHandler(
     const { data: applications, error: appError } = await supabase
       .from('ap_payment_applications')
       .insert(appRecords)
-      .select('*')
+      .select('id, payment_id, bill_id, amount, created_at')
 
     if (appError) {
       const mapped = mapDbError(appError)

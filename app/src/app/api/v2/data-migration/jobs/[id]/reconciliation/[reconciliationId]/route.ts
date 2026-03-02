@@ -42,7 +42,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('migration_reconciliation')
-      .select('*')
+      .select('id, company_id, job_id, entity_type, source_count, imported_count, matched_count, unmatched_count, discrepancies, status, notes, reconciled_at, created_at, updated_at')
       .eq('id', reconciliationId)
       .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
@@ -107,7 +107,7 @@ export const PUT = createApiHandler(
       .eq('id', reconciliationId)
       .eq('job_id', jobId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, job_id, entity_type, source_count, imported_count, matched_count, unmatched_count, discrepancies, status, notes, reconciled_at, created_at, updated_at')
       .single()
 
     if (error) {

@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('migration_mapping_templates')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, source_platform, mappings, is_system, is_active, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.source_platform) {
@@ -107,7 +107,7 @@ export const POST = createApiHandler(
         is_active: input.is_active,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, name, description, source_platform, mappings, is_system, is_active, created_by, created_at, updated_at')
       .single()
 
     if (error) {
