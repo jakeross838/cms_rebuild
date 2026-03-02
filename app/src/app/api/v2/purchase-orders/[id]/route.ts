@@ -40,7 +40,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('purchase_orders')
-      .select('*, purchase_order_lines(*), po_receipts(*)')
+      .select('id, company_id, job_id, vendor_id, po_number, title, status, subtotal, tax_amount, shipping_amount, total_amount, budget_id, cost_code_id, delivery_date, shipping_address, terms, notes, approved_by, approved_at, sent_at, created_by, created_at, updated_at, purchase_order_lines(id, po_id, description, quantity, unit, unit_price, amount, received_quantity, cost_code_id, sort_order, created_at, updated_at), po_receipts(id, po_id, company_id, received_date, received_by, notes, document_id, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -155,7 +155,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, vendor_id, po_number, title, status, subtotal, tax_amount, shipping_amount, total_amount, budget_id, cost_code_id, delivery_date, shipping_address, terms, notes, approved_by, approved_at, sent_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

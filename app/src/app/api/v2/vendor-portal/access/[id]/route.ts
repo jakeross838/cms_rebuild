@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('vendor_portal_access')
-      .select('*')
+      .select('id, company_id, vendor_id, access_level, can_submit_invoices, can_submit_lien_waivers, can_submit_daily_reports, can_view_schedule, can_view_purchase_orders, can_upload_documents, can_send_messages, allowed_job_ids, granted_by, granted_at, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -94,7 +94,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, vendor_id, access_level, can_submit_invoices, can_submit_lien_waivers, can_submit_daily_reports, can_view_schedule, can_view_purchase_orders, can_upload_documents, can_send_messages, allowed_job_ids, granted_by, granted_at, created_at, updated_at')
       .single()
 
     if (error || !data) {

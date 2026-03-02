@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('selection_categories')
-      .select('*')
+      .select('id, company_id, job_id, name, room, sort_order, pricing_model, allowance_amount, deadline, lead_time_buffer_days, assigned_to, status, designer_access, notes, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -132,7 +132,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, name, room, sort_order, pricing_model, allowance_amount, deadline, lead_time_buffer_days, assigned_to, status, designer_access, notes, created_by, created_at, updated_at')
       .single()
 
     if (error) {

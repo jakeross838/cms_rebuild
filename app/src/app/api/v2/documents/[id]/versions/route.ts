@@ -150,7 +150,7 @@ export const POST = createApiHandler(
         change_notes: input.change_notes ?? null,
         uploaded_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, document_id, version_number, storage_path, file_size, mime_type, change_notes, uploaded_by, created_at')
       .single()
 
     if (versionError) {

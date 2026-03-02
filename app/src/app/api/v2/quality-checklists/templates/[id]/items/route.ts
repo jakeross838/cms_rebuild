@@ -72,7 +72,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('quality_checklist_template_items')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, template_id, description, category, sort_order, is_required, created_at, updated_at', { count: 'exact' })
       .eq('template_id', templateId)
       .order('sort_order', { ascending: true })
       .range(offset, offset + limit - 1)
@@ -142,7 +142,7 @@ export const POST = createApiHandler(
         sort_order: input.sort_order,
         is_required: input.is_required,
       })
-      .select('*')
+      .select('id, company_id, template_id, description, category, sort_order, is_required, created_at, updated_at')
       .single()
 
     if (error) {

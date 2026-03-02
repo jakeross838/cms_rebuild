@@ -59,7 +59,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('rfi_routing')
-      .select('*')
+      .select('id, rfi_id, company_id, routed_to, routed_by, routed_at, status, notes, created_at, updated_at')
       .eq('id', routeId)
       .eq('rfi_id', rfiId)
       .single()
@@ -130,7 +130,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', routeId)
       .eq('rfi_id', rfiId)
-      .select('*')
+      .select('id, rfi_id, company_id, routed_to, routed_by, routed_at, status, notes, created_at, updated_at')
       .single()
 
     if (error) {

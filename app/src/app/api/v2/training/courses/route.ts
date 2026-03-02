@@ -48,7 +48,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('training_courses')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, title, description, content_url, thumbnail_url, duration_minutes, course_type, category, module_tag, role_tags, difficulty, language, transcript, sort_order, is_published, view_count, created_by, created_at, updated_at', { count: 'exact' })
       .is('deleted_at', null)
 
     // Show platform courses (company_id IS NULL) + company-specific courses
@@ -126,7 +126,7 @@ export const POST = createApiHandler(
         is_published: input.is_published,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, title, description, content_url, thumbnail_url, duration_minutes, course_type, category, module_tag, role_tags, difficulty, language, transcript, sort_order, is_published, view_count, created_by, created_at, updated_at')
       .single()
 
     if (error) {

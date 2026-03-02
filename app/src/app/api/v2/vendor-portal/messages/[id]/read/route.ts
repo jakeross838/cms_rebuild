@@ -46,7 +46,7 @@ export const POST = createApiHandler(
       // Already read, return current state
       const { data } = await supabase
         .from('vendor_messages')
-        .select('*')
+        .select('id, company_id, vendor_id, job_id, subject, body, direction, sender_id, is_read, read_at, attachments, parent_message_id, created_at, updated_at')
         .eq('id', id)
         .eq('company_id', ctx.companyId!)
         .single()
@@ -63,7 +63,7 @@ export const POST = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, vendor_id, job_id, subject, body, direction, sender_id, is_read, read_at, attachments, parent_message_id, created_at, updated_at')
       .single()
 
     if (error) {

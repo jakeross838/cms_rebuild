@@ -75,7 +75,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('rfi_routing')
-      .select('*', { count: 'exact' })
+      .select('id, rfi_id, company_id, routed_to, routed_by, routed_at, status, notes, created_at, updated_at', { count: 'exact' })
       .eq('rfi_id', rfiId)
       .order('routed_at', { ascending: false })
       .range(offset, offset + limit - 1)
@@ -153,7 +153,7 @@ export const POST = createApiHandler(
         status: 'pending',
         notes: input.notes ?? null,
       })
-      .select('*')
+      .select('id, rfi_id, company_id, routed_to, routed_by, routed_at, status, notes, created_at, updated_at')
       .single()
 
     if (error) {

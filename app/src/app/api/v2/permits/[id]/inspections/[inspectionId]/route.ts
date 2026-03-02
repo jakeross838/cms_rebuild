@@ -33,7 +33,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('permit_inspections')
-      .select('*')
+      .select('id, company_id, permit_id, job_id, inspection_type, status, scheduled_date, scheduled_time, inspector_name, inspector_phone, notes, completed_at, is_reinspection, original_inspection_id, created_by, created_at, updated_at')
       .eq('id', inspectionId)
       .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
@@ -49,7 +49,7 @@ export const GET = createApiHandler(
     // Fetch results
     const { data: results } = await supabase
       .from('inspection_results')
-      .select('*')
+      .select('id, company_id, inspection_id, result, result_notes, deficiencies, conditions_to_satisfy, inspector_comments, photos, is_first_time_pass, responsible_vendor_id, recorded_by, recorded_at, created_at, updated_at')
       .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
       .order('recorded_at', { ascending: false })
@@ -128,7 +128,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', inspectionId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, permit_id, job_id, inspection_type, status, scheduled_date, scheduled_time, inspector_name, inspector_phone, notes, completed_at, is_reinspection, original_inspection_id, created_by, created_at, updated_at')
       .single()
 
     if (error) {

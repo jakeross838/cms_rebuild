@@ -39,7 +39,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('permit_documents')
-      .select('*')
+      .select('id, company_id, permit_id, document_type, file_url, file_name, description, uploaded_by, uploaded_at, created_at')
       .eq('id', docId)
       .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)

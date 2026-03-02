@@ -80,7 +80,7 @@ export const PUT = createApiHandler(
       .eq('id', itemId)
       .eq('template_id', templateId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, template_id, description, category, sort_order, is_required, created_at, updated_at')
       .single()
 
     if (error) {

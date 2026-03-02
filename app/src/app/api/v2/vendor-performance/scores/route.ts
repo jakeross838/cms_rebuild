@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('vendor_scores')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, vendor_id, quality_score, timeliness_score, communication_score, budget_adherence_score, safety_score, overall_score, data_point_count, calculation_window_months, manual_adjustment, manual_adjustment_reason, calculated_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 

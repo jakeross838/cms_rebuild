@@ -75,7 +75,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('bid_comparisons')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, bid_package_id, name, comparison_data, notes, created_by, created_at, updated_at', { count: 'exact' })
       .eq('bid_package_id', bidPackageId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
@@ -147,7 +147,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, bid_package_id, name, comparison_data, notes, created_by, created_at, updated_at')
       .single()
 
     if (error) {

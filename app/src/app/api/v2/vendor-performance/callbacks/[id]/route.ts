@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('vendor_warranty_callbacks')
-      .select('*')
+      .select('id, company_id, vendor_id, job_id, title, description, severity, status, reported_date, resolved_date, resolution_notes, resolution_cost, resolution_days, reported_by, resolved_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -107,7 +107,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, vendor_id, job_id, title, description, severity, status, reported_date, resolved_date, resolution_notes, resolution_cost, resolution_days, reported_by, resolved_by, created_at, updated_at')
       .single()
 
     if (error) {

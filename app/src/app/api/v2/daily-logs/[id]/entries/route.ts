@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('daily_log_entries')
-      .select('*', { count: 'exact' })
+      .select('id, daily_log_id, entry_type, description, time_logged, sort_order, created_by, created_at, updated_at', { count: 'exact' })
       .eq('daily_log_id', id)
       .order('sort_order', { ascending: true })
       .range(offset, offset + limit - 1)
@@ -121,7 +121,7 @@ export const POST = createApiHandler(
         sort_order: input.sort_order ?? 0,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, daily_log_id, entry_type, description, time_logged, sort_order, created_by, created_at, updated_at')
       .single()
 
     if (error) {

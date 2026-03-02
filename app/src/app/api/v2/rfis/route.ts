@@ -49,7 +49,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('rfis')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, rfi_number, subject, question, status, priority, category, assigned_to, due_date, cost_impact, schedule_impact_days, related_document_id, created_by, answered_at, closed_at, closed_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -126,7 +126,7 @@ export const POST = createApiHandler(
         related_document_id: input.related_document_id ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, rfi_number, subject, question, status, priority, category, assigned_to, due_date, cost_impact, schedule_impact_days, related_document_id, created_by, answered_at, closed_at, closed_by, created_at, updated_at')
       .single()
 
     if (error) {

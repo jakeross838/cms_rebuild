@@ -77,7 +77,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('bid_invitations')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, bid_package_id, vendor_id, status, invited_at, viewed_at, responded_at, decline_reason, created_at, updated_at', { count: 'exact' })
       .eq('bid_package_id', bidPackageId)
 
     if (filters.status) {
@@ -160,7 +160,7 @@ export const POST = createApiHandler(
         status: 'invited',
         invited_at: new Date().toISOString(),
       })
-      .select('*')
+      .select('id, company_id, bid_package_id, vendor_id, status, invited_at, viewed_at, responded_at, decline_reason, created_at, updated_at')
       .single()
 
     if (error) {

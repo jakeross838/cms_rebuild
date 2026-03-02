@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('rfi_templates')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, category, subject_template, question_template, default_priority, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('is_active', true)
 
@@ -103,7 +103,7 @@ export const POST = createApiHandler(
         default_priority: input.default_priority,
         is_active: input.is_active,
       })
-      .select('*')
+      .select('id, company_id, name, category, subject_template, question_template, default_priority, is_active, created_at, updated_at')
       .single()
 
     if (error) {

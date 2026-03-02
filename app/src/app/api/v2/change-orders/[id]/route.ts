@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('change_orders')
-      .select('*, change_order_items(id), change_order_history(*)')
+      .select('id, company_id, job_id, co_number, title, description, change_type, status, requested_by_type, requested_by_id, amount, cost_impact, schedule_impact_days, approval_chain, approved_by, approved_at, client_approved, client_approved_at, document_id, budget_id, created_by, created_at, updated_at, change_order_items(id), change_order_history(id, change_order_id, action, previous_status, new_status, details, performed_by, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -130,7 +130,7 @@ export const PUT = createApiHandler(
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .in('status', ['draft', 'pending_approval'])
-      .select('*')
+      .select('id, company_id, job_id, co_number, title, description, change_type, status, requested_by_type, requested_by_id, amount, cost_impact, schedule_impact_days, approval_chain, approved_by, approved_at, client_approved, client_approved_at, document_id, budget_id, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -26,7 +26,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('vendor_portal_settings')
-      .select('*')
+      .select('id, company_id, portal_enabled, allow_self_registration, require_approval, allowed_submission_types, required_compliance_docs, auto_approve_submissions, portal_welcome_message, portal_branding, notification_settings, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .single()
@@ -98,7 +98,7 @@ export const POST = createApiHandler(
         portal_branding: input.portal_branding,
         notification_settings: input.notification_settings,
       })
-      .select('*')
+      .select('id, company_id, portal_enabled, allow_self_registration, require_approval, allowed_submission_types, required_compliance_docs, auto_approve_submissions, portal_welcome_message, portal_branding, notification_settings, created_at, updated_at')
       .single()
 
     if (error) {
@@ -149,7 +149,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, portal_enabled, allow_self_registration, require_approval, allowed_submission_types, required_compliance_docs, auto_approve_submissions, portal_welcome_message, portal_branding, notification_settings, created_at, updated_at')
       .single()
 
     if (error) {

@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('draw_requests')
-      .select('*, draw_request_lines(*), draw_request_history(*)')
+      .select('id, company_id, job_id, draw_number, application_date, period_to, status, contract_amount, total_completed, retainage_pct, retainage_amount, total_earned, less_previous, current_due, balance_to_finish, submitted_by, submitted_at, approved_by, approved_at, lender_reference, notes, created_at, updated_at, draw_request_lines(id, draw_request_id, cost_code_id, description, scheduled_value, previous_applications, current_work, materials_stored, total_completed, pct_complete, balance_to_finish, retainage, sort_order, created_at, updated_at), draw_request_history(id, draw_request_id, action, details, performed_by, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -121,7 +121,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, draw_number, application_date, period_to, status, contract_amount, total_completed, retainage_pct, retainage_amount, total_earned, less_previous, current_due, balance_to_finish, submitted_by, submitted_at, approved_by, approved_at, lender_reference, notes, created_at, updated_at')
       .single()
 
     if (drawError) {

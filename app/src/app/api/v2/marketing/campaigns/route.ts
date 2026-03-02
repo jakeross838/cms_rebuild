@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('marketing_campaigns')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, campaign_type, status, channel, start_date, end_date, budget, actual_spend, utm_source, utm_medium, utm_campaign, leads_generated, proposals_sent, contracts_won, contract_value_won, roi_pct, target_audience, notes, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.status) {
@@ -123,7 +123,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, name, description, campaign_type, status, channel, start_date, end_date, budget, actual_spend, utm_source, utm_medium, utm_campaign, leads_generated, proposals_sent, contracts_won, contract_value_won, roi_pct, target_audience, notes, created_by, created_at, updated_at')
       .single()
 
     if (error) {

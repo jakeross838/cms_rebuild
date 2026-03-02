@@ -73,7 +73,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('portfolio_photos')
-      .select('*', { count: 'exact' })
+      .select('id, portfolio_project_id, company_id, photo_url, caption, photo_type, room, display_order, is_cover, uploaded_by, created_at, updated_at', { count: 'exact' })
       .eq('portfolio_project_id', projectId)
       .eq('company_id', ctx.companyId!)
 
@@ -154,7 +154,7 @@ export const POST = createApiHandler(
         is_cover: input.is_cover,
         uploaded_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, portfolio_project_id, company_id, photo_url, caption, photo_type, room, display_order, is_cover, uploaded_by, created_at, updated_at')
       .single()
 
     if (error) {

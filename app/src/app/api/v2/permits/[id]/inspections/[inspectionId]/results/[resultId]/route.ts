@@ -40,7 +40,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('inspection_results')
-      .select('*')
+      .select('id, company_id, inspection_id, result, result_notes, deficiencies, conditions_to_satisfy, inspector_comments, photos, is_first_time_pass, responsible_vendor_id, recorded_by, recorded_at, created_at, updated_at')
       .eq('id', resultId)
       .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
@@ -118,7 +118,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', resultId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, inspection_id, result, result_notes, deficiencies, conditions_to_satisfy, inspector_comments, photos, is_first_time_pass, responsible_vendor_id, recorded_by, recorded_at, created_at, updated_at')
       .single()
 
     if (error) {

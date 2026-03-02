@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('daily_log_labor')
-      .select('*', { count: 'exact' })
+      .select('id, daily_log_id, company_id, worker_name, trade, hours_worked, overtime_hours, headcount, created_at', { count: 'exact' })
       .eq('daily_log_id', id)
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: true })
@@ -123,7 +123,7 @@ export const POST = createApiHandler(
         overtime_hours: input.overtime_hours ?? 0,
         headcount: input.headcount ?? 1,
       })
-      .select('*')
+      .select('id, daily_log_id, company_id, worker_name, trade, hours_worked, overtime_hours, headcount, created_at')
       .single()
 
     if (error) {

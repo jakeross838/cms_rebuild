@@ -60,7 +60,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('permit_documents')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, permit_id, document_type, file_url, file_name, description, uploaded_by, uploaded_at, created_at', { count: 'exact' })
       .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
       .order('uploaded_at', { ascending: false })
@@ -128,7 +128,7 @@ export const POST = createApiHandler(
         description: input.description ?? null,
         uploaded_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, permit_id, document_type, file_url, file_name, description, uploaded_by, uploaded_at, created_at')
       .single()
 
     if (error) {

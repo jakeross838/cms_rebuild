@@ -58,7 +58,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('bid_responses')
-      .select('*')
+      .select('id, company_id, bid_package_id, vendor_id, invitation_id, total_amount, breakdown, notes, attachments, submitted_at, is_qualified, created_at, updated_at')
       .eq('id', respId)
       .eq('bid_package_id', bidPackageId)
       .eq('company_id', ctx.companyId!)
@@ -134,7 +134,7 @@ export const PUT = createApiHandler(
       .eq('id', respId)
       .eq('bid_package_id', bidPackageId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, bid_package_id, vendor_id, invitation_id, total_amount, breakdown, notes, attachments, submitted_at, is_qualified, created_at, updated_at')
       .single()
 
     if (error) {

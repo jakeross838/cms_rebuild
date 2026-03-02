@@ -48,7 +48,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('lien_waivers')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, vendor_id, waiver_type, status, amount, through_date, document_id, payment_id, check_number, claimant_name, notes, requested_by, requested_at, received_at, approved_by, approved_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -121,7 +121,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         requested_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, vendor_id, waiver_type, status, amount, through_date, document_id, payment_id, check_number, claimant_name, notes, requested_by, requested_at, received_at, approved_by, approved_at, created_at, updated_at')
       .single()
 
     if (error) {

@@ -32,7 +32,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('training_paths')
-      .select('*')
+      .select('id, company_id, name, description, role_key, estimated_hours, sort_order, is_active, created_by, created_at, updated_at')
       .eq('id', id)
       .single()
 
@@ -111,7 +111,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, name, description, role_key, estimated_hours, sort_order, is_active, created_by, created_at, updated_at')
       .single()
 
     if (error) {
@@ -150,7 +150,7 @@ export const DELETE = createApiHandler(
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, name, description, role_key, estimated_hours, sort_order, is_active, created_by, created_at, updated_at')
       .single()
 
     if (error) {

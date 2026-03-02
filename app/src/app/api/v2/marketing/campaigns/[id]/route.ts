@@ -35,7 +35,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('marketing_campaigns')
-      .select('*')
+      .select('id, company_id, name, description, campaign_type, status, channel, start_date, end_date, budget, actual_spend, utm_source, utm_medium, utm_campaign, leads_generated, proposals_sent, contracts_won, contract_value_won, roi_pct, target_audience, notes, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -104,7 +104,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, name, description, campaign_type, status, channel, start_date, end_date, budget, actual_spend, utm_source, utm_medium, utm_campaign, leads_generated, proposals_sent, contracts_won, contract_value_won, roi_pct, target_audience, notes, created_by, created_at, updated_at')
       .single()
 
     if (error || !data) {

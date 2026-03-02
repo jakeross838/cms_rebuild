@@ -94,7 +94,7 @@ export const PUT = createApiHandler(
       .eq('id', itemId)
       .eq('change_order_id', changeOrderId)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, change_order_id, description, cost_code_id, quantity, unit_price, amount, markup_pct, markup_amount, total, vendor_id, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

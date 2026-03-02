@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('user_training_progress')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, item_type, item_id, status, progress_pct, started_at, completed_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.user_id) {
@@ -107,7 +107,7 @@ export const POST = createApiHandler(
         started_at: input.started_at ?? null,
         completed_at: input.completed_at ?? null,
       })
-      .select('*')
+      .select('id, company_id, user_id, item_type, item_id, status, progress_pct, started_at, completed_at, created_at, updated_at')
       .single()
 
     if (error) {

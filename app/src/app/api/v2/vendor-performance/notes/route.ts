@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('vendor_notes')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, vendor_id, author_id, title, body, tags, is_internal, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -99,7 +99,7 @@ export const POST = createApiHandler(
         tags: input.tags,
         is_internal: input.is_internal,
       })
-      .select('*')
+      .select('id, company_id, vendor_id, author_id, title, body, tags, is_internal, created_at, updated_at')
       .single()
 
     if (error) {

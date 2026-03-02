@@ -83,7 +83,7 @@ export const PUT = createApiHandler(
       .eq('id', lineId)
       .eq('po_id', poId)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, po_id, description, quantity, unit, unit_price, amount, received_quantity, cost_code_id, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

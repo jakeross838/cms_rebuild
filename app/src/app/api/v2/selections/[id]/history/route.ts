@@ -75,7 +75,7 @@ export const GET = createApiHandler(
     // Fetch history for the selection's category
     const { data, count, error } = await supabase
       .from('selection_history')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, category_id, option_id, action, actor_id, actor_role, notes, created_at', { count: 'exact' })
       .eq('category_id', selection.category_id)
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: false })

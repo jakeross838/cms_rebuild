@@ -75,7 +75,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('change_order_items')
-      .select('*', { count: 'exact' })
+      .select('id, change_order_id, description, cost_code_id, quantity, unit_price, amount, markup_pct, markup_amount, total, vendor_id, sort_order, created_at, updated_at', { count: 'exact' })
       .eq('change_order_id', changeOrderId)
       .is('deleted_at', null)
       .order('sort_order', { ascending: true })
@@ -159,7 +159,7 @@ export const POST = createApiHandler(
         vendor_id: input.vendor_id ?? null,
         sort_order: input.sort_order,
       })
-      .select('*')
+      .select('id, change_order_id, description, cost_code_id, quantity, unit_price, amount, markup_pct, markup_amount, total, vendor_id, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

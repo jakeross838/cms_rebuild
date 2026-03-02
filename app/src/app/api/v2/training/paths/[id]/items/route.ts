@@ -80,7 +80,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('training_path_items')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, path_id, item_type, item_id, sort_order, is_required, created_at, updated_at', { count: 'exact' })
       .eq('path_id', pathId)
       .order('sort_order', { ascending: true })
       .range(offset, offset + limit - 1)
@@ -150,7 +150,7 @@ export const POST = createApiHandler(
         sort_order: input.sort_order,
         is_required: input.is_required,
       })
-      .select('*')
+      .select('id, company_id, path_id, item_type, item_id, sort_order, is_required, created_at, updated_at')
       .single()
 
     if (error) {

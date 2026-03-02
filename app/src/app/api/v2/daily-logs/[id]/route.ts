@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('daily_logs')
-      .select('*, daily_log_entries(*), daily_log_labor(*), daily_log_photos(*)')
+      .select('id, company_id, job_id, log_date, status, weather_summary, high_temp, low_temp, conditions, submitted_by, submitted_at, approved_by, approved_at, notes, created_by, created_at, updated_at, daily_log_entries(id, daily_log_id, entry_type, description, time_logged, sort_order, created_by, created_at, updated_at), daily_log_labor(id, daily_log_id, company_id, worker_name, trade, hours_worked, overtime_hours, headcount, created_at), daily_log_photos(id, daily_log_id, storage_path, caption, taken_at, location_description, created_by, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -116,7 +116,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, log_date, status, weather_summary, high_temp, low_temp, conditions, submitted_by, submitted_at, approved_by, approved_at, notes, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -70,7 +70,7 @@ export const POST = createApiHandler(
       .update({ status: 'published', updated_at: new Date().toISOString() })
       .eq('id', bidPackageId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, job_id, title, description, trade, scope_of_work, bid_due_date, status, documents, created_by, created_at, updated_at')
       .single()
 
     if (error) {

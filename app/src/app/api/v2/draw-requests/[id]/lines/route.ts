@@ -56,7 +56,7 @@ export const GET = createApiHandler(
     // Fetch line items sorted by sort_order
     const { data: lines, error } = await supabase
       .from('draw_request_lines')
-      .select('*')
+      .select('id, draw_request_id, cost_code_id, description, scheduled_value, previous_applications, current_work, materials_stored, total_completed, pct_complete, balance_to_finish, retainage, sort_order, created_at, updated_at')
       .eq('draw_request_id', id)
       .order('sort_order', { ascending: true })
 
@@ -156,7 +156,7 @@ export const POST = createApiHandler(
     const { data: lines, error: linesError } = await supabase
       .from('draw_request_lines')
       .insert(lineRecords)
-      .select('*')
+      .select('id, draw_request_id, cost_code_id, description, scheduled_value, previous_applications, current_work, materials_stored, total_completed, pct_complete, balance_to_finish, retainage, sort_order, created_at, updated_at')
 
     if (linesError) {
       const mapped = mapDbError(linesError)

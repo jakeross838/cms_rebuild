@@ -49,7 +49,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('client_reviews')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, client_name, client_email, rating, review_text, source, status, display_name, is_featured, published_at, approved_by, approved_at, requested_at, submitted_at, response_text, response_by, response_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.status) {
@@ -123,7 +123,7 @@ export const POST = createApiHandler(
         response_text: input.response_text ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, client_name, client_email, rating, review_text, source, status, display_name, is_featured, published_at, approved_by, approved_at, requested_at, submitted_at, response_text, response_by, response_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

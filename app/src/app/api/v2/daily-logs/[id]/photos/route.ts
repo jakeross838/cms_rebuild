@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('daily_log_photos')
-      .select('*', { count: 'exact' })
+      .select('id, daily_log_id, storage_path, caption, taken_at, location_description, created_by, created_at', { count: 'exact' })
       .eq('daily_log_id', id)
       .order('created_at', { ascending: true })
       .range(offset, offset + limit - 1)
@@ -121,7 +121,7 @@ export const POST = createApiHandler(
         location_description: input.location_description ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, daily_log_id, storage_path, caption, taken_at, location_description, created_by, created_at')
       .single()
 
     if (error) {

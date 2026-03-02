@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('selections')
-      .select('*')
+      .select('id, company_id, category_id, option_id, job_id, room, selected_by, selected_at, confirmed_by, confirmed_at, status, change_reason, superseded_by, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -47,7 +47,7 @@ export const GET = createApiHandler(
     // Fetch history for this selection's category
     const { data: history } = await supabase
       .from('selection_history')
-      .select('*')
+      .select('id, company_id, category_id, option_id, action, actor_id, actor_role, notes, created_at')
       .eq('category_id', data.category_id)
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: false })
@@ -122,7 +122,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, category_id, option_id, job_id, room, selected_by, selected_at, confirmed_by, confirmed_at, status, change_reason, superseded_by, created_by, created_at, updated_at')
       .single()
 
     if (error) {

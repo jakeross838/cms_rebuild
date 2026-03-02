@@ -62,7 +62,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('permit_fees')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, permit_id, description, amount, status, due_date, paid_date, paid_by, receipt_url, notes, created_at, updated_at', { count: 'exact' })
       .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
 
@@ -138,7 +138,7 @@ export const POST = createApiHandler(
         receipt_url: input.receipt_url ?? null,
         notes: input.notes ?? null,
       })
-      .select('*')
+      .select('id, company_id, permit_id, description, amount, status, due_date, paid_date, paid_by, receipt_url, notes, created_at, updated_at')
       .single()
 
     if (error) {

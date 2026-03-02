@@ -75,7 +75,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('rfi_responses')
-      .select('*', { count: 'exact' })
+      .select('id, rfi_id, company_id, response_text, responded_by, attachments, is_official, created_at, updated_at', { count: 'exact' })
       .eq('rfi_id', rfiId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -155,7 +155,7 @@ export const POST = createApiHandler(
         attachments: input.attachments,
         is_official: input.is_official,
       })
-      .select('*')
+      .select('id, rfi_id, company_id, response_text, responded_by, attachments, is_official, created_at, updated_at')
       .single()
 
     if (error) {

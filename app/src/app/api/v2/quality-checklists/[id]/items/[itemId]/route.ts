@@ -82,7 +82,7 @@ export const PUT = createApiHandler(
       .eq('id', itemId)
       .eq('checklist_id', checklistId)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, checklist_id, description, result, notes, photo_url, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

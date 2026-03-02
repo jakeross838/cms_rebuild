@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('quality_checklist_templates')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, category, trade, is_active, is_system, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.category) {
@@ -110,7 +110,7 @@ export const POST = createApiHandler(
         is_active: input.is_active,
         is_system: input.is_system,
       })
-      .select('*')
+      .select('id, company_id, name, description, category, trade, is_active, is_system, created_at, updated_at')
       .single()
 
     if (error) {

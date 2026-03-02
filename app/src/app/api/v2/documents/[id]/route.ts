@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('documents')
-      .select('*, document_tags(tag), document_versions(id, version_number, file_size, mime_type, change_notes, uploaded_by, created_at)')
+      .select('id, company_id, job_id, folder_id, filename, storage_path, mime_type, file_size, document_type, ai_classification, ai_confidence, status, current_version_id, thumbnail_path, uploaded_by, created_at, updated_at, document_tags(tag), document_versions(id, version_number, file_size, mime_type, change_notes, uploaded_by, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .neq('status', 'deleted')
@@ -92,7 +92,7 @@ export const PUT = createApiHandler(
       .eq('company_id', ctx.companyId!)
       .neq('status', 'deleted')
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, folder_id, filename, storage_path, mime_type, file_size, document_type, ai_classification, ai_confidence, status, current_version_id, thumbnail_path, uploaded_by, created_at, updated_at')
       .single()
 
     if (error) {

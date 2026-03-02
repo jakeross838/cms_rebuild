@@ -66,7 +66,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('documents')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, folder_id, filename, storage_path, mime_type, file_size, document_type, ai_classification, ai_confidence, status, current_version_id, thumbnail_path, uploaded_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .neq('status', 'deleted')
       .is('deleted_at', null)
@@ -150,7 +150,7 @@ export const POST = createApiHandler(
         document_type: input.document_type ?? null,
         uploaded_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, folder_id, filename, storage_path, mime_type, file_size, document_type, ai_classification, ai_confidence, status, current_version_id, thumbnail_path, uploaded_by, created_at, updated_at')
       .single()
 
     if (docError) {

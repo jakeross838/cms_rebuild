@@ -48,7 +48,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('portfolio_projects')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, title, slug, description, highlights, category, style, status, is_featured, display_order, cover_photo_url, square_footage, bedrooms, bathrooms, build_duration_days, completion_date, location, custom_features, seo_title, seo_description, published_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -130,7 +130,7 @@ export const POST = createApiHandler(
         seo_description: input.seo_description ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, title, slug, description, highlights, category, style, status, is_featured, display_order, cover_photo_url, square_footage, bedrooms, bathrooms, build_duration_days, completion_date, location, custom_features, seo_title, seo_description, published_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -60,7 +60,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('rfi_responses')
-      .select('*')
+      .select('id, rfi_id, company_id, response_text, responded_by, attachments, is_official, created_at, updated_at')
       .eq('id', respId)
       .eq('rfi_id', rfiId)
       .eq('company_id', ctx.companyId!)
@@ -135,7 +135,7 @@ export const PUT = createApiHandler(
       .eq('rfi_id', rfiId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, rfi_id, company_id, response_text, responded_by, attachments, is_official, created_at, updated_at')
       .single()
 
     if (error) {

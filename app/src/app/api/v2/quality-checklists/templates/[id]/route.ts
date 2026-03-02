@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('quality_checklist_templates')
-      .select('*')
+      .select('id, company_id, name, description, category, trade, is_active, is_system, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -45,7 +45,7 @@ export const GET = createApiHandler(
     // Fetch template items
     const { data: items } = await supabase
       .from('quality_checklist_template_items')
-      .select('*')
+      .select('id, company_id, template_id, description, category, sort_order, is_required, created_at, updated_at')
       .eq('template_id', id)
       .order('sort_order', { ascending: true })
 
@@ -102,7 +102,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, name, description, category, trade, is_active, is_system, created_at, updated_at')
       .single()
 
     if (error) {

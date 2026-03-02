@@ -75,7 +75,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('po_receipts')
-      .select('*', { count: 'exact' })
+      .select('id, po_id, company_id, received_date, received_by, notes, document_id, created_at', { count: 'exact' })
       .eq('po_id', poId)
       .eq('company_id', ctx.companyId!)
       .order('received_date', { ascending: false })
@@ -94,7 +94,7 @@ export const GET = createApiHandler(
     const { data: allLines } = receiptIds.length > 0
       ? await supabase
           .from('po_receipt_lines')
-          .select('*')
+          .select('id, receipt_id, po_line_id, quantity_received, notes, created_at')
           .in('receipt_id', receiptIds)
       : { data: [] }
 
@@ -178,7 +178,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         document_id: input.document_id ?? null,
       })
-      .select('*')
+      .select('id, po_id, company_id, received_date, received_by, notes, document_id, created_at')
       .single()
 
     if (receiptError) {
@@ -200,7 +200,7 @@ export const POST = createApiHandler(
     const { data: lines, error: linesError } = await supabase
       .from('po_receipt_lines')
       .insert(receiptLines)
-      .select('*')
+      .select('id, receipt_id, po_line_id, quantity_received, notes, created_at')
 
     if (linesError) {
       const mapped = mapDbError(linesError)

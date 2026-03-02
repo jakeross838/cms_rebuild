@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('training_paths')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, role_key, estimated_hours, sort_order, is_active, created_by, created_at, updated_at', { count: 'exact' })
 
     // Show platform paths (company_id IS NULL) + company-specific paths
     query = query.or(`company_id.is.null,company_id.eq.${ctx.companyId!}`)
@@ -109,7 +109,7 @@ export const POST = createApiHandler(
         is_active: input.is_active,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, name, description, role_key, estimated_hours, sort_order, is_active, created_by, created_at, updated_at')
       .single()
 
     if (error) {
