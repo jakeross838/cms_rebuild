@@ -50,7 +50,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, user_id, trade, rate_type, hourly_rate, effective_date, end_date, created_at, updated_at, skill_level, overtime_rate, region, notes, created_by')
       .single()
 
     if (error) {
@@ -87,7 +87,7 @@ export const DELETE = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, user_id, trade, rate_type, hourly_rate, effective_date, end_date, created_at, updated_at, skill_level, overtime_rate, region, notes, created_by')
       .single()
 
     if (error) {

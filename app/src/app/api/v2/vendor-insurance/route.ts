@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('vendor_insurance')
-      .select('*', { count: 'exact' })
+      .select('id, vendor_id, company_id, insurance_type, carrier_name, policy_number, coverage_amount, expiration_date, certificate_document_id, status, verified_at, verified_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -113,7 +113,7 @@ export const POST = createApiHandler(
         status: input.status ?? 'active',
         certificate_document_id: input.certificate_document_id ?? null,
       } as never)
-      .select('*')
+      .select('id, vendor_id, company_id, insurance_type, carrier_name, policy_number, coverage_amount, expiration_date, certificate_document_id, status, verified_at, verified_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('platform_metrics_snapshots')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, snapshot_date, metric_type, metric_value, breakdown, period, created_by, created_at, updated_at', { count: 'exact' })
 
     // Filter by company — show platform-wide (null) + own company
     if (filters.company_id) {
@@ -116,7 +116,7 @@ export const POST = createApiHandler(
         period: input.period,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, snapshot_date, metric_type, metric_value, breakdown, period, created_by, created_at, updated_at')
       .single()
 
     if (error) {

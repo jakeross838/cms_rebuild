@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('material_requests')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, requested_by, status, priority, needed_by, notes, approved_by, approved_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -112,7 +112,7 @@ export const POST = createApiHandler(
         needed_by: input.needed_by ?? null,
         notes: input.notes ?? null,
       })
-      .select('*')
+      .select('id, company_id, job_id, requested_by, status, priority, needed_by, notes, approved_by, approved_at, created_at, updated_at')
       .single()
 
     if (requestError) {
@@ -148,7 +148,7 @@ export const POST = createApiHandler(
     // Fetch the request with items
     const { data: items } = await supabase
       .from('material_request_items')
-      .select('*')
+      .select('id, request_id, item_id, description, quantity_requested, quantity_fulfilled, unit, notes, created_at')
       .eq('request_id', request.id)
 
     return NextResponse.json(

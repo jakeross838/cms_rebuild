@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('material_requests')
-      .select('*, material_request_items(*)')
+      .select('id, company_id, job_id, requested_by, status, priority, needed_by, notes, approved_by, approved_at, created_at, updated_at, material_request_items(id, request_id, item_id, description, quantity_requested, quantity_fulfilled, unit, notes, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -113,7 +113,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, requested_by, status, priority, needed_by, notes, approved_by, approved_at, created_at, updated_at')
       .single()
 
     if (error) {
@@ -166,7 +166,7 @@ export const PUT = createApiHandler(
     // Fetch updated items
     const { data: items } = await supabase
       .from('material_request_items')
-      .select('*')
+      .select('id, request_id, item_id, description, quantity_requested, quantity_fulfilled, unit, notes, created_at')
       .eq('request_id', id)
 
     return NextResponse.json({

@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('sample_data_sets')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, data_type, status, content, applied_at, applied_by, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.data_type) {
@@ -104,7 +104,7 @@ export const POST = createApiHandler(
         content: input.content,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, name, description, data_type, status, content, applied_at, applied_by, created_by, created_at, updated_at')
       .single()
 
     if (error) {

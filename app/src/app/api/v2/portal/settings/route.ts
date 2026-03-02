@@ -41,7 +41,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('portal_settings')
-      .select('*')
+      .select('id, company_id, job_id, is_enabled, branding_logo_url, branding_primary_color, welcome_message, show_budget, show_schedule, show_documents, show_photos, show_daily_logs, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
       .eq('job_id', job_id)
       .single()
@@ -113,7 +113,7 @@ export const PUT = createApiHandler(
     const { data, error } = await supabase
       .from('portal_settings')
       .upsert(payload as never, { onConflict: 'company_id,job_id' })
-      .select('*')
+      .select('id, company_id, job_id, is_enabled, branding_logo_url, branding_primary_color, welcome_message, show_budget, show_schedule, show_documents, show_photos, show_daily_logs, created_at, updated_at')
       .single()
 
     if (error) {

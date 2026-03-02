@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('subscription_plans')
-      .select('*', { count: 'exact' })
+      .select('id, name, slug, description, tier, price_monthly, price_annual, max_users, max_projects, features, is_active, sort_order, created_at, updated_at', { count: 'exact' })
 
     if (filters.tier) {
       query = query.eq('tier', filters.tier)
@@ -131,7 +131,7 @@ export const POST = createApiHandler(
         is_active: input.is_active,
         sort_order: input.sort_order,
       })
-      .select('*')
+      .select('id, name, slug, description, tier, price_monthly, price_annual, max_users, max_projects, features, is_active, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

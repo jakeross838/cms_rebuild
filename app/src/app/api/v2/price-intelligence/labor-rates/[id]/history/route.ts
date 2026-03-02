@@ -69,7 +69,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('labor_rate_history')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, labor_rate_id, old_hourly_rate, new_hourly_rate, old_overtime_rate, new_overtime_rate, changed_by, created_at', { count: 'exact' })
       .eq('labor_rate_id', rateId)
       .eq('company_id', ctx.companyId!)
 

@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('plan_addons')
-      .select('*')
+      .select('id, name, slug, description, addon_type, price_monthly, price_annual, is_metered, meter_unit, meter_price_per_unit, is_active, sort_order, created_at, updated_at')
       .eq('id', id)
       .single()
 
@@ -92,7 +92,7 @@ export const PUT = createApiHandler(
       .from('plan_addons')
       .update(updates)
       .eq('id', id)
-      .select('*')
+      .select('id, name, slug, description, addon_type, price_monthly, price_annual, is_metered, meter_unit, meter_price_per_unit, is_active, sort_order, created_at, updated_at')
       .single()
 
     if (error || !data) {

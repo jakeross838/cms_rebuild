@@ -49,7 +49,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, waiver_type, template_name, template_content, state_code, is_default, created_at, updated_at')
       .single()
 
     if (error) {

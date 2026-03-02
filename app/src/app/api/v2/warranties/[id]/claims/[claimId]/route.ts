@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('warranty_claims')
-      .select('*')
+      .select('id, company_id, warranty_id, claim_number, title, description, status, priority, reported_by, reported_date, assigned_to, assigned_vendor_id, resolution_notes, resolution_cost, resolved_at, resolved_by, due_date, photos, created_by, created_at, updated_at')
       .eq('id', claimId)
       .eq('warranty_id', warrantyId)
       .eq('company_id', ctx.companyId!)
@@ -61,7 +61,7 @@ export const GET = createApiHandler(
     // Fetch history
     const { data: history } = await supabase
       .from('warranty_claim_history')
-      .select('*')
+      .select('id, claim_id, company_id, action, previous_status, new_status, details, performed_by, created_at')
       .eq('claim_id', claimId)
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: false })
@@ -141,7 +141,7 @@ export const PUT = createApiHandler(
       .eq('warranty_id', warrantyId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, warranty_id, claim_number, title, description, status, priority, reported_by, reported_date, assigned_to, assigned_vendor_id, resolution_notes, resolution_cost, resolved_at, resolved_by, due_date, photos, created_by, created_at, updated_at')
       .single()
 
     if (error) {

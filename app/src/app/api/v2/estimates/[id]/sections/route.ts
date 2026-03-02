@@ -75,7 +75,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('estimate_sections')
-      .select('*', { count: 'exact' })
+      .select('id, estimate_id, company_id, parent_id, name, sort_order, subtotal, created_at, updated_at', { count: 'exact' })
       .eq('estimate_id', estimateId)
       .eq('company_id', ctx.companyId!)
       .order('sort_order', { ascending: true })
@@ -153,7 +153,7 @@ export const POST = createApiHandler(
         name: input.name,
         sort_order: input.sort_order,
       })
-      .select('*')
+      .select('id, estimate_id, company_id, parent_id, name, sort_order, subtotal, created_at, updated_at')
       .single()
 
     if (error) {

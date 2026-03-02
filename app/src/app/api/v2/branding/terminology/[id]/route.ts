@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('builder_terminology')
-      .select('*')
+      .select('id, company_id, default_term, custom_term, context, is_active, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -87,7 +87,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, default_term, custom_term, context, is_active, created_at, updated_at')
       .single()
 
     if (error || !data) {

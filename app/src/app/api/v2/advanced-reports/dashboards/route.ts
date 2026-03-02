@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('report_dashboards')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, layout, is_default, is_admin_pushed, target_roles, global_filters, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -105,7 +105,7 @@ export const POST = createApiHandler(
         global_filters: input.global_filters,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, name, description, layout, is_default, is_admin_pushed, target_roles, global_filters, created_by, created_at, updated_at')
       .single()
 
     if (error) {

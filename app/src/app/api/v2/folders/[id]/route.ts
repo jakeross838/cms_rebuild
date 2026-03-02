@@ -38,7 +38,7 @@ export const PUT = createApiHandler(
     // Get current folder
     const { data: current, error: fetchError } = await supabase
       .from('document_folders')
-      .select('*')
+      .select('id, company_id, job_id, parent_folder_id, name, path, sort_order, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -69,7 +69,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, job_id, parent_folder_id, name, path, sort_order, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('builder_content_pages')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, page_type, title, slug, content_html, is_published, published_at, sort_order, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -114,7 +114,7 @@ export const POST = createApiHandler(
     const { data, error } = await supabase
       .from('builder_content_pages')
       .insert(insertData as never)
-      .select('*')
+      .select('id, company_id, page_type, title, slug, content_html, is_published, published_at, sort_order, created_by, created_at, updated_at')
       .single()
 
     if (error) {

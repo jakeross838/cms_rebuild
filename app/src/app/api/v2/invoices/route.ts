@@ -50,7 +50,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('invoices')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, vendor_id, invoice_number, amount, status, invoice_date, due_date, notes, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.job_id) {
@@ -115,7 +115,7 @@ export const POST = createApiHandler(
         status: input.status ?? 'draft',
         notes: input.notes ?? null,
       } as never)
-      .select('*')
+      .select('id, company_id, job_id, vendor_id, invoice_number, amount, status, invoice_date, due_date, notes, created_at, updated_at')
       .single()
 
     if (error) {

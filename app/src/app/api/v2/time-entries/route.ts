@@ -48,7 +48,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('time_entries')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, job_id, cost_code_id, entry_date, clock_in, clock_out, regular_hours, overtime_hours, double_time_hours, break_minutes, status, notes, gps_clock_in, gps_clock_out, entry_method, approved_by, approved_at, rejected_by, rejected_at, rejection_reason, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -126,7 +126,7 @@ export const POST = createApiHandler(
         entry_method: input.entry_method,
         status: 'pending',
       })
-      .select('*')
+      .select('id, company_id, user_id, job_id, cost_code_id, entry_date, clock_in, clock_out, regular_hours, overtime_hours, double_time_hours, break_minutes, status, notes, gps_clock_in, gps_clock_out, entry_method, approved_by, approved_at, rejected_by, rejected_at, rejection_reason, created_at, updated_at')
       .single()
 
     if (error) {

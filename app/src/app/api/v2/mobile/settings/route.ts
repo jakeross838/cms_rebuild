@@ -21,7 +21,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('mobile_app_settings')
-      .select('*')
+      .select('id, company_id, user_id, data_saver_mode, auto_sync, sync_on_wifi_only, photo_quality, location_tracking, gps_accuracy, biometric_enabled, quiet_hours_start, quiet_hours_end, push_notifications, offline_storage_limit_mb, theme, preferences, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
       .eq('user_id', ctx.user!.id)
       .single()
@@ -112,7 +112,7 @@ export const PUT = createApiHandler(
         .update(updates)
         .eq('company_id', ctx.companyId!)
         .eq('user_id', ctx.user!.id)
-        .select('*')
+        .select('id, company_id, user_id, data_saver_mode, auto_sync, sync_on_wifi_only, photo_quality, location_tracking, gps_accuracy, biometric_enabled, quiet_hours_start, quiet_hours_end, push_notifications, offline_storage_limit_mb, theme, preferences, created_at, updated_at')
         .single()
 
       if (error) {
@@ -145,7 +145,7 @@ export const PUT = createApiHandler(
           theme: input.theme ?? 'system',
           preferences: input.preferences ?? {},
         })
-        .select('*')
+        .select('id, company_id, user_id, data_saver_mode, auto_sync, sync_on_wifi_only, photo_quality, location_tracking, gps_accuracy, biometric_enabled, quiet_hours_start, quiet_hours_end, push_notifications, offline_storage_limit_mb, theme, preferences, created_at, updated_at')
         .single()
 
       if (error) {

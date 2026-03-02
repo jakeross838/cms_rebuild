@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('offline_sync_queue')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, device_id, action, entity_type, entity_id, payload, status, priority, retry_count, max_retries, error_message, synced_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.device_id) {
@@ -112,7 +112,7 @@ export const POST = createApiHandler(
         priority: input.priority,
         max_retries: input.max_retries,
       })
-      .select('*')
+      .select('id, company_id, user_id, device_id, action, entity_type, entity_id, payload, status, priority, retry_count, max_retries, error_message, synced_at, created_at, updated_at')
       .single()
 
     if (error) {

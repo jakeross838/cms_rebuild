@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('builder_terminology')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, default_term, custom_term, context, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.context) {
@@ -104,7 +104,7 @@ export const POST = createApiHandler(
         context: input.context,
         is_active: input.is_active,
       })
-      .select('*')
+      .select('id, company_id, default_term, custom_term, context, is_active, created_at, updated_at')
       .single()
 
     if (error) {

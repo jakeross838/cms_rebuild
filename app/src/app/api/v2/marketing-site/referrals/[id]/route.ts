@@ -35,7 +35,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('marketing_referrals')
-      .select('*')
+      .select('id, referrer_company_id, referral_code, referred_email, referred_company_name, status, referrer_credit, credit_applied, notes, clicked_at, signed_up_at, converted_at, created_at, updated_at')
       .eq('id', id)
       .eq('referrer_company_id', ctx.companyId!)
       .single()
@@ -102,7 +102,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('referrer_company_id', ctx.companyId!)
-      .select('*')
+      .select('id, referrer_company_id, referral_code, referred_email, referred_company_name, status, referrer_credit, credit_applied, notes, clicked_at, signed_up_at, converted_at, created_at, updated_at')
       .single()
 
     if (error || !data) {

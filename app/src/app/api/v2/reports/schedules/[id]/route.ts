@@ -50,7 +50,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, report_definition_id, frequency, day_of_week, day_of_month, recipients, is_active, last_run_at, next_run_at, created_at, updated_at')
       .single()
 
     if (error) {

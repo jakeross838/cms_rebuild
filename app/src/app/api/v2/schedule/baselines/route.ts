@@ -43,7 +43,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('schedule_baselines')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, name, snapshot_date, baseline_data, created_by, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('job_id', filters.job_id)
 
@@ -88,7 +88,7 @@ export const POST = createApiHandler(
     if (Object.keys(baselineData).length === 0) {
       const { data: tasks } = await supabase
         .from('schedule_tasks')
-        .select('*')
+        .select('id, company_id, job_id, parent_task_id, name, description, phase, trade, task_type, planned_start, planned_end, actual_start, actual_end, duration_days, progress_pct, status, assigned_to, assigned_vendor_id, is_critical_path, total_float, sort_order, notes, created_at, updated_at')
         .eq('company_id', ctx.companyId!)
         .eq('job_id', input.job_id)
         .is('deleted_at', null)
@@ -107,7 +107,7 @@ export const POST = createApiHandler(
         baseline_data: baselineData,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, name, snapshot_date, baseline_data, created_by, created_at')
       .single()
 
     if (error) {

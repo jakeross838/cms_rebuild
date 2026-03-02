@@ -92,7 +92,7 @@ export const POST = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, document_id, status, extracted_data, confidence_score, vendor_match_id, job_match_id, matched_bill_id, extraction_model, processing_time_ms, error_message, reviewed_by, reviewed_at, created_at, updated_at')
       .single()
 
     if (updateError) {

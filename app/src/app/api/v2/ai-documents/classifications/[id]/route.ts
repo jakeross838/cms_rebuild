@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('document_classifications')
-      .select('*')
+      .select('id, company_id, document_id, classified_type, confidence_score, model_version, metadata, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)

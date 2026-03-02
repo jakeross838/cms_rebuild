@@ -50,7 +50,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('marketplace_templates')
-      .select('*', { count: 'exact' })
+      .select('id, publisher_id, publisher_type, template_type, name, slug, description, long_description, screenshots, tags, region_tags, construction_tags, price, currency, template_data, required_modules, version, install_count, avg_rating, review_count, review_status, is_featured, is_active, created_by, created_at, updated_at', { count: 'exact' })
       .is('deleted_at', null)
 
     if (filters.template_type) {
@@ -139,7 +139,7 @@ export const POST = createApiHandler(
         is_active: input.is_active,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, publisher_id, publisher_type, template_type, name, slug, description, long_description, screenshots, tags, region_tags, construction_tags, price, currency, template_data, required_modules, version, install_count, avg_rating, review_count, review_status, is_featured, is_active, created_by, created_at, updated_at')
       .single()
 
     if (error) {

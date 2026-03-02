@@ -57,7 +57,7 @@ export const PUT = createApiHandler(
       .eq('report_id', reportId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, report_id, company_id, title, widget_type, data_source, configuration, filters, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

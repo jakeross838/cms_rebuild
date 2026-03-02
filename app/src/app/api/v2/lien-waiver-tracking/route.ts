@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('lien_waiver_tracking')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, vendor_id, period_start, period_end, expected_amount, waiver_id, is_compliant, notes, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.job_id) {
@@ -107,7 +107,7 @@ export const POST = createApiHandler(
         is_compliant: input.is_compliant ?? false,
         notes: input.notes ?? null,
       })
-      .select('*')
+      .select('id, company_id, job_id, vendor_id, period_start, period_end, expected_amount, waiver_id, is_compliant, notes, created_at, updated_at')
       .single()
 
     if (error) {

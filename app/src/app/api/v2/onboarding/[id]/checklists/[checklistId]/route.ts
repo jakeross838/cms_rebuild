@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('onboarding_checklists')
-      .select('*')
+      .select('id, company_id, session_id, category, title, description, is_completed, is_required, completed_at, completed_by, sort_order, created_at, updated_at')
       .eq('id', checklistId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
@@ -112,7 +112,7 @@ export const PUT = createApiHandler(
       .eq('id', checklistId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, session_id, category, title, description, is_completed, is_required, completed_at, completed_by, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

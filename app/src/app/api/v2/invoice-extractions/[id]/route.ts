@@ -35,7 +35,7 @@ export const GET = createApiHandler(
     // Get the extraction with line items and audit log in a single query
     const { data, error } = await supabase
       .from('invoice_extractions')
-      .select('*, invoice_line_extractions(*), extraction_audit_log(*)')
+      .select('id, company_id, document_id, status, extracted_data, confidence_score, vendor_match_id, job_match_id, matched_bill_id, extraction_model, processing_time_ms, error_message, reviewed_by, reviewed_at, created_at, updated_at, invoice_line_extractions(*), extraction_audit_log(*)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .order('line_number', { referencedTable: 'invoice_line_extractions', ascending: true })
@@ -115,7 +115,7 @@ export const PUT = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, document_id, status, extracted_data, confidence_score, vendor_match_id, job_match_id, matched_bill_id, extraction_model, processing_time_ms, error_message, reviewed_by, reviewed_at, created_at, updated_at')
       .single()
 
     if (updateError) {

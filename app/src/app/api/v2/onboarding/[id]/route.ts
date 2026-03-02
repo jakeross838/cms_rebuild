@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('onboarding_sessions')
-      .select('*')
+      .select('id, company_id, user_id, status, current_step, total_steps, company_type, company_size, started_at, completed_at, skipped_at, metadata, created_by, created_at, updated_at')
       .eq('id', sessionId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -113,7 +113,7 @@ export const PUT = createApiHandler(
       .eq('id', sessionId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, user_id, status, current_step, total_steps, company_type, company_size, started_at, completed_at, skipped_at, metadata, created_by, created_at, updated_at')
       .single()
 
     if (error || !data) {
@@ -146,7 +146,7 @@ export const DELETE = createApiHandler(
       .eq('id', sessionId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, user_id, status, current_step, total_steps, company_type, company_size, started_at, completed_at, skipped_at, metadata, created_by, created_at, updated_at')
       .single()
 
     if (error || !data) {

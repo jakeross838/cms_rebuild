@@ -22,7 +22,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('document_folders')
-      .select('*')
+      .select('id, company_id, job_id, parent_folder_id, name, path, sort_order, created_by, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
       .order('sort_order', { ascending: true })
       .order('name', { ascending: true })
@@ -103,7 +103,7 @@ export const POST = createApiHandler(
         path: folderPath,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, parent_folder_id, name, path, sort_order, created_by, created_at, updated_at')
       .single()
 
     if (error) {

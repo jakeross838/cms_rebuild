@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('job_photos')
-      .select('*')
+      .select('id, company_id, job_id, title, description, photo_url, category, taken_date, taken_by, location, notes, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -88,7 +88,7 @@ export const PATCH = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, title, description, photo_url, category, taken_date, taken_by, location, notes, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -29,7 +29,7 @@ export const GET = createApiHandler(
     // Integration listings are global — no company_id filter
     const { data, error } = await supabase
       .from('integration_listings')
-      .select('*')
+      .select('id, name, slug, description, long_description, logo_url, screenshots, category, developer_name, developer_url, documentation_url, support_url, pricing_type, price_monthly, install_count, avg_rating, review_count, status, is_featured, required_plan_tier, created_by, created_at, updated_at')
       .eq('slug', slug)
       .single()
 

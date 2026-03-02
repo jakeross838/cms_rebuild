@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('schedule_risk_scores')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, task_id, risk_level, risk_score, risk_factors, mitigation_suggestions, weather_component, resource_component, dependency_component, history_component, assessed_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -115,7 +115,7 @@ export const POST = createApiHandler(
         history_component: input.history_component,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, task_id, risk_level, risk_score, risk_factors, mitigation_suggestions, weather_component, resource_component, dependency_component, history_component, assessed_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -35,7 +35,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('budget_lines')
-      .select('*, cost_codes(code, name)')
+      .select('id, budget_id, company_id, job_id, cost_code_id, phase, description, estimated_amount, committed_amount, actual_amount, projected_amount, variance_amount, sort_order, notes, created_at, updated_at, cost_codes(code, name)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -92,7 +92,7 @@ export const PATCH = createApiHandler(
       .update({ ...parseResult.data, updated_at: new Date().toISOString() } as never)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, budget_id, company_id, job_id, cost_code_id, phase, description, estimated_amount, committed_amount, actual_amount, projected_amount, variance_amount, sort_order, notes, created_at, updated_at')
       .single()
 
     if (error) {

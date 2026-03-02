@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('financial_periods')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, period_name, period_start, period_end, status, fiscal_year, fiscal_quarter, closed_by, closed_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.status) {
@@ -104,7 +104,7 @@ export const POST = createApiHandler(
         fiscal_year: input.fiscal_year,
         fiscal_quarter: input.fiscal_quarter ?? null,
       })
-      .select('*')
+      .select('id, company_id, period_name, period_start, period_end, status, fiscal_year, fiscal_quarter, closed_by, closed_at, created_at, updated_at')
       .single()
 
     if (error) {

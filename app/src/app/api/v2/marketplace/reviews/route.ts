@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('marketplace_reviews')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, template_id, user_id, rating, title, review_text, publisher_response, publisher_responded_at, is_verified_purchase, is_flagged, created_at, updated_at', { count: 'exact' })
 
     if (filters.template_id) {
       query = query.eq('template_id', filters.template_id)
@@ -127,7 +127,7 @@ export const POST = createApiHandler(
         review_text: input.review_text ?? null,
         is_verified_purchase: input.is_verified_purchase,
       })
-      .select('*')
+      .select('id, company_id, template_id, user_id, rating, title, review_text, publisher_response, publisher_responded_at, is_verified_purchase, is_flagged, created_at, updated_at')
       .single()
 
     if (error) {

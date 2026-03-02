@@ -43,7 +43,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('inventory_stock')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, item_id, location_id, quantity_on_hand, quantity_reserved, quantity_available, last_counted_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.item_id) {

@@ -48,7 +48,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('feature_usage_events')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, feature_key, event_type, metadata, session_id, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.feature_key) {
@@ -116,7 +116,7 @@ export const POST = createApiHandler(
         metadata: input.metadata,
         session_id: input.session_id ?? null,
       })
-      .select('*')
+      .select('id, company_id, user_id, feature_key, event_type, metadata, session_id, created_at')
       .single()
 
     if (error) {

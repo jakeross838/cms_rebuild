@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('employee_certifications')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, employee_id, certification_name, certification_type, certification_number, issuing_authority, issued_date, expiration_date, status, document_url, notes, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .neq('status', 'revoked')
 
@@ -128,7 +128,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, employee_id, certification_name, certification_type, certification_number, issuing_authority, issued_date, expiration_date, status, document_url, notes, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('lien_waiver_templates')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, waiver_type, template_name, template_content, state_code, is_default, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.waiver_type) {
@@ -100,7 +100,7 @@ export const POST = createApiHandler(
         state_code: input.state_code ?? null,
         is_default: input.is_default ?? false,
       })
-      .select('*')
+      .select('id, company_id, waiver_type, template_name, template_content, state_code, is_default, created_at, updated_at')
       .single()
 
     if (error) {

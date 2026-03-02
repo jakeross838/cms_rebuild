@@ -78,7 +78,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('estimate_line_items')
-      .select('*', { count: 'exact' })
+      .select('id, estimate_id, company_id, section_id, cost_code_id, assembly_id, description, item_type, quantity, unit, unit_cost, markup_pct, total, alt_group, notes, sort_order, ai_suggested, ai_confidence, created_at, updated_at', { count: 'exact' })
       .eq('estimate_id', estimateId)
 
     if (filters.section_id) {
@@ -176,7 +176,7 @@ export const POST = createApiHandler(
         ai_suggested: input.ai_suggested,
         ai_confidence: input.ai_confidence ?? null,
       })
-      .select('*')
+      .select('id, estimate_id, company_id, section_id, cost_code_id, assembly_id, description, item_type, quantity, unit, unit_cost, markup_pct, total, alt_group, notes, sort_order, ai_suggested, ai_confidence, created_at, updated_at')
       .single()
 
     if (error) {

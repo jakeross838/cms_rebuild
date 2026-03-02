@@ -71,7 +71,7 @@ export const PUT = createApiHandler(
       .eq('budget_id', budgetId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, budget_id, company_id, job_id, cost_code_id, phase, description, estimated_amount, committed_amount, actual_amount, projected_amount, variance_amount, sort_order, notes, created_at, updated_at')
       .single()
 
     if (error) {

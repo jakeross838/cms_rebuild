@@ -67,7 +67,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('notifications')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, event_type, category, title, body, entity_type, entity_id, url_path, urgency, read, read_at, archived, snoozed_until, idempotency_key, triggered_by, job_id, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('user_id', ctx.user!.id)
       .eq('archived', false) as unknown as {

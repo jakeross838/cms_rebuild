@@ -60,7 +60,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('custom_report_widgets')
-      .select('*', { count: 'exact' })
+      .select('id, report_id, company_id, title, widget_type, data_source, configuration, filters, sort_order, created_at, updated_at', { count: 'exact' })
       .eq('report_id', reportId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -130,7 +130,7 @@ export const POST = createApiHandler(
         filters: input.filters,
         sort_order: input.sort_order,
       })
-      .select('*')
+      .select('id, report_id, company_id, title, widget_type, data_source, configuration, filters, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

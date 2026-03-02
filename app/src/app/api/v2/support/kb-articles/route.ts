@@ -47,7 +47,7 @@ export const GET = createApiHandler(
     // KB articles can be platform-level (company_id IS NULL) or company-specific
     let query = supabase
       .from('kb_articles')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, title, slug, content, category, tags, status, author_id, created_at, updated_at', { count: 'exact' })
       .or(`company_id.eq.${ctx.companyId},company_id.is.null`)
       .is('deleted_at', null)
 
@@ -131,7 +131,7 @@ export const POST = createApiHandler(
         status: input.status,
         author_id: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, title, slug, content, category, tags, status, author_id, created_at, updated_at')
       .single()
 
     if (error) {

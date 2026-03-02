@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('positions')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, title, description, department_id, pay_grade, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.department_id) {
@@ -105,7 +105,7 @@ export const POST = createApiHandler(
         pay_grade: input.pay_grade ?? null,
         is_active: input.is_active,
       })
-      .select('*')
+      .select('id, company_id, title, description, department_id, pay_grade, is_active, created_at, updated_at')
       .single()
 
     if (error) {

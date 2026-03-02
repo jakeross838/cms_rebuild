@@ -33,7 +33,7 @@ export const POST = createApiHandler(
     // Fetch the open time entry
     const { data: entry, error: fetchError } = await supabase
       .from('time_entries')
-      .select('*')
+      .select('id, company_id, user_id, job_id, cost_code_id, entry_date, clock_in, clock_out, regular_hours, overtime_hours, double_time_hours, break_minutes, status, notes, gps_clock_in, gps_clock_out, entry_method, approved_by, approved_at, rejected_by, rejected_at, rejection_reason, created_at, updated_at')
       .eq('id', input.time_entry_id)
       .eq('company_id', ctx.companyId!)
       .eq('user_id', ctx.user!.id)
@@ -86,7 +86,7 @@ export const POST = createApiHandler(
       })
       .eq('id', input.time_entry_id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, user_id, job_id, cost_code_id, entry_date, clock_in, clock_out, regular_hours, overtime_hours, double_time_hours, break_minutes, status, notes, gps_clock_in, gps_clock_out, entry_method, approved_by, approved_at, rejected_by, rejected_at, rejection_reason, created_at, updated_at')
       .single()
 
     if (error) {

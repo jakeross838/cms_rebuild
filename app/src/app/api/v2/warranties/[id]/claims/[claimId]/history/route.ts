@@ -77,7 +77,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('warranty_claim_history')
-      .select('*', { count: 'exact' })
+      .select('id, claim_id, company_id, action, previous_status, new_status, details, performed_by, created_at', { count: 'exact' })
       .eq('claim_id', claimId)
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: false })

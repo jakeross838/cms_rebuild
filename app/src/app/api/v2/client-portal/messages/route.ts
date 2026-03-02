@@ -51,7 +51,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('client_messages')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, sender_user_id, sender_type, subject, message_text, thread_id, topic, category, attachments, is_external_log, external_channel, status, read_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -124,7 +124,7 @@ export const POST = createApiHandler(
         external_channel: input.external_channel ?? null,
         status: 'sent',
       })
-      .select('*')
+      .select('id, company_id, job_id, sender_user_id, sender_type, subject, message_text, thread_id, topic, category, attachments, is_external_log, external_channel, status, read_at, created_at, updated_at')
       .single()
 
     if (error) {

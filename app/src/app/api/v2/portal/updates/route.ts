@@ -48,7 +48,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('portal_update_posts')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, title, body, post_type, is_published, published_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('job_id', filters.job_id)
       .is('deleted_at', null)
@@ -106,7 +106,7 @@ export const POST = createApiHandler(
         post_type: input.post_type,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, title, body, post_type, is_published, published_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

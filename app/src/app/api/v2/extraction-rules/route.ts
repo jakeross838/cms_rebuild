@@ -48,7 +48,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('extraction_rules')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, vendor_id, rule_type, conditions, actions, is_active, priority, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.vendor_id) {
@@ -111,7 +111,7 @@ export const POST = createApiHandler(
         priority: input.priority,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, vendor_id, rule_type, conditions, actions, is_active, priority, created_by, created_at, updated_at')
       .single()
 
     if (ruleError) {

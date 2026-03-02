@@ -66,7 +66,7 @@ export const PUT = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, vendor_id, rule_type, conditions, actions, is_active, priority, created_by, created_at, updated_at')
       .single()
 
     if (updateError) {
@@ -123,7 +123,7 @@ export const DELETE = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, vendor_id, rule_type, conditions, actions, is_active, priority, created_by, created_at, updated_at')
       .single()
 
     if (updateError) {

@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('report_snapshots')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, report_definition_id, period_start, period_end, snapshot_data, generated_by, generated_at, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.report_definition_id) {

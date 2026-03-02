@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('warranty_claims')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, warranty_id, claim_number, title, description, status, priority, reported_by, reported_date, assigned_to, assigned_vendor_id, resolution_notes, resolution_cost, resolved_at, resolved_by, due_date, photos, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -119,7 +119,7 @@ export const POST = createApiHandler(
         resolution_cost: input.resolution_cost ?? null,
         created_by: ctx.user!.id,
       } as never)
-      .select('*')
+      .select('id, company_id, warranty_id, claim_number, title, description, status, priority, reported_by, reported_date, assigned_to, assigned_vendor_id, resolution_notes, resolution_cost, resolved_at, resolved_by, due_date, photos, created_by, created_at, updated_at')
       .single()
 
     if (error) {

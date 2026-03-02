@@ -56,7 +56,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('punch_item_photos')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, punch_item_id, photo_url, caption, photo_type, uploaded_by, uploaded_at, created_at', { count: 'exact' })
       .eq('punch_item_id', punchItemId)
       .order('uploaded_at', { ascending: true })
       .range(offset, offset + limit - 1)
@@ -127,7 +127,7 @@ export const POST = createApiHandler(
         photo_type: input.photo_type,
         uploaded_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, punch_item_id, photo_url, caption, photo_type, uploaded_by, uploaded_at, created_at')
       .single()
 
     if (error) {

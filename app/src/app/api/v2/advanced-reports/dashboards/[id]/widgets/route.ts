@@ -60,7 +60,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('dashboard_widgets')
-      .select('*', { count: 'exact' })
+      .select('id, dashboard_id, company_id, title, widget_type, data_source, report_id, position_x, position_y, width, height, configuration, refresh_interval_seconds, created_at, updated_at', { count: 'exact' })
       .eq('dashboard_id', dashboardId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -135,7 +135,7 @@ export const POST = createApiHandler(
         configuration: input.configuration,
         refresh_interval_seconds: input.refresh_interval_seconds,
       })
-      .select('*')
+      .select('id, dashboard_id, company_id, title, widget_type, data_source, report_id, position_x, position_y, width, height, configuration, refresh_interval_seconds, created_at, updated_at')
       .single()
 
     if (error) {

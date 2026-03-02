@@ -84,7 +84,7 @@ export const POST = createApiHandler(
         generated_by: ctx.user!.id,
         generated_at: new Date().toISOString(),
       })
-      .select('*')
+      .select('id, company_id, report_definition_id, period_start, period_end, snapshot_data, generated_by, generated_at, created_at')
       .single()
 
     if (snapError) {

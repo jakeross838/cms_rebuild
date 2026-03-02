@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('inventory_locations')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, location_type, address, job_id, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.location_type) {
@@ -109,7 +109,7 @@ export const POST = createApiHandler(
         job_id: input.job_id ?? null,
         is_active: input.is_active,
       })
-      .select('*')
+      .select('id, company_id, name, location_type, address, job_id, is_active, created_at, updated_at')
       .single()
 
     if (error) {

@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('blog_posts')
-      .select('*', { count: 'exact' })
+      .select('id, title, slug, excerpt, body_html, author_name, category, tags, featured_image, meta_title, meta_description, is_published, published_at, created_by, created_at, updated_at', { count: 'exact' })
       .is('deleted_at', null)
 
     if (filters.category) {
@@ -112,7 +112,7 @@ export const POST = createApiHandler(
         published_at: input.is_published ? new Date().toISOString() : null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, title, slug, excerpt, body_html, author_name, category, tags, featured_image, meta_title, meta_description, is_published, published_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

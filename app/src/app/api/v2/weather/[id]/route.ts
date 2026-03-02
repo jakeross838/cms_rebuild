@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('weather_records')
-      .select('*')
+      .select('id, company_id, job_id, record_date, high_temp, low_temp, conditions, precipitation_inches, wind_mph, is_work_day, notes, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -86,7 +86,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, record_date, high_temp, low_temp, conditions, precipitation_inches, wind_mph, is_work_day, notes, created_at, updated_at')
       .single()
 
     if (error) {

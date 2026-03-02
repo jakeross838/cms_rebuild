@@ -49,7 +49,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('tenant_health_scores')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, score_date, overall_score, adoption_score, engagement_score, satisfaction_score, growth_score, risk_level, churn_probability, last_login_at, active_users_count, feature_utilization, notes, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.risk_level) {
@@ -125,7 +125,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, score_date, overall_score, adoption_score, engagement_score, satisfaction_score, growth_score, risk_level, churn_probability, last_login_at, active_users_count, feature_utilization, notes, created_by, created_at, updated_at')
       .single()
 
     if (error) {

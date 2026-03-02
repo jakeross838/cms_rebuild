@@ -75,7 +75,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('feature_request_votes')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, feature_request_id, user_id, created_at', { count: 'exact' })
       .eq('feature_request_id', requestId)
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: false })
@@ -177,7 +177,7 @@ export const POST = createApiHandler(
         feature_request_id: featureRequestId,
         user_id: input.user_id,
       })
-      .select('*')
+      .select('id, company_id, feature_request_id, user_id, created_at')
       .single()
 
     if (error) {

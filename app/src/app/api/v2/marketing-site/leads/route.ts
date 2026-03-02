@@ -48,7 +48,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('marketing_leads')
-      .select('*', { count: 'exact' })
+      .select('id, source, utm_source, utm_medium, utm_campaign, name, email, company_name, phone, company_size, current_tools, pipeline_stage, assigned_to, deal_value, close_probability, closed_at, closed_reason, competitor_name, notes, crm_id, created_at, updated_at', { count: 'exact' })
       .is('deleted_at', null)
 
     if (filters.source) {
@@ -124,7 +124,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         crm_id: input.crm_id ?? null,
       })
-      .select('*')
+      .select('id, source, utm_source, utm_medium, utm_campaign, name, email, company_name, phone, company_size, current_tools, pipeline_stage, assigned_to, deal_value, close_probability, closed_at, closed_reason, competitor_name, notes, crm_id, created_at, updated_at')
       .single()
 
     if (error) {

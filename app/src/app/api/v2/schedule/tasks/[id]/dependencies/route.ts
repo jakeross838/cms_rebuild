@@ -47,12 +47,12 @@ export const GET = createApiHandler(
     // Get dependencies where this task is predecessor or successor
     const { data: asPredecessor } = await supabase
       .from('schedule_dependencies')
-      .select('*')
+      .select('id, predecessor_id, successor_id, dependency_type, lag_days, created_at')
       .eq('predecessor_id', taskId)
 
     const { data: asSuccessor } = await supabase
       .from('schedule_dependencies')
-      .select('*')
+      .select('id, predecessor_id, successor_id, dependency_type, lag_days, created_at')
       .eq('successor_id', taskId)
 
     return NextResponse.json({
@@ -125,7 +125,7 @@ export const POST = createApiHandler(
         dependency_type: input.dependency_type,
         lag_days: input.lag_days,
       })
-      .select('*')
+      .select('id, predecessor_id, successor_id, dependency_type, lag_days, created_at')
       .single()
 
     if (error) {

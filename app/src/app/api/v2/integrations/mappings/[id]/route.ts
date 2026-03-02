@@ -73,7 +73,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, connection_id, entity_type, internal_id, external_id, external_name, sync_status, error_message, created_at, updated_at')
       .single()
 
     if (mapError) {

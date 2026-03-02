@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('portal_shared_photos')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, storage_path, caption, album_name, sort_order, shared_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('job_id', filters.job_id)
 
@@ -102,7 +102,7 @@ export const POST = createApiHandler(
         sort_order: input.sort_order,
         shared_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, storage_path, caption, album_name, sort_order, shared_by, created_at, updated_at')
       .single()
 
     if (error) {

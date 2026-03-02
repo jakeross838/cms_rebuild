@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('usage_meters')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, addon_id, meter_type, period_start, period_end, quantity, unit, overage_quantity, overage_cost, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.meter_type) {
@@ -111,7 +111,7 @@ export const POST = createApiHandler(
         overage_quantity: input.overage_quantity,
         overage_cost: input.overage_cost,
       })
-      .select('*')
+      .select('id, company_id, addon_id, meter_type, period_start, period_end, quantity, unit, overage_quantity, overage_cost, created_at, updated_at')
       .single()
 
     if (error) {

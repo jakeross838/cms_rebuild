@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('project_user_roles')
-      .select('*')
+      .select('id, company_id, user_id, job_id, role_id, role_override, granted_by, created_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -86,7 +86,7 @@ export const PATCH = createApiHandler(
       .update(updates as never)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, user_id, job_id, role_id, role_override, granted_by, created_at')
       .single()
 
     if (error) {

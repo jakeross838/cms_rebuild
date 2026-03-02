@@ -31,7 +31,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('marketplace_templates')
-      .select('*')
+      .select('id, publisher_id, publisher_type, template_type, name, slug, description, long_description, screenshots, tags, region_tags, construction_tags, price, currency, template_data, required_modules, version, install_count, avg_rating, review_count, review_status, is_featured, is_active, created_by, created_at, updated_at')
       .eq('id', id)
       .is('deleted_at', null)
       .single()
@@ -148,7 +148,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, publisher_id, publisher_type, template_type, name, slug, description, long_description, screenshots, tags, region_tags, construction_tags, price, currency, template_data, required_modules, version, install_count, avg_rating, review_count, review_status, is_featured, is_active, created_by, created_at, updated_at')
       .single()
 
     if (error) {

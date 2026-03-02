@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('integration_installs')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, listing_id, status, configuration, installed_by, installed_at, uninstalled_at, uninstalled_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.listing_id) {
@@ -147,7 +147,7 @@ export const POST = createApiHandler(
         configuration: input.configuration,
         installed_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, listing_id, status, configuration, installed_by, installed_at, uninstalled_at, uninstalled_by, created_at, updated_at')
       .single()
 
     if (error) {

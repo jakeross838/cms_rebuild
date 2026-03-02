@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('sync_conflicts')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, connection_id, entity_type, internal_data, external_data, resolution, resolved_by, resolved_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.connection_id) {

@@ -53,7 +53,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('ai_feedback')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, extraction_id, field_name, original_value, corrected_value, feedback_type, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('extraction_id', extractionId)
 
@@ -133,7 +133,7 @@ export const POST = createApiHandler(
         feedback_type: input.feedback_type,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, extraction_id, field_name, original_value, corrected_value, feedback_type, created_by, created_at, updated_at')
       .single()
 
     if (error) {

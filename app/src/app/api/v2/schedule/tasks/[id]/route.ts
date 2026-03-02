@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('schedule_tasks')
-      .select('*')
+      .select('id, company_id, job_id, parent_task_id, name, description, phase, trade, task_type, planned_start, planned_end, actual_start, actual_end, duration_days, progress_pct, status, assigned_to, assigned_vendor_id, is_critical_path, total_float, sort_order, notes, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -43,12 +43,12 @@ export const GET = createApiHandler(
     // Fetch dependencies where this task is predecessor or successor
     const { data: predecessors, error: predError } = await supabase
       .from('schedule_dependencies')
-      .select('*')
+      .select('id, predecessor_id, successor_id, dependency_type, lag_days, created_at')
       .eq('successor_id', id)
 
     const { data: successors, error: succError } = await supabase
       .from('schedule_dependencies')
-      .select('*')
+      .select('id, predecessor_id, successor_id, dependency_type, lag_days, created_at')
       .eq('predecessor_id', id)
 
     return NextResponse.json({
@@ -115,7 +115,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, parent_task_id, name, description, phase, trade, task_type, planned_start, planned_end, actual_start, actual_end, duration_days, progress_pct, status, assigned_to, assigned_vendor_id, is_critical_path, total_float, sort_order, notes, created_at, updated_at')
       .single()
 
     if (error) {

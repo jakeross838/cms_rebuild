@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('client_payments')
-      .select('*')
+      .select('id, company_id, job_id, client_user_id, payment_number, amount, payment_method, status, reference_number, description, draw_request_id, invoice_id, payment_date, notes, created_by, created_at, updated_at')
       .eq('id', paymentId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)

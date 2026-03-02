@@ -27,7 +27,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('inventory_locations')
-      .select('*')
+      .select('id, company_id, name, location_type, address, job_id, is_active, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -80,7 +80,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, name, location_type, address, job_id, is_active, created_at, updated_at')
       .single()
 
     if (error) {

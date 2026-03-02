@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('project_user_roles')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, job_id, role_id, role_override, granted_by, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.job_id) {
@@ -103,7 +103,7 @@ export const POST = createApiHandler(
         role_override: input.role_override ?? null,
         granted_by: ctx.user!.id,
       } as never)
-      .select('*')
+      .select('id, company_id, user_id, job_id, role_id, role_override, granted_by, created_at')
       .single()
 
     if (error) {

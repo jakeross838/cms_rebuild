@@ -28,7 +28,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('financial_periods')
-      .select('*')
+      .select('id, company_id, period_name, period_start, period_end, status, fiscal_year, fiscal_quarter, closed_by, closed_at, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -106,7 +106,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, period_name, period_start, period_end, status, fiscal_year, fiscal_quarter, closed_by, closed_at, created_at, updated_at')
       .single()
 
     if (error) {

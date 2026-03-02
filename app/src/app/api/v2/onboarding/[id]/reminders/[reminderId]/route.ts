@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('onboarding_reminders')
-      .select('*')
+      .select('id, company_id, session_id, reminder_type, subject, message, scheduled_at, sent_at, status, created_at, updated_at')
       .eq('id', reminderId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
@@ -108,7 +108,7 @@ export const PUT = createApiHandler(
       .eq('id', reminderId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, session_id, reminder_type, subject, message, scheduled_at, sent_at, status, created_at, updated_at')
       .single()
 
     if (error) {

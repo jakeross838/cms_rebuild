@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('case_studies')
-      .select('*', { count: 'exact' })
+      .select('id, title, slug, company_name, company_size, challenge, solution, results, metrics, quote_text, quote_author, photos, industry_tags, region_tags, is_published, published_at, created_by, created_at, updated_at', { count: 'exact' })
       .is('deleted_at', null)
 
     if (filters.is_published !== undefined) {
@@ -111,7 +111,7 @@ export const POST = createApiHandler(
         published_at: input.is_published ? new Date().toISOString() : null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, title, slug, company_name, company_size, challenge, solution, results, metrics, quote_text, quote_author, photos, industry_tags, region_tags, is_published, published_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

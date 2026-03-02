@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('schedule_predictions')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, task_id, prediction_type, predicted_value, confidence_score, model_version, is_accepted, accepted_by, accepted_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -111,7 +111,7 @@ export const POST = createApiHandler(
         model_version: input.model_version ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, task_id, prediction_type, predicted_value, confidence_score, model_version, is_accepted, accepted_by, accepted_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

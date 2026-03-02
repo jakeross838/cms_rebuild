@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('plan_addons')
-      .select('*', { count: 'exact' })
+      .select('id, name, slug, description, addon_type, price_monthly, price_annual, is_metered, meter_unit, meter_price_per_unit, is_active, sort_order, created_at, updated_at', { count: 'exact' })
 
     if (filters.addon_type) {
       query = query.eq('addon_type', filters.addon_type)
@@ -131,7 +131,7 @@ export const POST = createApiHandler(
         is_active: input.is_active,
         sort_order: input.sort_order,
       })
-      .select('*')
+      .select('id, name, slug, description, addon_type, price_monthly, price_annual, is_metered, meter_unit, meter_price_per_unit, is_active, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

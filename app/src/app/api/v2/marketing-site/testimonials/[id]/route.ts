@@ -35,7 +35,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('testimonials')
-      .select('*')
+      .select('id, company_id, contact_name, contact_title, company_display_name, quote_text, rating, video_url, photo_url, is_approved, is_featured, display_on, collected_at, approved_by, approved_at, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -97,7 +97,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, contact_name, contact_title, company_display_name, quote_text, rating, video_url, photo_url, is_approved, is_featured, display_on, collected_at, approved_by, approved_at, created_at, updated_at')
       .single()
 
     if (error || !data) {

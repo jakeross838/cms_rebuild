@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('marketing_referrals')
-      .select('*', { count: 'exact' })
+      .select('id, referrer_company_id, referral_code, referred_email, referred_company_name, status, referrer_credit, credit_applied, notes, clicked_at, signed_up_at, converted_at, created_at, updated_at', { count: 'exact' })
       .eq('referrer_company_id', ctx.companyId!)
 
     if (filters.status) {
@@ -128,7 +128,7 @@ export const POST = createApiHandler(
         referrer_credit: input.referrer_credit,
         notes: input.notes ?? null,
       })
-      .select('*')
+      .select('id, referrer_company_id, referral_code, referred_email, referred_company_name, status, referrer_credit, credit_applied, notes, clicked_at, signed_up_at, converted_at, created_at, updated_at')
       .single()
 
     if (error) {

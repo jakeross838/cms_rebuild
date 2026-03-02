@@ -51,7 +51,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('onboarding_checklists')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, session_id, category, title, description, is_completed, is_required, completed_at, completed_by, sort_order, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('session_id', sessionId)
 
@@ -132,7 +132,7 @@ export const POST = createApiHandler(
         is_required: input.is_required,
         sort_order: input.sort_order,
       })
-      .select('*')
+      .select('id, company_id, session_id, category, title, description, is_completed, is_required, completed_at, completed_by, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

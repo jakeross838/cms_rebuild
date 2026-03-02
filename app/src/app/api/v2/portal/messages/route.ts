@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('portal_messages')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, sender_id, sender_type, subject, body, parent_message_id, is_read, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('job_id', filters.job_id)
 
@@ -97,7 +97,7 @@ export const POST = createApiHandler(
         body: input.body,
         parent_message_id: input.parent_message_id ?? null,
       })
-      .select('*')
+      .select('id, company_id, job_id, sender_id, sender_type, subject, body, parent_message_id, is_read, created_at, updated_at')
       .single()
 
     if (error) {

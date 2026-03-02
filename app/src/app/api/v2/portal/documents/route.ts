@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     const query = supabase
       .from('portal_shared_documents')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, document_id, shared_by, shared_at, notes, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('job_id', filters.job_id)
       .order('shared_at', { ascending: false })
@@ -94,7 +94,7 @@ export const POST = createApiHandler(
         shared_by: ctx.user!.id,
         notes: input.notes ?? null,
       })
-      .select('*')
+      .select('id, company_id, job_id, document_id, shared_by, shared_at, notes, created_at, updated_at')
       .single()
 
     if (error) {

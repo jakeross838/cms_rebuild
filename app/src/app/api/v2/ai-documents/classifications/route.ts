@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('document_classifications')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, document_id, classified_type, confidence_score, model_version, metadata, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -106,7 +106,7 @@ export const POST = createApiHandler(
         metadata: input.metadata,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, document_id, classified_type, confidence_score, model_version, metadata, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -74,7 +74,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('vendor_item_prices')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, vendor_id, master_item_id, unit_price, lead_time_days, min_order_qty, effective_date, notes, created_at, updated_at', { count: 'exact' })
       .eq('master_item_id', itemId)
       .eq('company_id', ctx.companyId!)
 
@@ -155,7 +155,7 @@ export const POST = createApiHandler(
         effective_date: input.effective_date ?? new Date().toISOString().split('T')[0],
         notes: input.notes ?? null,
       })
-      .select('*')
+      .select('id, company_id, vendor_id, master_item_id, unit_price, lead_time_days, min_order_qty, effective_date, notes, created_at, updated_at')
       .single()
 
     if (error) {

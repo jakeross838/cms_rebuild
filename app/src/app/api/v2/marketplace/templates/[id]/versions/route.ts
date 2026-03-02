@@ -74,7 +74,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('marketplace_template_versions')
-      .select('*', { count: 'exact' })
+      .select('id, template_id, version, changelog, template_data, published_at, created_at', { count: 'exact' })
       .eq('template_id', templateId)
       .order('published_at', { ascending: false })
       .range(offset, offset + limit - 1)
@@ -151,7 +151,7 @@ export const POST = createApiHandler(
         changelog: input.changelog ?? null,
         template_data: input.template_data,
       })
-      .select('*')
+      .select('id, template_id, version, changelog, template_data, published_at, created_at')
       .single()
 
     if (error) {

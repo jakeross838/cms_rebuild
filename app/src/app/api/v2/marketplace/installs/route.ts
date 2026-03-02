@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('marketplace_installs')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, template_id, template_version, installed_by, installed_at, payment_id, payment_amount, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.template_id) {
@@ -127,7 +127,7 @@ export const POST = createApiHandler(
         payment_id: input.payment_id ?? null,
         payment_amount: input.payment_amount ?? null,
       })
-      .select('*')
+      .select('id, company_id, template_id, template_version, installed_by, installed_at, payment_id, payment_amount, created_at')
       .single()
 
     if (error) {

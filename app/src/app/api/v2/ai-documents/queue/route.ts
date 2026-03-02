@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('document_processing_queue')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, document_id, status, priority, max_attempts, error_message, started_at, completed_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.status) {
@@ -100,7 +100,7 @@ export const POST = createApiHandler(
         max_attempts: input.max_attempts,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, document_id, status, priority, max_attempts, error_message, started_at, completed_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

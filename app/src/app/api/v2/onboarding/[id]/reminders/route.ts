@@ -51,7 +51,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('onboarding_reminders')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, session_id, reminder_type, subject, message, scheduled_at, sent_at, status, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('session_id', sessionId)
 
@@ -131,7 +131,7 @@ export const POST = createApiHandler(
         scheduled_at: input.scheduled_at,
         status: input.status,
       })
-      .select('*')
+      .select('id, company_id, session_id, reminder_type, subject, message, scheduled_at, sent_at, status, created_at, updated_at')
       .single()
 
     if (error) {

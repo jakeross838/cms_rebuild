@@ -78,7 +78,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('ticket_messages')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, ticket_id, sender_type, sender_id, message_text, attachments, is_internal, created_at, updated_at', { count: 'exact' })
       .eq('ticket_id', ticketId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -170,7 +170,7 @@ export const POST = createApiHandler(
         attachments: input.attachments,
         is_internal: input.is_internal,
       })
-      .select('*')
+      .select('id, company_id, ticket_id, sender_type, sender_id, message_text, attachments, is_internal, created_at, updated_at')
       .single()
 
     if (error) {

@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('vendor_contacts')
-      .select('*', { count: 'exact' })
+      .select('id, vendor_id, company_id, name, title, email, phone, is_primary, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -103,7 +103,7 @@ export const POST = createApiHandler(
         phone: input.phone ?? null,
         is_primary: input.is_primary ?? null,
       } as never)
-      .select('*')
+      .select('id, vendor_id, company_id, name, title, email, phone, is_primary, created_at, updated_at')
       .single()
 
     if (error) {

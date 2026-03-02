@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('warranties')
-      .select('*, warranty_claims(id)')
+      .select('id, company_id, job_id, title, description, warranty_type, status, vendor_id, start_date, end_date, coverage_details, exclusions, document_id, contact_name, contact_phone, contact_email, transferred_to, transferred_at, created_by, created_at, updated_at, warranty_claims(id)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -127,7 +127,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, title, description, warranty_type, status, vendor_id, start_date, end_date, coverage_details, exclusions, document_id, contact_name, contact_phone, contact_email, transferred_to, transferred_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

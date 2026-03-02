@@ -25,7 +25,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('client_portal_settings')
-      .select('*')
+      .select('id, company_id, branding, custom_domain, feature_flags, visibility_rules, notification_rules, approval_config, email_templates, footer_text, privacy_policy_url, terms_of_service_url, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
       .maybeSingle()
 
@@ -68,7 +68,7 @@ export const PUT = createApiHandler(
         company_id: ctx.companyId!,
         ...input,
       }, { onConflict: 'company_id' })
-      .select('*')
+      .select('id, company_id, branding, custom_domain, feature_flags, visibility_rules, notification_rules, approval_config, email_templates, footer_text, privacy_policy_url, terms_of_service_url, created_at, updated_at')
       .single()
 
     if (error) {

@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('sync_mappings')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, connection_id, entity_type, internal_id, external_id, external_name, sync_status, error_message, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.connection_id) {
@@ -153,7 +153,7 @@ export const POST = createApiHandler(
         external_name: input.external_name ?? null,
         sync_status: 'pending',
       })
-      .select('*')
+      .select('id, company_id, connection_id, entity_type, internal_id, external_id, external_name, sync_status, error_message, created_at, updated_at')
       .single()
 
     if (mapError) {

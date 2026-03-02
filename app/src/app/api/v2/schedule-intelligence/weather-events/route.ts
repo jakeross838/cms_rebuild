@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('schedule_weather_events')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, event_date, weather_type, severity, impact_description, affected_tasks, schedule_impact_days, temperature_high, temperature_low, precipitation_inches, wind_speed_mph, auto_logged, notes, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
 
@@ -122,7 +122,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, event_date, weather_type, severity, impact_description, affected_tasks, schedule_impact_days, temperature_high, temperature_low, precipitation_inches, wind_speed_mph, auto_logged, notes, created_by, created_at, updated_at')
       .single()
 
     if (error) {

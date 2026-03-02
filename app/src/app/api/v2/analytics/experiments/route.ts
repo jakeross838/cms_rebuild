@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('ab_experiments')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, status, feature_key, variants, start_date, end_date, sample_percentage, results, created_by, created_at, updated_at', { count: 'exact' })
 
     // Show platform-wide (null) + own company experiments
     query = query.or(`company_id.is.null,company_id.eq.${ctx.companyId!}`)
@@ -112,7 +112,7 @@ export const POST = createApiHandler(
         results: input.results,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, name, description, status, feature_key, variants, start_date, end_date, sample_percentage, results, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -70,7 +70,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('price_history')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, master_item_id, vendor_id, old_price, new_price, change_pct, recorded_at, created_at', { count: 'exact' })
       .eq('master_item_id', itemId)
       .eq('company_id', ctx.companyId!)
 

@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('employee_documents')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, employee_id, document_type, title, description, file_url, file_name, file_size_bytes, uploaded_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.employee_id) {
@@ -124,7 +124,7 @@ export const POST = createApiHandler(
         file_size_bytes: input.file_size_bytes ?? null,
         uploaded_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, employee_id, document_type, title, description, file_url, file_name, file_size_bytes, uploaded_by, created_at, updated_at')
       .single()
 
     if (error) {

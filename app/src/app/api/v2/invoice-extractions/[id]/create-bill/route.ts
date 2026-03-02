@@ -92,7 +92,7 @@ export const POST = createApiHandler(
         description: input.description ?? null,
         created_by: ctx.user!.id,
       } as never)
-      .select('*')
+      .select('id, company_id, vendor_id, bill_number, bill_date, due_date, amount, balance_due, status, job_id, description, created_by, created_at, updated_at')
       .single()
 
     if (billError) {

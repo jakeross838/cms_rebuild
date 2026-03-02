@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('deployment_releases')
-      .select('*', { count: 'exact' })
+      .select('id, version, release_type, status, description, changelog, deployed_at, deployed_by, rollback_reason, affected_services, created_at, updated_at', { count: 'exact' })
 
     if (filters.release_type) {
       query = query.eq('release_type', filters.release_type)
@@ -107,7 +107,7 @@ export const POST = createApiHandler(
         rollback_reason: input.rollback_reason ?? null,
         affected_services: input.affected_services,
       })
-      .select('*')
+      .select('id, version, release_type, status, description, changelog, deployed_at, deployed_by, rollback_reason, affected_services, created_at, updated_at')
       .single()
 
     if (error) {

@@ -47,7 +47,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('testimonials')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, contact_name, contact_title, company_display_name, quote_text, rating, video_url, photo_url, is_approved, is_featured, display_on, collected_at, approved_by, approved_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.is_approved !== undefined) {
@@ -115,7 +115,7 @@ export const POST = createApiHandler(
         display_on: input.display_on,
         collected_at: input.collected_at ?? new Date().toISOString(),
       })
-      .select('*')
+      .select('id, company_id, contact_name, contact_title, company_display_name, quote_text, rating, video_url, photo_url, is_approved, is_featured, display_on, collected_at, approved_by, approved_at, created_at, updated_at')
       .single()
 
     if (error) {

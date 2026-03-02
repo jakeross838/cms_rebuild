@@ -44,7 +44,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('onboarding_milestones')
-      .select('*')
+      .select('id, company_id, session_id, milestone_key, title, description, status, sort_order, started_at, completed_at, skipped_at, data, created_at, updated_at')
       .eq('id', milestoneId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
@@ -115,7 +115,7 @@ export const PUT = createApiHandler(
       .eq('id', milestoneId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, session_id, milestone_key, title, description, status, sort_order, started_at, completed_at, skipped_at, data, created_at, updated_at')
       .single()
 
     if (error) {
