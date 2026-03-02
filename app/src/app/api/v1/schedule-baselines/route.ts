@@ -70,7 +70,7 @@ export const GET = createApiHandler(
     }
 
     return NextResponse.json(
-      { ...paginatedResponse(baselines ?? [], count ?? 0, page, limit), requestId: ctx.requestId }
+      paginatedResponse(baselines ?? [], count ?? 0, page, limit, ctx.requestId)
     )
   },
   { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }

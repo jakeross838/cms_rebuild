@@ -61,7 +61,8 @@ export const GET = createApiHandler(
     let query = supabase
       .from('cost_transactions')
       .select('*', { count: 'exact' })
-      .eq('company_id', ctx.companyId!) as unknown as {
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null) as unknown as {
         eq: (col: string, val: unknown) => typeof query
         gte: (col: string, val: string) => typeof query
         lte: (col: string, val: string) => typeof query
@@ -104,9 +105,7 @@ export const GET = createApiHandler(
       )
     }
 
-    return NextResponse.json(
-      { ...paginatedResponse(transactions ?? [], count ?? 0, page, limit), requestId: ctx.requestId }
-    )
+    return NextResponse.json(paginatedResponse(transactions ?? [], count ?? 0, page, limit, ctx.requestId))
   },
   { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
 )

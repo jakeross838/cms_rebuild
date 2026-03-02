@@ -61,7 +61,8 @@ export const GET = createApiHandler(
     let query = supabase
       .from('gl_accounts')
       .select('*', { count: 'exact' })
-      .eq('company_id', ctx.companyId!) as unknown as {
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null) as unknown as {
         eq: (col: string, val: unknown) => typeof query
         or: (filter: string) => typeof query
         order: (col: string, opts: { ascending: boolean }) => typeof query
@@ -95,9 +96,7 @@ export const GET = createApiHandler(
       )
     }
 
-    return NextResponse.json(
-      { ...paginatedResponse(accounts ?? [], count ?? 0, page, limit), requestId: ctx.requestId }
-    )
+    return NextResponse.json(paginatedResponse(accounts ?? [], count ?? 0, page, limit, ctx.requestId))
   },
   { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
 )

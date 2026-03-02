@@ -41,7 +41,7 @@ export const GET = createApiHandler(
       return a.name.localeCompare(b.name)
     })
 
-    return NextResponse.json({ ...paginatedResponse(sorted, count ?? 0, page, limit), requestId: ctx.requestId })
+    return NextResponse.json(paginatedResponse(sorted, count ?? 0, page, limit, ctx.requestId))
   },
   { requireAuth: true, rateLimit: 'api',
     permission: 'roles:read:all',
