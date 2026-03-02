@@ -1,5 +1,34 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 54c — select('*') → Explicit Columns on All 468 API Routes (2026-03-02)
+
+### What Changed
+All ~800 `select('*')` calls across all 468 API route files replaced with explicit column lists matching the actual DB schema. Prevents exposing sensitive columns (settings JSON, base_wage, emergency contacts, etc.) and makes queries self-documenting.
+
+### Scope (5 commits, ~453 files)
+- **Batch 1 (24 files):** Financial (ap/bills, ap/payments, ar/invoices, ar/receipts, gl/accounts, gl/journal-entries, payroll/periods, payroll/exports) + CRM (leads, sources, pipelines, stages)
+- **Batch 2 (67 files):** All 35 v1 routes (audit-log, clients, cost-codes, cost-transactions, daily-logs, gl-accounts, budgets, journal-entries, roles, settings/phases, schedule-*, vendors, weather-records, workflows, custom-fields) + v2 contracts (12 files) + v2 safety (12 files) + v2 equipment (8 files)
+- **Batch 3 (121 files):** permits, bid-packages, rfis, purchase-orders, change-orders, draw-requests, lien-waivers, documents, selections, quality-checklists, daily-logs, training, vendor-portal, vendor-performance, marketing
+- **Batch 4 (218 files):** All remaining v2 domains (onboarding, advanced-reports, ai-documents, reports, invoice-extractions, support, marketplace, analytics, schedule-intelligence, price-intelligence, estimates, billing, branding, marketing-site, integrations, portal, hr, client-portal, assemblies, warranties, maintenance, punch-list, inventory, time-entries, labor-rates, material-requests, financial-periods, mobile, invoices, submittals, job-photos, communications, contacts, notifications, etc.)
+- **Final cleanup (23 files):** AP/AR line items, data-migration, equipment costs, vendor subdirectories
+
+### Pattern
+```typescript
+// BEFORE:
+.select('*', { count: 'exact' })
+// AFTER:
+.select('id, company_id, col3, col4, ...', { count: 'exact' })
+
+// JOINs preserved:
+.select('id, company_id, ..., vendors(id, name)')
+```
+
+### Verification
+- `grep -rl "select('\*'" app/src/app/api/` returns 0 files
+- `deleted_at` excluded from all column lists (filtered, not returned)
+- TypeScript: 0 errors across all 5 validation runs
+- Acceptance tests: 3260/3260 pass across all 5 runs
+
 ## Session 54b — deleted_at Filters + Pagination Normalization (2026-03-02)
 
 ### deleted_at Filters (2 files)

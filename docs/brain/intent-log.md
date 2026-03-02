@@ -1,5 +1,24 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-02: Session 54c — select('*') → Explicit Columns on All API Routes
+
+### Why
+- Session 49 identified `select('*')` as a MEDIUM security issue — `companies` table exposes `settings` JSON, `employees` table exposes `base_wage`/`emergency_contact_*`/`address`/`workers_comp_class`
+- Session 54b audit counted 585 instances across 468 files — too large for that session
+- `select('*')` returns all columns including future additions, violating principle of least privilege
+- Explicit column lists are self-documenting and prevent accidental exposure of new sensitive columns
+
+### What
+- Queried `information_schema.columns` via Supabase MCP for 60+ table schemas
+- Replaced ~800 `select('*')` patterns across ~453 files in 5 batches
+- Each replacement uses the actual DB column list, excluding `deleted_at` (filtered, not returned)
+- JOIN syntax preserved (e.g., `vendors(id, name)` left intact)
+- Zero `select('*')` remaining in any API route
+
+### Discovered
+- Some table names differed from expected: `custom_field_definitions` not `custom_fields`, `project_phases` not `phases`, `vendor_compliance` not `vendor_compliance_docs`
+- Batch 1 missed nested line-item queries (ap_bill_lines, ar_invoice_lines) — caught in final cleanup
+
 ## 2026-03-02: Session 54b — deleted_at Filters + Pagination Normalization
 
 ### Why

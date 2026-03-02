@@ -1,5 +1,17 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 54c — select('*') → Explicit Columns on All API Routes (2026-03-02)
+
+### select('*') Elimination
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero `select('*')` in any API route file | `grep -rl "select('\*'" app/src/app/api/` returns 0 | PASS |
+| All column lists match actual DB schema | Verified against information_schema.columns | PASS |
+| `deleted_at` excluded from all select lists | Not returned to clients | PASS |
+| JOIN syntax preserved | `table(col1, col2)` intact | PASS |
+| TypeScript compilation (5 runs) | 0 errors | PASS |
+| Acceptance tests (5 runs) | 3260/3260 pass | PASS |
+
 ## Session 54b — deleted_at Filters + Pagination Normalization (2026-03-02)
 
 ### Query Correctness
