@@ -38,7 +38,7 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
 
   const { data, error } = await supabase
     .from('workflow_definitions')
-    .select('*')
+    .select('id, company_id, entity_type, name, description, is_active, is_default, states, transitions, thresholds, notifications, created_at, updated_at')
     .eq('company_id', ctx.companyId!)
     .eq('entity_type', entityType)
     .is('deleted_at', null)

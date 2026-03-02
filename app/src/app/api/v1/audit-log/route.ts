@@ -12,7 +12,7 @@ export const GET = createApiHandler(
     // Build query
     let query = supabase
       .from('auth_audit_log')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, user_id, action, table_name, record_id, old_data, new_data, ip_address, user_agent, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: false })
 

@@ -89,7 +89,7 @@ export const GET = createApiHandler(
 
     const { data: contacts, count, error } = await supabase
       .from('vendor_contacts')
-      .select('*', { count: 'exact' })
+      .select('id, vendor_id, company_id, name, title, email, phone, is_primary, created_at, updated_at', { count: 'exact' })
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
       .order('is_primary', { ascending: false })

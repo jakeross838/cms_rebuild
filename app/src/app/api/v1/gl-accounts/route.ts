@@ -60,7 +60,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('gl_accounts')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, account_number, name, account_type, sub_type, parent_account_id, is_active, is_system, description, normal_balance, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null) as unknown as {
         eq: (col: string, val: unknown) => typeof query

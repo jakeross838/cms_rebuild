@@ -42,7 +42,7 @@ export const GET = createApiHandler(
 
     const { data: client, error } = await supabase
       .from('clients')
-      .select('*')
+      .select('id, company_id, name, email, phone, address, city, state, zip, notes, created_at')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)

@@ -75,7 +75,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('contract_signers')
-      .select('*', { count: 'exact' })
+      .select('id, contract_id, company_id, name, email, role, status, sign_order, signed_at, declined_at, decline_reason, viewed_at, ip_address, user_agent, created_at, updated_at', { count: 'exact' })
       .eq('contract_id', contractId)
       .is('deleted_at', null)
       .order('sign_order', { ascending: true })
@@ -147,7 +147,7 @@ export const POST = createApiHandler(
         role: input.role,
         sign_order: input.sign_order,
       })
-      .select('*')
+      .select('id, contract_id, company_id, name, email, role, status, sign_order, signed_at, declined_at, decline_reason, viewed_at, ip_address, user_agent, created_at, updated_at')
       .single()
 
     if (error) {

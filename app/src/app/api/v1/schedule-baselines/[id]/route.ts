@@ -38,7 +38,7 @@ export const GET = createApiHandler(
 
     const { data: baseline, error } = await supabase
       .from('schedule_baselines')
-      .select('*')
+      .select('id, company_id, job_id, name, snapshot_date, baseline_data, created_by, created_at')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .single() as { data: ScheduleBaseline | null; error: { message: string } | null }

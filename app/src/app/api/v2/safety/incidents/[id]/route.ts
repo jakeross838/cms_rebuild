@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('safety_incidents')
-      .select('*')
+      .select('id, company_id, job_id, incident_number, title, description, incident_date, incident_time, location, severity, status, incident_type, reported_by, assigned_to, injured_party, injury_description, witnesses, root_cause, corrective_actions, preventive_actions, osha_recordable, osha_report_number, lost_work_days, restricted_days, medical_treatment, photos, documents, resolved_at, resolved_by, closed_at, closed_by, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -141,7 +141,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, incident_number, title, description, incident_date, incident_time, location, severity, status, incident_type, reported_by, assigned_to, injured_party, injury_description, witnesses, root_cause, corrective_actions, preventive_actions, osha_recordable, osha_report_number, lost_work_days, restricted_days, medical_treatment, photos, documents, resolved_at, resolved_by, closed_at, closed_by, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -92,7 +92,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('vendor_compliance')
-      .select('*', { count: 'exact' })
+      .select('id, vendor_id, company_id, requirement_type, requirement_name, status, expiration_date, document_id, notes, created_at, updated_at', { count: 'exact' })
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!) as unknown as {
         eq: (col: string, val: unknown) => typeof query

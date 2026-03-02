@@ -45,7 +45,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('contract_templates')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, contract_type, content, clauses, variables, is_active, is_system, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('is_active', true)
 
@@ -105,7 +105,7 @@ export const POST = createApiHandler(
         is_active: input.is_active,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, name, description, contract_type, content, clauses, variables, is_active, is_system, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -59,7 +59,7 @@ export const GET = createApiHandler(
 
     const { data: deps, error } = await supabase
       .from('schedule_dependencies')
-      .select('*')
+      .select('id, predecessor_id, successor_id, dependency_type, lag_days, created_at')
       .in('predecessor_id', ids)
       .order('created_at', { ascending: true }) as { data: ScheduleDependency[] | null; error: { message: string } | null }
 

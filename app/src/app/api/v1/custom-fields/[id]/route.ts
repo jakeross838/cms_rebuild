@@ -37,7 +37,7 @@ async function handleGet(req: NextRequest, ctx: ApiContext) {
 
   const { data, error } = await supabase
     .from('custom_field_definitions')
-    .select('*')
+    .select('id, company_id, entity_type, field_key, field_label, field_type, description, placeholder, default_value, options, validation, show_conditions, section, sort_order, visible_to_roles, editable_by_roles, show_in_portal, show_in_list_view, is_required, is_active, created_at, updated_at')
     .eq('id', id)
     .eq('company_id', ctx.companyId!)
     .is('deleted_at', null)

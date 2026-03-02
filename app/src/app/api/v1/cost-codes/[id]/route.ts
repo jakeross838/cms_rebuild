@@ -42,7 +42,7 @@ export const GET = createApiHandler(
 
     const { data: costCode, error } = await supabase
       .from('cost_codes')
-      .select('*')
+      .select('id, company_id, code, division, subdivision, name, description, category, trade, parent_id, sort_order, is_active, is_default, created_at')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)

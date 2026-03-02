@@ -40,7 +40,7 @@ export const GET = createApiHandler(
 
     const { data: task, error } = await supabase
       .from('schedule_tasks')
-      .select('*')
+      .select('id, company_id, job_id, parent_task_id, name, description, phase, trade, task_type, planned_start, planned_end, actual_start, actual_end, duration_days, progress_pct, status, assigned_to, assigned_vendor_id, is_critical_path, total_float, sort_order, notes, created_at, updated_at')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)

@@ -25,7 +25,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
 
   const { data: phasesData, error } = await supabase
     .from('project_phases')
-    .select('*')
+    .select('id, company_id, name, description, color, default_duration_days, sort_order, is_active, is_system, milestone_type, created_at, updated_at')
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order('sort_order', { ascending: true })

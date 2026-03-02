@@ -60,7 +60,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('cost_codes')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, code, division, subdivision, name, description, category, trade, parent_id, sort_order, is_active, is_default, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null) as unknown as {
         eq: (col: string, val: unknown) => typeof query

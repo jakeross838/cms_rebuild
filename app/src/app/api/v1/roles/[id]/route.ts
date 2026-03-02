@@ -32,7 +32,7 @@ export const GET = createApiHandler(
 
     const { data: role, error } = await supabase
       .from('roles')
-      .select('*')
+      .select('id, company_id, name, description, base_role, is_system, permissions, field_overrides, created_at, updated_at')
       .eq('id', id)
       .or(`company_id.is.null,company_id.eq.${ctx.companyId}`)
       .is('deleted_at', null)
@@ -67,7 +67,7 @@ export const PATCH = createApiHandler(
 
     const { data: existing, error: fetchError } = await supabase
       .from('roles')
-      .select('*')
+      .select('id, company_id, name, description, base_role, is_system, permissions, field_overrides, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)

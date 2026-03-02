@@ -42,7 +42,7 @@ export const GET = createApiHandler(
 
     const { data: line, error } = await supabase
       .from('budget_lines')
-      .select('*')
+      .select('id, budget_id, company_id, job_id, cost_code_id, phase, description, estimated_amount, committed_amount, actual_amount, projected_amount, variance_amount, sort_order, notes, created_at, updated_at')
       .eq('id', lineId)
       .eq('budget_id', budgetId)
       .eq('company_id', ctx.companyId!)

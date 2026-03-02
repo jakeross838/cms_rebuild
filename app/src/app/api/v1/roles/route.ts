@@ -20,7 +20,7 @@ export const GET = createApiHandler(
 
     const { data, error, count } = await supabase
       .from('roles')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, name, description, base_role, is_system, permissions, field_overrides, created_at, updated_at', { count: 'exact' })
       .or(`company_id.is.null,company_id.eq.${ctx.companyId}`)
       .is('deleted_at', null)
       .order('name', { ascending: true })

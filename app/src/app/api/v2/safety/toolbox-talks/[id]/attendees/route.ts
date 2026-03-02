@@ -74,7 +74,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('toolbox_talk_attendees')
-      .select('*', { count: 'exact' })
+      .select('id, talk_id, company_id, attendee_name, attendee_id, trade, company_name, signed, signed_at, notes, created_at', { count: 'exact' })
       .eq('talk_id', talkId)
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: true })
@@ -148,7 +148,7 @@ export const POST = createApiHandler(
         signed_at: input.signed ? new Date().toISOString() : null,
         notes: input.notes ?? null,
       })
-      .select('*')
+      .select('id, talk_id, company_id, attendee_name, attendee_id, trade, company_name, signed, signed_at, notes, created_at')
       .single()
 
     if (error) {

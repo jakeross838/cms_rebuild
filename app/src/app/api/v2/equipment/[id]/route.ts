@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('equipment')
-      .select('*, equipment_assignments(id), equipment_maintenance(id), equipment_costs(id)')
+      .select('id, company_id, name, description, equipment_type, status, ownership_type, make, model, serial_number, year, purchase_date, purchase_price, current_value, daily_rate, location, notes, photo_urls, created_by, created_at, updated_at, equipment_assignments(id), equipment_maintenance(id), equipment_costs(id)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -110,7 +110,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, name, description, equipment_type, status, ownership_type, make, model, serial_number, year, purchase_date, purchase_price, current_value, daily_rate, location, notes, photo_urls, created_by, created_at, updated_at')
       .single()
 
     if (error) {

@@ -75,7 +75,7 @@ export const GET = createApiHandler(
 
     const { data, count, error } = await supabase
       .from('safety_inspection_items')
-      .select('*', { count: 'exact' })
+      .select('id, inspection_id, company_id, description, category, result, notes, photo_url, sort_order, created_at, updated_at', { count: 'exact' })
       .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
       .order('sort_order', { ascending: true })
@@ -149,7 +149,7 @@ export const POST = createApiHandler(
         photo_url: input.photo_url ?? null,
         sort_order: input.sort_order,
       })
-      .select('*')
+      .select('id, inspection_id, company_id, description, category, result, notes, photo_url, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

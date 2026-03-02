@@ -59,7 +59,7 @@ export const GET = createApiHandler(
 
     const { data: entries, error } = await supabase
       .from('daily_log_entries')
-      .select('*')
+      .select('id, daily_log_id, entry_type, description, time_logged, sort_order, created_by, created_at, updated_at')
       .eq('daily_log_id', logId)
       .order('sort_order', { ascending: true }) as { data: DailyLogEntry[] | null; error: { message: string } | null }
 

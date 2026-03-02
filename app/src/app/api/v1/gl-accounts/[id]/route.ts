@@ -43,7 +43,7 @@ export const GET = createApiHandler(
 
     const { data: account, error } = await supabase
       .from('gl_accounts')
-      .select('*')
+      .select('id, company_id, account_number, name, account_type, sub_type, parent_account_id, is_active, is_system, description, normal_balance, created_at, updated_at')
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .single() as { data: GlAccount | null; error: { message: string } | null }

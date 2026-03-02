@@ -29,7 +29,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('toolbox_talks')
-      .select('*')
+      .select('id, company_id, job_id, title, topic, description, talk_date, talk_time, duration_minutes, status, presenter_id, location, materials, notes, completed_at, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -44,7 +44,7 @@ export const GET = createApiHandler(
     // Fetch attendees
     const { data: attendees } = await supabase
       .from('toolbox_talk_attendees')
-      .select('*')
+      .select('id, talk_id, company_id, attendee_name, attendee_id, trade, company_name, signed, signed_at, notes, created_at')
       .eq('talk_id', id)
       .eq('company_id', ctx.companyId!)
       .order('created_at', { ascending: true })
@@ -122,7 +122,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, company_id, job_id, title, topic, description, talk_date, talk_time, duration_minutes, status, presenter_id, location, materials, notes, completed_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

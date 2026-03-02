@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('safety_inspections')
-      .select('*')
+      .select('id, company_id, job_id, inspection_number, title, description, inspection_date, inspection_type, status, result, inspector_id, location, total_items, passed_items, failed_items, na_items, score, notes, follow_up_required, follow_up_date, follow_up_notes, completed_at, completed_by, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -46,7 +46,7 @@ export const GET = createApiHandler(
     // Fetch items
     const { data: items } = await supabase
       .from('safety_inspection_items')
-      .select('*')
+      .select('id, inspection_id, company_id, description, category, result, notes, photo_url, sort_order, created_at, updated_at')
       .eq('inspection_id', id)
       .eq('company_id', ctx.companyId!)
       .order('sort_order', { ascending: true })
@@ -133,7 +133,7 @@ export const PUT = createApiHandler(
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
-      .select('*')
+      .select('id, company_id, job_id, inspection_number, title, description, inspection_date, inspection_type, status, result, inspector_id, location, total_items, passed_items, failed_items, na_items, score, notes, follow_up_required, follow_up_date, follow_up_notes, completed_at, completed_by, created_by, created_at, updated_at')
       .single()
 
     if (error) {

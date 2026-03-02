@@ -85,7 +85,7 @@ export const POST = createApiHandler(
       .eq('id', signerId)
       .eq('contract_id', contractId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, contract_id, company_id, name, email, role, status, sign_order, signed_at, declined_at, decline_reason, viewed_at, ip_address, user_agent, created_at, updated_at')
       .single()
 
     if (error) {

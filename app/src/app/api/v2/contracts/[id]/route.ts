@@ -30,7 +30,7 @@ export const GET = createApiHandler(
 
     const { data, error } = await supabase
       .from('contracts')
-      .select('*, contract_signers(id), contract_versions(*)')
+      .select('id, company_id, job_id, contract_number, title, description, contract_type, status, template_id, vendor_id, client_id, contract_value, retention_pct, start_date, end_date, executed_at, expires_at, content, metadata, created_by, created_at, updated_at, contract_signers(id), contract_versions(id, contract_id, company_id, version_number, change_summary, content, snapshot_json, created_by, created_at)')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -132,7 +132,7 @@ export const PUT = createApiHandler(
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .eq('status', existing.status)
-      .select('*')
+      .select('id, company_id, job_id, contract_number, title, description, contract_type, status, template_id, vendor_id, client_id, contract_value, retention_pct, start_date, end_date, executed_at, expires_at, content, metadata, created_by, created_at, updated_at')
       .single()
 
     if (error) {

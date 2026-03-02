@@ -29,7 +29,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext, { params }: RoutePa
 
   const { data: phaseData, error } = await supabase
     .from('project_phases')
-    .select('*')
+    .select('id, company_id, name, description, color, default_duration_days, sort_order, is_active, is_system, milestone_type, created_at, updated_at')
     .eq('id', id)
     .eq('company_id', companyId)
     .is('deleted_at', null)
@@ -93,7 +93,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext, { params }: RouteP
   // Get existing phase
   const { data: existingData, error: fetchError } = await supabase
     .from('project_phases')
-    .select('*')
+    .select('id, company_id, name, description, color, default_duration_days, sort_order, is_active, is_system, milestone_type, created_at, updated_at')
     .eq('id', id)
     .eq('company_id', companyId)
     .is('deleted_at', null)
@@ -222,7 +222,7 @@ async function handleDelete(_req: NextRequest, ctx: ApiContext, { params }: Rout
   // Get existing phase
   const { data: existingData, error: fetchError } = await supabase
     .from('project_phases')
-    .select('*')
+    .select('id, company_id, name, description, color, default_duration_days, sort_order, is_active, is_system, milestone_type, created_at, updated_at')
     .eq('id', id)
     .eq('company_id', companyId)
     .is('deleted_at', null)

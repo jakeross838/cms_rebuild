@@ -46,7 +46,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('toolbox_talks')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, title, topic, description, talk_date, talk_time, duration_minutes, status, presenter_id, location, materials, notes, completed_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
 
     if (filters.job_id) {
@@ -113,7 +113,7 @@ export const POST = createApiHandler(
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
       })
-      .select('*')
+      .select('id, company_id, job_id, title, topic, description, talk_date, talk_time, duration_minutes, status, presenter_id, location, materials, notes, completed_at, created_by, created_at, updated_at')
       .single()
 
     if (error) {

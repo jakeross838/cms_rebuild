@@ -83,7 +83,7 @@ export const PUT = createApiHandler(
       .eq('id', itemId)
       .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
-      .select('*')
+      .select('id, inspection_id, company_id, description, category, result, notes, photo_url, sort_order, created_at, updated_at')
       .single()
 
     if (error) {

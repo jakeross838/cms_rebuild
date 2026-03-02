@@ -61,7 +61,7 @@ export const GET = createApiHandler(
 
     let query = supabase
       .from('gl_journal_entries')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, entry_date, reference_number, memo, status, source_type, source_id, posted_by, posted_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!) as unknown as {
         eq: (col: string, val: unknown) => typeof query
         gte: (col: string, val: string) => typeof query

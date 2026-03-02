@@ -54,7 +54,7 @@ export const GET = createApiHandler(
 
     const { data: baselines, count, error } = await supabase
       .from('schedule_baselines')
-      .select('*', { count: 'exact' })
+      .select('id, company_id, job_id, name, snapshot_date, baseline_data, created_by, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
       .eq('job_id', filters.job_id)
       .order('created_at', { ascending: false })

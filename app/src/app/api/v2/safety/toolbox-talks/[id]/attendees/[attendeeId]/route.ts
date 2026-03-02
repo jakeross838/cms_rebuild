@@ -86,7 +86,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', attendeeId)
       .eq('talk_id', talkId)
-      .select('*')
+      .select('id, talk_id, company_id, attendee_name, attendee_id, trade, company_name, signed, signed_at, notes, created_at')
       .single()
 
     if (error) {
