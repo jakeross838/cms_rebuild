@@ -144,11 +144,11 @@ export function FeatureRegistryPreview(): React.ReactElement {
   return (
     <div className="space-y-4">
       {/* ── Header ─────────────────────────────── */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 rounded-xl p-6 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
-              <ToggleRight className="h-5 w-5 text-amber-400" />
+            <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center">
+              <ToggleRight className="h-5 w-5 text-white/80" />
             </div>
             <div>
               <h1 className="text-xl font-bold">Feature Registry</h1>
@@ -159,12 +159,12 @@ export function FeatureRegistryPreview(): React.ReactElement {
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <div className="text-2xl font-bold text-amber-400">{stats.enabled}</div>
+              <div className="text-2xl font-bold text-white">{stats.enabled}</div>
               <div className="text-[10px] text-slate-400 uppercase tracking-wider">Enabled</div>
             </div>
             <div className="h-8 w-px bg-slate-700" />
             <div className="text-right">
-              <div className="text-2xl font-bold text-green-400">{stats.ready}</div>
+              <div className="text-2xl font-bold text-slate-300">{stats.ready}</div>
               <div className="text-[10px] text-slate-400 uppercase tracking-wider">Ready</div>
             </div>
           </div>
@@ -174,12 +174,12 @@ export function FeatureRegistryPreview(): React.ReactElement {
       {/* ── Stats Cards ────────────────────────── */}
       <div className="grid grid-cols-6 gap-3">
         {[
-          { label: 'Total Features', value: stats.total, icon: Zap, color: 'bg-stone-100 text-stone-600' },
-          { label: 'Enabled', value: stats.enabled, icon: ToggleRight, color: 'bg-amber-100 text-amber-600' },
-          { label: 'Self-Learning', value: stats.selfLearning, icon: Brain, color: 'bg-purple-100 text-purple-600' },
-          { label: 'Ready to Build', value: stats.ready, icon: CheckCircle, color: 'bg-green-100 text-green-600' },
-          { label: 'Planned', value: stats.planned, icon: Clock, color: 'bg-amber-100 text-amber-600' },
-          { label: 'Future', value: stats.future, icon: Star, color: 'bg-indigo-100 text-indigo-600' },
+          { label: 'Total Features', value: stats.total, icon: Zap, color: 'bg-slate-100 text-slate-600' },
+          { label: 'Enabled', value: stats.enabled, icon: ToggleRight, color: 'bg-slate-100 text-slate-700' },
+          { label: 'Self-Learning', value: stats.selfLearning, icon: Brain, color: 'bg-slate-100 text-slate-600' },
+          { label: 'Ready to Build', value: stats.ready, icon: CheckCircle, color: 'bg-slate-100 text-slate-600' },
+          { label: 'Planned', value: stats.planned, icon: Clock, color: 'bg-slate-100 text-slate-500' },
+          { label: 'Future', value: stats.future, icon: Star, color: 'bg-slate-100 text-slate-500' },
         ].map(stat => (
           <div key={stat.label} className="flex items-center gap-2 bg-white rounded-lg border border-warm-200 p-3">
             <div className={cn('h-9 w-9 rounded-lg flex items-center justify-center', stat.color)}>
@@ -200,8 +200,8 @@ export function FeatureRegistryPreview(): React.ReactElement {
           className="w-full flex items-center justify-between px-4 py-3 hover:bg-warm-50 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-amber-100 flex items-center justify-center">
-              <Rocket className="h-4 w-4 text-amber-600" />
+            <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center">
+              <Rocket className="h-4 w-4 text-slate-600" />
             </div>
             <div className="text-left">
               <div className="text-sm font-semibold text-warm-900">Smart Onboarding Walkthrough</div>
@@ -236,7 +236,7 @@ export function FeatureRegistryPreview(): React.ReactElement {
                     className="bg-warm-50 rounded-lg p-3 border border-warm-100"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="h-6 w-6 rounded-full bg-amber-100 flex items-center justify-center text-[10px] font-bold text-amber-700">
+                      <div className="h-6 w-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-700">
                         {step.step}
                       </div>
                       <StepIcon className="h-4 w-4 text-warm-500" />
@@ -265,7 +265,7 @@ export function FeatureRegistryPreview(): React.ReactElement {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search 205 features..."
-              className="w-full pl-9 pr-3 py-2 text-sm bg-warm-50 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400"
+              className="w-full pl-9 pr-3 py-2 text-sm bg-warm-50 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/50 focus:border-slate-400"
             />
           </div>
 
@@ -273,7 +273,7 @@ export function FeatureRegistryPreview(): React.ReactElement {
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-2 text-sm bg-warm-50 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400/50"
+            className="px-3 py-2 text-sm bg-warm-50 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/50"
           >
             <option value="all">All Statuses</option>
             <option value="ready">Ready to Build</option>
@@ -287,7 +287,7 @@ export function FeatureRegistryPreview(): React.ReactElement {
             className={cn(
               'flex items-center gap-2 px-3 py-2 text-sm rounded-lg border transition-colors',
               selfLearnOnly
-                ? 'bg-purple-50 border-purple-300 text-purple-700'
+                ? 'bg-slate-800 border-slate-700 text-white'
                 : 'bg-warm-50 border-warm-200 text-warm-600 hover:bg-warm-100'
             )}
           >
@@ -331,7 +331,7 @@ export function FeatureRegistryPreview(): React.ReactElement {
                     <div className="text-[10px] text-warm-500">
                       {features.length} features &middot; {enabledCount} enabled
                       {selfLearnCount > 0 && (
-                        <span className="ml-1 text-purple-500">&middot; {selfLearnCount} AI-powered</span>
+                        <span className="ml-1 text-slate-500">&middot; {selfLearnCount} AI-powered</span>
                       )}
                     </div>
                   </div>
@@ -340,13 +340,13 @@ export function FeatureRegistryPreview(): React.ReactElement {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => enableAllInCategory(cat)}
-                    className="px-2 py-1 text-[10px] font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded border border-green-200 transition-colors"
+                    className="px-2 py-1 text-[10px] font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded border border-slate-200 transition-colors"
                   >
                     Enable All
                   </button>
                   <button
                     onClick={() => disableAllInCategory(cat)}
-                    className="px-2 py-1 text-[10px] font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded border border-red-200 transition-colors"
+                    className="px-2 py-1 text-[10px] font-medium text-slate-500 bg-white hover:bg-slate-50 rounded border border-slate-200 transition-colors"
                   >
                     Disable All
                   </button>
@@ -374,7 +374,7 @@ export function FeatureRegistryPreview(): React.ReactElement {
                           onClick={() => toggleFeature(feature.id)}
                           className={cn(
                             'mt-0.5 relative h-6 w-11 rounded-full transition-colors flex-shrink-0',
-                            isEnabled ? 'bg-amber-500' : 'bg-warm-300'
+                            isEnabled ? 'bg-slate-800' : 'bg-slate-300'
                           )}
                         >
                           <div
@@ -396,7 +396,7 @@ export function FeatureRegistryPreview(): React.ReactElement {
                             </span>
 
                             {feature.selfLearn && (
-                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-purple-50 text-purple-600 rounded border border-purple-200">
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-slate-100 text-slate-600 rounded border border-slate-200">
                                 <Brain className="h-3 w-3" />
                                 Self-Learning
                               </span>
@@ -435,12 +435,12 @@ export function FeatureRegistryPreview(): React.ReactElement {
       </div>
 
       {/* ── AI Insights Bar ────────────────────── */}
-      <div className="bg-warm-50 border border-amber-200 rounded-xl px-4 py-3">
+      <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
         <div className="flex items-start gap-3">
-          <Sparkles className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+          <Sparkles className="h-4 w-4 text-slate-500 mt-0.5 flex-shrink-0" />
           <div className="text-sm">
-            <span className="font-medium text-amber-800">AI Feature Intelligence: </span>
-            <span className="text-amber-700">
+            <span className="font-medium text-slate-700">AI Feature Intelligence: </span>
+            <span className="text-slate-600">
               {stats.selfLearning} features use self-learning AI that improves with every interaction.
               {stats.ready} features are ready to build today.
               Enabling all Phase 1 features gives your team immediate access to the core platform.

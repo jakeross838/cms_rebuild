@@ -13,16 +13,16 @@ export interface Feature {
 }
 
 export const statusConfig = {
-  ready: { label: 'Ready to Build', color: 'text-green-400', bg: 'bg-green-950', border: 'border-green-800/30' },
-  planned: { label: 'Planned', color: 'text-amber-400', bg: 'bg-amber-950', border: 'border-amber-800/30' },
-  future: { label: 'Future', color: 'text-indigo-400', bg: 'bg-indigo-950', border: 'border-indigo-800/30' },
+  ready: { label: 'Ready to Build', color: 'text-slate-700', bg: 'bg-slate-100', border: 'border-slate-300' },
+  planned: { label: 'Planned', color: 'text-slate-500', bg: 'bg-slate-50', border: 'border-slate-200' },
+  future: { label: 'Future', color: 'text-slate-400', bg: 'bg-white', border: 'border-slate-200' },
 } as const
 
 export const effortConfig = {
-  S: { label: 'Small', color: 'text-green-300' },
-  M: { label: 'Medium', color: 'text-yellow-300' },
-  L: { label: 'Large', color: 'text-orange-400' },
-  XL: { label: 'XL', color: 'text-red-400' },
+  S: { label: 'Small', color: 'text-slate-400' },
+  M: { label: 'Medium', color: 'text-slate-500' },
+  L: { label: 'Large', color: 'text-slate-600' },
+  XL: { label: 'XL', color: 'text-slate-700 font-semibold' },
 } as const
 
 export const FEATURES: Feature[] = [
