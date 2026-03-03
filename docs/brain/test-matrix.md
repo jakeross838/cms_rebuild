@@ -1,5 +1,30 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 57 — Security Headers, Notification Casts, Error/Loading Boundaries (2026-03-03)
+
+### Security Headers
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Middleware calls proxy() | `import { proxy }` from `@/proxy` | PASS |
+| Config is static object literal | No re-export, inline matcher | PASS |
+| Build succeeds with proxy middleware | Clean build | PASS |
+
+### Notification Service
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero `as never` in notifications/service.ts | Uses typedUpsert + typedInsertMany | PASS |
+| typedUpsert accepts ignoreDuplicates | Option added to signature | PASS |
+
+### Error/Loading Boundaries
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| 80 nested route segments have error.tsx | Files created | PASS |
+| 80 nested route segments have loading.tsx | Files created | PASS |
+| All error.tsx are `'use client'` components | Pattern verified | PASS |
+| TypeScript compilation | 0 errors | PASS |
+| All tests pass | 3306/3306 | PASS |
+| Build succeeds | Clean | PASS |
+
 ## Session 56 — Quality Hardening, Deploy Prep, Performance, E2E Coverage (2026-03-03)
 
 ### Root Middleware

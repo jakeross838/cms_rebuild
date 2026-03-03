@@ -1,5 +1,22 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 57 — Security Headers, Notification Casts, Error/Loading Boundaries (2026-03-03)
+
+### Security Headers Wired to Middleware
+Updated `app/middleware.ts` to import and call `proxy()` from `src/proxy.ts` instead of directly calling `updateSession()`. Now all responses include CSP, X-Frame-Options (DENY), X-Content-Type-Options (nosniff), X-XSS-Protection, Referrer-Policy, Permissions-Policy, X-DNS-Prefetch-Control, and HSTS (production only). Previously headers were defined in proxy.ts but never applied.
+
+### Notification Service — Last `as never` Casts Removed
+Updated `app/src/lib/notifications/service.ts` to use `typedUpsert` and `typedInsertMany` from `typed-queries.ts` instead of direct `as never` casts. Added `ignoreDuplicates` option to `typedUpsert` helper signature.
+
+### 160 Error/Loading Boundary Files Added (80 route segments)
+Added `error.tsx` + `loading.tsx` to 80 nested route segments that were missing them:
+- 20 top-level "new" form routes (bids, change-orders, clients, communications, compliance, contacts, contracts, cost-codes, dashboards, draw-requests, email-marketing, equipment, estimates)
+- 20 more form/utility routes (expenses sub-pages, financial sub-forms, hr, inventory, invoices, account/profile, activity sub-pages, community, company sub-pages)
+- 15 directory/detail routes (directory sub-pages, docs, lien-waivers, permits, punch-lists, purchase-orders, rfis, submittals, time-clock, warranties)
+- 25 job-nested routes (budget, change-orders, communications, daily-logs, edit, files, inspections, inventory, invoices, lien-waivers, permits, photos, punch-list, purchase-orders, selections, team)
+
+Each error.tsx follows the standard pattern: `'use client'`, AlertTriangle icon, contextual heading, dev/prod error message, error digest display, "Try again" + "Go back" buttons. Each loading.tsx has a centered spinner with "Loading..." text.
+
 ## Session 56 — Quality Hardening, Deploy Prep, Performance, E2E Coverage (2026-03-03)
 
 ### Root Middleware Created (CRITICAL — Auth Fix)

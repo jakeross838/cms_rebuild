@@ -1,5 +1,17 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-03: Session 57 — Security Headers, Notification Casts, Error/Loading Boundaries
+
+### Why
+- **Security headers not applied**: proxy.ts defined CSP, X-Frame-Options, HSTS etc. but middleware.ts only called `updateSession()` — no headers were sent on responses, leaving the app vulnerable to clickjacking, XSS, and MIME sniffing.
+- **2 remaining `as never` casts**: notifications/service.ts still had direct casts instead of using the centralized typed-queries helpers.
+- **67 nested pages missing error/loading boundaries**: While parent route groups had them, form pages and detail pages lacked granular boundaries, meaning errors in a child route would blow away the parent layout.
+
+### Decisions
+- **Middleware imports proxy()**: Rather than duplicating the security headers logic, middleware.ts now imports `proxy()` from `src/proxy.ts` which handles both session update and header injection.
+- **Static config required**: Next.js requires `export const config` to be a static object literal — re-exporting from proxy.ts failed. Inlined the matcher directly.
+- **Consistent error.tsx pattern**: All 80 error.tsx files follow the same structure with contextual labels and "Go back" links pointing to the parent route.
+
 ## 2026-03-03: Session 56 — Quality Hardening, Deploy Prep, Performance, E2E Coverage
 
 ### Why
