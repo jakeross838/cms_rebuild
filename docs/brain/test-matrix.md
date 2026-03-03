@@ -6594,3 +6594,172 @@ All 4 list page edits (div->Link) pass `npx tsc --noEmit`:
 - **After**: 0 redundant queries, all auth via context from SSR
 - **Network saved**: ~121 HTTP requests eliminated per app session
 - **Load time**: Faster client hydration, no auth fetch delay on detail/edit pages
+
+---
+
+## Session 58 — Hook Unit Tests, Integration Tests, Row Actions, V1 Deprecation, E2E (2026-03-03)
+
+### Hook Unit Tests (53 files, ~550 tests)
+
+Each hook file follows the same test pattern:
+
+| Test | Expected |
+|------|----------|
+| useList returns data on success | MSW returns mock array, `result.current.data` matches |
+| useList handles error | MSW returns 500, `result.current.error` is defined |
+| useDetail returns single record | MSW returns mock object for given ID |
+| useDetail disabled when ID is null | Query not fired, `result.current.data` is undefined |
+| useCreate mutates successfully | POST to API, invalidates list query key |
+
+**Hooks tested** (all in `tests/unit/hooks/`):
+use-clients, use-vendors, use-jobs, use-invoices, use-budgets, use-contacts, use-leads, use-estimates, use-bids, use-rfis, use-submittals, use-change-orders, use-purchase-orders, use-daily-logs, use-punch-lists, use-equipment, use-time-entries, use-documents, use-notifications, use-scheduling, use-warranties, use-permits, use-safety, use-hr, use-inventory, use-draw-requests, use-lien-waivers, use-selections, use-contracts, and all remaining hooks from `app/src/hooks/`
+
+### Integration Tests (5 files, 97 tests)
+
+#### `api-middleware.test.ts` (39 tests)
+| Test | Expected |
+|------|----------|
+| Unauthenticated request | Returns 401 with error message |
+| Authenticated request with valid role | Returns 200 |
+| Insufficient RBAC role | Returns 403 |
+| Rate limit exceeded | Returns 429 after threshold |
+| Valid Zod body | Passes validation, proceeds to handler |
+| Invalid Zod body | Returns 400 with validation errors |
+| Audit log created on mutation | Audit entry written after POST/PUT/DELETE |
+| Pagination params parsed | `page`, `limit`, `sort`, `order` extracted from query |
+| Soft-delete sets archived_at | DELETE sets `archived_at` instead of removing row |
+| Deprecated route returns headers | `Deprecation: true`, `Sunset`, `Link` headers present |
+| Cache hit returns cached data | Second identical GET returns from cache |
+| Cache invalidation on mutation | POST/PUT/DELETE clears relevant cache keys |
+
+#### `auth-api.test.ts` (14 tests)
+| Test | Expected |
+|------|----------|
+| Login with valid credentials | Returns 200 with session token |
+| Login with invalid password | Returns 401 |
+| Signup creates user + profile | Returns 201, user row and profile row created |
+| Signup with duplicate email | Returns 409 |
+| Password reset sends email | Returns 200, email dispatched |
+| Session refresh extends TTL | Returns new token with extended expiry |
+| Role-based redirect after login | Redirects to role-appropriate dashboard |
+
+#### `clients-api.test.ts` (15 tests)
+| Test | Expected |
+|------|----------|
+| List clients with pagination | Returns paginated array with total count |
+| List clients with search | Filters by name/email containing search term |
+| List clients with sort | Returns sorted by specified column and order |
+| Create client with valid data | Returns 201 with new client record |
+| Create client with missing required fields | Returns 400 |
+| Update client | Returns 200 with updated fields |
+| Archive client | Sets archived_at, returns 200 |
+| Multi-tenant isolation | Cannot access clients from other company_id |
+
+#### `jobs-api.test.ts` (15 tests)
+| Test | Expected |
+|------|----------|
+| List jobs with pagination | Returns paginated array with total count |
+| Create job with valid data | Returns 201, job linked to company_id |
+| Update job | Returns 200 with updated fields |
+| Archive job | Sets archived_at, returns 200 |
+| Job assignments CRUD | Create/list/delete assignments for a job |
+| Status transitions | Valid transitions succeed, invalid return 400 |
+
+#### `financial-api.test.ts` (14 tests)
+| Test | Expected |
+|------|----------|
+| List invoices | Returns paginated invoices for company |
+| Create invoice with line items | Returns 201, line items linked |
+| Budget variance calculation | Returns correct variance (budget - actual) |
+| Cost transaction entry | Creates transaction, updates budget actual |
+| Payment recording | Updates invoice status to paid, records payment |
+
+### Row Actions Component Tests
+
+#### `RowActions` (`app/src/components/ui/row-actions.tsx`)
+| Test | Expected |
+|------|----------|
+| Renders ⋯ trigger button | MoreHorizontal icon visible |
+| Click opens dropdown | Edit and Archive options visible |
+| Edit navigates to edit page | `router.push('/{entity}/{id}/edit')` called |
+| Archive shows confirmation | `window.confirm()` called |
+| Archive on confirm sends POST | POST to `/api/{entity}/{id}/archive` |
+| Archive refreshes page | `router.refresh()` called after success |
+| Click does not trigger parent Link | `e.stopPropagation()` prevents navigation |
+
+### V1 Deprecation Headers Tests
+
+| Test | Expected |
+|------|----------|
+| V1 route returns Deprecation header | `Deprecation: true` in response headers |
+| V1 route returns Sunset header | RFC 7231 formatted date: `Mon, 01 Sep 2026 00:00:00 GMT` |
+| V1 route returns Link header | `</api/v2/{entity}>; rel="successor-version"` |
+| V2 route does NOT return deprecation | No Deprecation/Sunset/Link headers |
+
+### E2E Tests (6 files, 44 tests)
+
+#### `auth-flows.spec.ts` (9 tests)
+| Test | Expected |
+|------|----------|
+| Login with valid credentials | Redirects to dashboard |
+| Login with invalid credentials | Shows error message |
+| Signup flow | Creates account, redirects to onboarding |
+| Password reset flow | Shows success message |
+| Session persistence | Refresh page, still logged in |
+| Logout | Redirects to login page |
+| Role-based dashboard | Different roles see different content |
+
+#### `financial-workflows.spec.ts` (8 tests)
+| Test | Expected |
+|------|----------|
+| Create invoice | Form submits, invoice appears in list |
+| Edit invoice | Updates reflected after save |
+| Record payment | Invoice status changes to paid |
+| Budget tracking | Budget page shows correct totals |
+| Cost entry | New cost transaction appears in ledger |
+
+#### `vendor-management.spec.ts` (8 tests)
+| Test | Expected |
+|------|----------|
+| Create vendor | Form submits, vendor appears in list |
+| Edit vendor | Updates reflected after save |
+| Archive vendor | Vendor removed from active list |
+| Insurance tracking | Insurance details displayed on vendor page |
+| Performance review | Scores visible on vendor detail |
+
+#### `document-management.spec.ts` (5 tests)
+| Test | Expected |
+|------|----------|
+| Upload document | File appears in document list |
+| Create folder | Folder appears in tree |
+| Search documents | Results filtered by query |
+| Download document | File download initiated |
+
+#### `scheduling.spec.ts` (7 tests)
+| Test | Expected |
+|------|----------|
+| Create calendar event | Event appears on calendar |
+| Gantt chart renders | Tasks shown as bars with dependencies |
+| Task dependency | Linked tasks show connection line |
+| Drag to reschedule | Date updates after drag |
+
+#### `notifications-settings.spec.ts` (7 tests)
+| Test | Expected |
+|------|----------|
+| View notifications | List of notifications displayed |
+| Mark as read | Notification visual state changes |
+| Bulk mark all read | All notifications cleared |
+| Settings page loads | Preference toggles visible |
+| Toggle email notification | Setting saved, toast confirmation |
+
+### Test Summary After Session 58
+| Category | Files | Tests | Status |
+|----------|-------|-------|--------|
+| Hook unit tests | 53 | ~550 | ALL PASS |
+| Integration tests | 5 | 97 | ALL PASS |
+| E2E tests | 6 | 44 | ALL PASS |
+| Existing tests | 60 | ~3,362 | ALL PASS |
+| **Total** | **124** | **4,053** | **ALL PASS** |
+
+TypeScript: 0 errors (`tsc --noEmit` clean)
+Build: Success (`next build` clean)

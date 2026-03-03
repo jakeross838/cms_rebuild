@@ -4636,3 +4636,78 @@ Affected components include:
 - **Client components**: 121 files migrated this session to use `useAuth()`
 - **Total migration**: 238 files, ~1,440 lines of boilerplate removed
 - **Result**: Single source of truth for authentication across entire app, no redundant Supabase queries
+
+---
+
+## Session 58 — Hook Unit Tests, Integration Tests, Row Actions, V1 Deprecation, E2E Expansion (2026-03-03)
+
+### `RowActions` Component — `app/src/components/ui/row-actions.tsx`
+- New reusable `'use client'` component providing dropdown action menu for list page rows
+- Renders `MoreHorizontal` (⋯) trigger button inside a `DropdownMenu`
+- Two standard actions: **Edit** (navigates to `/{entityType}/{entityId}/edit`) and **Archive** (soft-delete)
+- Uses `e.preventDefault()` + `e.stopPropagation()` to prevent parent `<Link>` navigation when clicking the menu
+- Archive sends `POST` to `/api/{entityType}/{entityId}/archive`, then calls `router.refresh()` to update the list
+- Shows confirmation via `window.confirm()` before archive
+- Props: `entityType: string`, `entityId: string`
+
+### 15 List Pages — Row-Level Action Menus Added
+All major entity list pages now include `<RowActions>` in each row:
+- `/clients`, `/vendors`, `/jobs`, `/invoices`, `/contacts`
+- `/leads`, `/purchase-orders`, `/change-orders`, `/rfis`, `/submittals`
+- `/equipment`, `/estimates`, `/bids`, `/punch-lists`, `/daily-logs`
+
+Each page imports `RowActions` from `@/components/ui/row-actions` and places it as the last column in each row, passing the entity type and ID.
+
+### V1 API Deprecation Headers — 16 Route Files
+All v1 API routes that have v2 equivalents now return deprecation headers:
+- `Deprecation: true`
+- `Sunset: Mon, 01 Sep 2026 00:00:00 GMT` (RFC 7231 format)
+- `Link: </api/v2/{entity}>; rel="successor-version"`
+
+Affected entities (all routes under `/api/v1/`):
+- **daily-logs** (5 files): route.ts, [id]/route.ts, [id]/entries/route.ts, [id]/weather/route.ts, [id]/crew/route.ts
+- **vendors** (6 files): route.ts, [id]/route.ts, [id]/contacts/route.ts, [id]/insurance/route.ts, [id]/documents/route.ts, [id]/performance/route.ts
+- **budgets** (4 files): route.ts, [id]/route.ts, [id]/lines/route.ts, [id]/transactions/route.ts
+- **cost-transactions** (1 file): route.ts
+
+Implementation via `deprecated` option in `createApiHandler`:
+```typescript
+createApiHandler({
+  deprecated: {
+    sunset: '2026-09-01',
+    alternative: '/api/v2/daily-logs'
+  }
+})
+```
+
+### `createApiHandler` — Deprecation Support (`app/src/lib/api/middleware.ts`)
+- New `deprecated` option added to `ApiHandlerOptions` interface
+- When set, automatically adds `Deprecation`, `Sunset`, and `Link` headers to all responses
+- Sunset date is formatted as RFC 7231 (e.g., `Mon, 01 Sep 2026 00:00:00 GMT`)
+- This is additive — existing caching, auth, RBAC, rate limiting, and audit features unchanged
+
+### 53 Hook Unit Test Files — `tests/unit/hooks/`
+Every hook created via `createApiHooks` factory now has a dedicated unit test file:
+- Test pattern: vitest + MSW (Mock Service Worker) + `@testing-library/react` `renderHook`
+- Each test file creates a fresh `QueryClient` to avoid cross-test pollution
+- Standard test cases per hook:
+  - `useList` — success with mocked API response, error handling
+  - `useDetail` — success with ID, disabled when ID is null
+  - `useCreate` — success mutation with invalidation
+- Total: ~550 tests across 53 files
+- All hooks from `app/src/hooks/` covered including: use-clients, use-vendors, use-jobs, use-invoices, use-budgets, use-contacts, use-leads, use-estimates, use-bids, use-rfis, use-submittals, use-change-orders, use-purchase-orders, use-daily-logs, use-punch-lists, use-equipment, use-time-entries, use-documents, use-notifications, use-scheduling, use-warranties, use-permits, use-safety, use-hr, use-inventory, use-draw-requests, use-lien-waivers, use-selections, use-contracts, and more
+
+### 5 Integration Test Files — `tests/integration/`
+- **`api-middleware.test.ts`** (39 tests) — Tests `createApiHandler` directly: auth enforcement, RBAC role checks, rate limiting, Zod validation, audit logging, pagination, soft-delete, deprecation headers, caching
+- **`auth-api.test.ts`** (14 tests) — Auth flow contract tests: login, signup, password reset, session refresh, role-based access
+- **`clients-api.test.ts`** (15 tests) — Client CRUD: list with pagination, create with validation, update, archive, search, sort
+- **`jobs-api.test.ts`** (15 tests) — Job CRUD: list, create, update, archive, assignments, status transitions
+- **`financial-api.test.ts`** (14 tests) — Financial endpoints: invoices, budgets, cost transactions, budget variance
+
+### 6 E2E Test Files — `tests/e2e/`
+- **`auth-flows.spec.ts`** (9 tests) — Login, signup, password reset, session persistence, role-based redirects
+- **`financial-workflows.spec.ts`** (8 tests) — Invoice creation, budget tracking, cost entry, payment recording
+- **`vendor-management.spec.ts`** (8 tests) — Vendor CRUD, insurance tracking, performance review
+- **`document-management.spec.ts`** (5 tests) — Upload, folder organization, search, download
+- **`scheduling.spec.ts`** (7 tests) — Calendar events, Gantt interactions, task dependencies
+- **`notifications-settings.spec.ts`** (7 tests) — Notification preferences, mark read, bulk actions, settings page

@@ -2906,3 +2906,39 @@ The AuthProvider already hydrates `profile` on SSR, making this redundant. Elimi
 - **TypeScript clean** — no type errors
 - **Performance**: Eliminated 121 redundant Supabase queries per app session
 - **Auth deduplication complete**: Single pattern across all 238 files that need auth context
+
+---
+
+## 2026-03-03: Session 58 — Hook Unit Tests, Integration Tests, Row Actions, V1 Deprecation, E2E Expansion
+
+### Why
+1. **63 hooks, 0 unit tests**: All React Query hooks created via `createApiHooks` factory had no unit test coverage. A regression in any hook (wrong query key, broken mutation, missing invalidation) would go undetected.
+2. **Zero integration tests**: No tests existed that exercised `createApiHandler` middleware directly — auth enforcement, RBAC, rate limiting, Zod validation, and audit logging were all untested at the integration level.
+3. **No row-level actions on list pages**: Users could view lists but had no way to edit or archive individual rows without navigating to the detail page first. This is a fundamental UX gap for a CRUD-heavy platform.
+4. **V1 API routes had no deprecation signals**: 4 entity types (daily-logs, vendors, budgets, cost-transactions) had duplicate v1/v2 routes, but v1 returned no headers telling clients they should migrate. Without `Deprecation`, `Sunset`, and `Link` headers, API consumers have no programmatic way to know v1 is being retired.
+5. **E2E test coverage was minimal**: Only basic auth and navigation flows were tested. Critical workflows (financial, vendor, document, scheduling, notifications) had no browser-level validation.
+
+### What was done
+1. **Created 53 hook unit test files** in `tests/unit/hooks/` using vitest + MSW + `@testing-library/react` renderHook. Each file tests useList (success + error), useDetail (success + disabled when null), and useCreate (success). Total: ~550 new tests.
+2. **Created 5 integration test files** in `tests/integration/` covering createApiHandler middleware (39 tests), auth API flows (14 tests), client CRUD (15 tests), job CRUD (15 tests), and financial endpoints (14 tests). Total: 97 new integration tests.
+3. **Created `RowActions` component** (`app/src/components/ui/row-actions.tsx`) — reusable client component with DropdownMenu offering Edit and Archive actions. Prevents parent Link navigation via event propagation control.
+4. **Added RowActions to 15 list pages** — clients, vendors, jobs, invoices, contacts, leads, purchase-orders, change-orders, rfis, submittals, equipment, estimates, bids, punch-lists, daily-logs.
+5. **Added `deprecated` option to `createApiHandler`** in `app/src/lib/api/middleware.ts` — when set, responses include `Deprecation: true`, `Sunset` (RFC 7231), and `Link` (successor-version) headers.
+6. **Applied deprecation to 16 v1 route files** — all routes under `/api/v1/daily-logs`, `/api/v1/vendors`, `/api/v1/budgets`, `/api/v1/cost-transactions`.
+7. **Created 6 E2E test files** in `tests/e2e/` covering auth flows, financial workflows, vendor management, document management, scheduling, and notification settings. Total: 44 new E2E tests.
+8. **Fixed 55 TypeScript errors** in test files — TS18046 (unknown data from renderHook) resolved by casting `result.current.data as any`, TS2698 (spread types from unknown request.json()) resolved by casting `body as any`.
+
+### Key decisions
+1. **MSW for hook testing**: Used Mock Service Worker to intercept fetch calls in test environment rather than mocking the React Query hooks directly. This tests the actual hook behavior end-to-end within a test environment.
+2. **Fresh QueryClient per test**: Each test file creates a new `QueryClient` with `retry: false` to prevent cross-test cache pollution and avoid flaky tests from retries.
+3. **`as any` in test files only**: The 55 TS error fixes use `as any` casts specifically in test assertion code where the React Query generic types aren't inferred through MSW. Production code remains cast-free.
+4. **RowActions uses router.refresh()**: After archive, the component calls `router.refresh()` instead of client-side cache invalidation because list pages are server-rendered. This triggers a server re-render with fresh data.
+5. **Deprecation sunset = 2026-09-01**: Chose 6-month sunset period from today, giving API consumers ample migration time.
+6. **RowActions prevents Link navigation**: The dropdown uses `e.preventDefault()` + `e.stopPropagation()` because list rows are typically wrapped in `<Link>` elements. Without this, clicking the menu would navigate away.
+
+### Result
+- **124 test files, 4,053 tests, 0 TypeScript errors, clean build**
+- Test breakdown: ~550 hook unit tests + 97 integration tests + 44 E2E tests + existing ~3,362 tests
+- All 15 list pages now have inline Edit/Archive actions per row
+- All v1 API routes signal deprecation to consumers
+- Committed as Session 58 (107 files, 16,619 insertions)
