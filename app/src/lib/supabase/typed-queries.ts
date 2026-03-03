@@ -62,7 +62,7 @@ export function typedUpsert<T extends TableName>(
   table: T,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
-  options?: { onConflict?: string }
+  options?: { onConflict?: string; ignoreDuplicates?: boolean }
 ) {
   return supabase.from(table).upsert(data as never, options)
 }

@@ -7,6 +7,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
+import { typedInsertMany, typedUpsert } from '@/lib/supabase/typed-queries'
 import type { NotificationCategory, NotificationUrgency } from '@/types/database'
 
 export interface EmitOptions {
@@ -73,9 +74,7 @@ export async function emitNotification(options: EmitOptions): Promise<{ notifica
     idempotency_key: `${eventType}:${entityId ?? 'none'}:${userId}:${Math.floor(Date.now() / 60000)}`,
   }))
 
-  const { data, error } = await supabase
-    .from('notifications')
-    .upsert(records as never, { onConflict: 'idempotency_key', ignoreDuplicates: true })
+  const { data, error } = await typedUpsert(supabase, 'notifications', records, { onConflict: 'idempotency_key', ignoreDuplicates: true })
     .select('id')
 
   if (error) {
@@ -92,9 +91,7 @@ export async function emitNotification(options: EmitOptions): Promise<{ notifica
       status: 'delivered' as const,
     }))
 
-    await supabase
-      .from('notification_deliveries')
-      .insert(deliveries as never)
+    await typedInsertMany(supabase, 'notification_deliveries', deliveries)
   }
 
   return { notificationIds }
