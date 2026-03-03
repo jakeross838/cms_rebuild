@@ -10,6 +10,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { updateProjectUserRoleSchema } from '@/lib/validation/schemas/project-user-roles'
 
 // ============================================================================
@@ -81,9 +82,7 @@ export const PATCH = createApiHandler(
       if (val !== undefined) updates[key] = val
     }
 
-    const { data, error } = await supabase
-      .from('project_user_roles')
-      .update(updates as never)
+    const { data, error } = await typedUpdate(supabase, 'project_user_roles', updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .select('id, company_id, user_id, job_id, role_id, role_override, granted_by, created_at')

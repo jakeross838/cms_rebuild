@@ -16,6 +16,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listWarrantyClaimsSchema, createWarrantyClaimSchema } from '@/lib/validation/schemas/warranty-claims'
 
 // ============================================================================
@@ -100,9 +101,7 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('warranty_claims')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'warranty_claims', {
         company_id: ctx.companyId!,
         warranty_id: input.warranty_id,
         title: input.title,
@@ -118,7 +117,7 @@ export const POST = createApiHandler(
         resolution_notes: input.resolution_notes ?? null,
         resolution_cost: input.resolution_cost ?? null,
         created_by: ctx.user!.id,
-      } as never)
+      })
       .select('id, company_id, warranty_id, claim_number, title, description, status, priority, reported_by, reported_date, assigned_to, assigned_vendor_id, resolution_notes, resolution_cost, resolved_at, resolved_by, due_date, photos, created_by, created_at, updated_at')
       .single()
 

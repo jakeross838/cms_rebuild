@@ -16,6 +16,7 @@ import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { sendPasswordResetEmail } from '@/lib/email/resend'
 import { env } from '@/lib/env'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validation/schemas/auth'
 
 export const POST = createApiHandler(
@@ -39,14 +40,14 @@ export const POST = createApiHandler(
     const user = userData as { id: string; name: string | null; company_id: string } | null
 
     // Log the password reset request (regardless of whether user exists)
-    await admin.from('auth_audit_log').insert({
+    await typedInsert(admin, 'auth_audit_log', {
       company_id: user?.company_id ?? '00000000-0000-0000-0000-000000000000',
       user_id: user?.id ?? null,
       event_type: 'password_reset_requested',
       ip_address: ipAddress,
       user_agent: userAgent,
       metadata: { email, user_exists: !!user },
-    } as never)
+    })
 
     // If user exists, generate reset link and send email
     if (user) {

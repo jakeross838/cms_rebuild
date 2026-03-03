@@ -20,6 +20,7 @@ import { sendInviteEmail } from '@/lib/email/resend'
 import { createLogger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { escapeLike } from '@/lib/utils'
 import { inviteUserSchema, listUsersSchema, type InviteUserInput } from '@/lib/validation/schemas/users'
 import type { User } from '@/types/database'
@@ -204,9 +205,7 @@ export const POST = createApiHandler(
     const { token, hash: tokenHash } = generateInviteToken()
 
     // Create invitation record
-    const { data: invitation, error: inviteError } = await adminClient
-      .from('user_invitations')
-      .insert({
+    const { data: invitation, error: inviteError } = await typedInsert(adminClient, 'user_invitations', {
         company_id: ctx.companyId!,
         email: body.email,
         name: body.name,
@@ -214,7 +213,7 @@ export const POST = createApiHandler(
         token_hash: tokenHash,
         invited_by: ctx.user!.id,
         invited_at: new Date().toISOString(),
-      } as never)
+      })
       .select()
       .single()
 
@@ -250,9 +249,7 @@ export const POST = createApiHandler(
     }
 
     // Log to auth_audit_log via admin client
-    await adminClient
-      .from('auth_audit_log')
-      .insert({
+    await typedInsert(adminClient, 'auth_audit_log', {
         company_id: ctx.companyId!,
         user_id: ctx.user!.id,
         event_type: 'user_invited',
@@ -264,7 +261,7 @@ export const POST = createApiHandler(
           invited_role: body.role,
           email_sent: emailResult.success,
         },
-      } as never)
+      })
       .then(({ error }: { error: { message: string } | null }) => {
         if (error) logger.warn('Failed to write auth audit log', { error: error.message })
       })

@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { updateBudgetLineSchema } from '@/lib/validation/schemas/budget'
 import type { BudgetLine } from '@/types/budget'
@@ -108,14 +109,12 @@ export const PATCH = createApiHandler(
       updated_at: new Date().toISOString(),
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('budget_lines')
-      .update(updateData as never)
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'budget_lines', updateData)
       .eq('id', lineId)
       .eq('budget_id', budgetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: BudgetLine | null; error: { message: string } | null }>)
+      .single()
 
     if (updateError || !updated) {
       logger.error('Failed to update budget line', { error: updateError?.message, lineId })

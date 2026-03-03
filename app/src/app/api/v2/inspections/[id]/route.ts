@@ -10,6 +10,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { updateInspectionSchema } from '@/lib/validation/schemas/inspections'
 
 // ============================================================================
@@ -81,9 +82,7 @@ export const PATCH = createApiHandler(
       if (val !== undefined) updates[key] = val
     }
 
-    const { data, error } = await supabase
-      .from('permit_inspections')
-      .update(updates as never)
+    const { data, error } = await typedUpdate(supabase, 'permit_inspections', updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .select('id, company_id, permit_id, job_id, inspection_type, status, scheduled_date, scheduled_time, inspector_name, inspector_phone, notes, completed_at, is_reinspection, original_inspection_id, created_by, created_at, updated_at')

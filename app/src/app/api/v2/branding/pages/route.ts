@@ -16,6 +16,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listContentPagesSchema, createContentPageSchema } from '@/lib/validation/schemas/white-label'
 
 // ============================================================================
@@ -111,9 +112,7 @@ export const POST = createApiHandler(
       insertData.published_at = new Date().toISOString()
     }
 
-    const { data, error } = await supabase
-      .from('builder_content_pages')
-      .insert(insertData as never)
+    const { data, error } = await typedInsert(supabase, 'builder_content_pages', insertData)
       .select('id, company_id, page_type, title, slug, content_html, is_published, published_at, sort_order, created_by, created_at, updated_at')
       .single()
 

@@ -1,5 +1,45 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 56 — Quality Hardening, Deploy Prep, Performance, E2E Coverage (2026-03-03)
+
+### Root Middleware Created (CRITICAL — Auth Fix)
+Created `app/middleware.ts` — the root Next.js middleware was completely missing. Without it, `updateSession()` from `lib/supabase/middleware.ts` was never invoked, meaning auth token refresh and session management didn't work at the middleware level. Exports `middleware()` function calling `updateSession(request)` with standard matcher excluding static assets.
+
+### Centralized Supabase Type Helpers (`typed-queries.ts`)
+Created `app/src/lib/supabase/typed-queries.ts` with 4 helpers: `typedInsert`, `typedInsertMany`, `typedUpdate`, `typedUpsert`. Each accepts `any` data and applies `as never` internally, eliminating the need for `as never` at 126+ call sites across all API routes. The Supabase client's `.insert()` and `.update()` methods require exact type matches that Zod-validated payloads with computed fields can't satisfy.
+
+### Removed 126 `as never` Casts from All API Routes (84 files)
+Replaced all `supabase.from('table').insert(data as never)` patterns with `typedInsert(supabase, 'table', data)` across:
+- 6 auth routes (login, signup, logout, forgot-password, accept-invite, switch-company)
+- 39 v1 CRUD routes (ap-bills, ap-payments, ar-invoices, ar-receipts, budgets, clients, cost-codes, cost-transactions, custom-fields, daily-logs, gl-accounts, jobs, journal-entries, roles, schedule-*, users, vendors, weather-records, workflows)
+- 25 v2 routes (api-keys, branding, budget-lines, communications, contacts, inspections, invoice-extractions, invoices, job-photos, labor-rates, portal, project-user-roles, submittals, vendor-insurance)
+Also removed outer `as unknown as Promise<...>` wrappers and fixed 5 result type mismatches with `as unknown as Type[]`.
+
+### API Middleware Caching (Performance)
+Modified `app/src/lib/api/middleware.ts`:
+- **User profile lookup cached** (5 min TTL) — previously hit DB on every authenticated request
+- **Company settings lookup cached** (1 hour TTL) — previously hit DB on every permission-checked request
+- Added `getCachedList`, `setCachedList`, `invalidateEntityCache` helper exports for route-level caching
+
+### Compound Database Indexes
+Created `app/supabase/migrations/20260303000000_add_compound_indexes.sql` with compound indexes for: audit_log, auth_audit_log, jobs, ap_bills, ar_invoices, leads, schedule_tasks, daily_logs, notifications, cost_transactions, vendors, documents. All use `CREATE INDEX IF NOT EXISTS` and `CONCURRENTLY` where applicable.
+
+### Dockerfile & Docker Ignore (Deploy Prep)
+Created `app/Dockerfile` — multi-stage production build (deps → builder → runner) using node:22-alpine. Non-root `nextjs` user, `DOCKER_BUILD=1` env triggers standalone output. Created `app/.dockerignore` excluding node_modules, .next, tests, docs, etc.
+
+### Next.js Config — Conditional Standalone Output
+Modified `app/next.config.ts`: `output: process.env.DOCKER_BUILD === '1' ? 'standalone' : undefined`. Standalone mode required for Docker but causes `middleware.js.nft.json` ENOENT errors in normal dev/build.
+
+### CI/CD Pipeline Enhancement
+Modified `.github/workflows/ci.yml`: Split into 4 jobs (lint-typecheck → test, build → e2e). Added env vars for test/build jobs. E2E job runs only on main branch pushes with Playwright chromium. Coverage and playwright-report uploaded as artifacts.
+
+### 5 New E2E Test Files (38 tests)
+- `tests/e2e/company-pages.spec.ts` — 12 tests: dashboard, clients, vendors, estimates, leads, jobs, contacts, submittals, rfis, bids, punch-lists, purchase-orders
+- `tests/e2e/financial-pages.spec.ts` — 6 tests: AP bills, AR invoices, chart of accounts, journal entries, reports overview, payroll
+- `tests/e2e/admin-settings.spec.ts` — 7 tests: settings, users, integrations, profile, notifications, roles, audit log
+- `tests/e2e/search-filter.spec.ts` — 5 tests: search/filter on clients, vendors, jobs, invoices, employees
+- `tests/e2e/job-scoped-crud.spec.ts` — 8 tests: change orders, POs, punch items, lien waivers, budget, schedule, photos, selections
+
 ## Session 55 — Remove as any Casts + Add Dropdown Error States (2026-03-02)
 
 ### Remove 31 `as any` Casts (23 files)

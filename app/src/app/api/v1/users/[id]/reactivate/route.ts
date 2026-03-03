@@ -10,6 +10,7 @@ import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middlew
 import { createLogger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import type { User } from '@/types/database'
 
@@ -67,17 +68,15 @@ export const POST = createApiHandler(
 
     // Reactivate: set is_active = true and clear deleted_at
     const now = new Date().toISOString()
-    const { data: reactivatedUser, error: updateError } = await (supabase
-      .from('users')
-      .update({
+    const { data: reactivatedUser, error: updateError } = await typedUpdate(supabase, 'users', {
         is_active: true,
         deleted_at: null,
         updated_at: now,
-      } as never)
+      })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: User | null; error: { message: string } | null }>)
+      .single() as { data: User | null; error: { message: string } | null }
 
     if (updateError || !reactivatedUser) {
       logger.error('Failed to reactivate user', { error: updateError?.message ?? 'Unknown', targetId })
@@ -90,9 +89,7 @@ export const POST = createApiHandler(
 
     // Log to auth_audit_log via admin client (untyped, bypasses RLS)
     const adminClient = createAdminClient()
-    await adminClient
-      .from('auth_audit_log')
-      .insert({
+    await typedInsert(adminClient, 'auth_audit_log', {
         company_id: ctx.companyId!,
         user_id: ctx.user!.id,
         event_type: 'user_reactivated',
@@ -102,7 +99,7 @@ export const POST = createApiHandler(
           reactivated_user_id: targetId,
           reactivated_user_role: targetUser.role,
         },
-      } as never)
+      })
       .then(({ error }: { error: { message: string } | null }) => {
         if (error) logger.warn('Failed to write auth audit log', { error: error.message })
       })

@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { submitDailyLogSchema } from '@/lib/validation/schemas/daily-logs'
 import type { DailyLog } from '@/types/daily-logs'
@@ -59,18 +60,16 @@ export const POST = createApiHandler(
 
     const now = new Date().toISOString()
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('daily_logs')
-      .update({
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'daily_logs', {
         status: 'submitted',
         submitted_by: ctx.user!.id,
         submitted_at: now,
         updated_at: now,
-      } as never)
+      })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: DailyLog | null; error: { message: string } | null }>)
+      .single()
 
     if (updateError || !updated) {
       logger.error('Failed to submit daily log', { error: updateError?.message, targetId })

@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { updateVendorSchema, type UpdateVendorInput } from '@/lib/validation/schemas/vendors'
 import type { Vendor } from '@/types/database'
@@ -103,13 +104,11 @@ export const PATCH = createApiHandler(
       updated_at: new Date().toISOString(),
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('vendors')
-      .update(updateData as never)
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'vendors', updateData)
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: Vendor | null; error: { message: string } | null }>)
+      .single() as { data: Vendor | null; error: { message: string } | null }
 
     if (updateError || !updated) {
       logger.error('Failed to update vendor', { error: updateError?.message, targetId })
@@ -151,13 +150,11 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
     const now = new Date().toISOString()
 
-    const { data: deleted, error } = await (supabase
-      .from('vendors')
-      .update({ deleted_at: now, updated_at: now } as never)
+    const { data: deleted, error } = await typedUpdate(supabase, 'vendors', { deleted_at: now, updated_at: now })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select('id, deleted_at')
-      .single() as unknown as Promise<{ data: { id: string; deleted_at: string } | null; error: { message: string } | null }>)
+      .single() as { data: { id: string; deleted_at: string } | null; error: { message: string } | null }
 
     if (error || !deleted) {
       logger.warn('Vendor not found for soft delete', { targetId })

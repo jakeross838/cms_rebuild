@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, getPaginationParams, mapDbError, paginatedResponse, type ApiContext } from '@/lib/api/middleware'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { createRoleSchema, type CreateRoleInput } from '@/lib/validation/schemas/roles'
 import type { RoleRow } from '@/types/database'
 
@@ -53,9 +54,7 @@ export const POST = createApiHandler(
     const body = ctx.validatedBody as CreateRoleInput
     const supabase = await createClient()
 
-    const { data: role, error } = await supabase
-      .from('roles')
-      .insert({
+    const { data: role, error } = await typedInsert(supabase, 'roles', {
         name: body.name,
         description: body.description ?? null,
         base_role: body.base_role,
@@ -63,9 +62,9 @@ export const POST = createApiHandler(
         field_overrides: body.field_overrides,
         is_system: false,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as { data: RoleRow | null; error: { message: string; code?: string } | null }
+      .single() as { data: RoleRow | null; error: { message: string; code?: string } | null }
 
     if (error) {
       const mapped = mapDbError(error)
@@ -76,14 +75,14 @@ export const POST = createApiHandler(
     }
 
     const admin = createAdminClient()
-    await admin.from('auth_audit_log').insert({
+    await typedInsert(admin, 'auth_audit_log', {
       company_id: ctx.companyId!,
       user_id: ctx.user!.id,
       event_type: 'role.create',
       ip_address: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
       user_agent: req.headers.get('user-agent') ?? null,
       metadata: { role_id: role?.id, role_name: role?.name, base_role: role?.base_role },
-    } as never)
+    })
 
     return NextResponse.json({ data: role, requestId: ctx.requestId }, { status: 201 })
   },

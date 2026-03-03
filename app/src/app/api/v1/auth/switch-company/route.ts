@@ -13,6 +13,7 @@ import { z } from 'zod'
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 
 const switchCompanySchema = z.object({
   companyId: z.string().uuid('Invalid company ID'),
@@ -75,7 +76,7 @@ export const POST = createApiHandler(
       .single()
 
     // Log the company switch
-    await admin.from('auth_audit_log').insert({
+    await typedInsert(admin, 'auth_audit_log', {
       company_id: targetCompanyId,
       user_id: ctx.user!.id,
       event_type: 'company_switched',
@@ -85,7 +86,7 @@ export const POST = createApiHandler(
         from_company_id: ctx.companyId,
         to_company_id: targetCompanyId,
       },
-    } as never)
+    })
 
     // Create response with cookie to persist the selection
     const response = NextResponse.json({

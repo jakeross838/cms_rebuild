@@ -13,6 +13,7 @@ import {
 } from '@/lib/api/middleware'
 import { logger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedInsertMany } from '@/lib/supabase/typed-queries'
 import { createBillFromExtractionSchema } from '@/lib/validation/schemas/invoice-processing'
 
 // ============================================================================
@@ -77,9 +78,7 @@ export const POST = createApiHandler(
     }
 
     // Create the AP bill
-    const { data: bill, error: billError } = await supabase
-      .from('ap_bills')
-      .insert({
+    const { data: bill, error: billError } = await typedInsert(supabase, 'ap_bills', {
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,
         bill_number: input.bill_number,
@@ -91,7 +90,7 @@ export const POST = createApiHandler(
         job_id: input.job_id ?? null,
         description: input.description ?? null,
         created_by: ctx.user!.id,
-      } as never)
+      })
       .select('id, company_id, vendor_id, bill_number, bill_date, due_date, amount, balance_due, status, job_id, description, created_by, created_at, updated_at')
       .single()
 
@@ -113,7 +112,7 @@ export const POST = createApiHandler(
         job_id: line.job_id ?? null,
         cost_code_id: line.cost_code_id ?? null,
       }))
-      const { error: linesError } = await supabase.from('ap_bill_lines').insert(lineRecords as never)
+      const { error: linesError } = await typedInsertMany(supabase, 'ap_bill_lines', lineRecords)
       if (linesError) {
         const mapped = mapDbError(linesError)
         return NextResponse.json(

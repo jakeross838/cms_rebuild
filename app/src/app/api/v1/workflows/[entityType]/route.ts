@@ -11,6 +11,7 @@ import { z } from 'zod'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedUpdate } from '@/lib/supabase/typed-queries'
 
 const entityTypes = ['invoice', 'purchase_order', 'change_order', 'draw', 'selection', 'estimate', 'contract'] as const
 
@@ -153,9 +154,7 @@ async function handlePut(req: NextRequest, ctx: ApiContext) {
 
   // If isDefault, unset other defaults for this entity type
   if (body.isDefault) {
-    await supabase
-      .from('workflow_definitions')
-      .update({ is_default: false, updated_at: new Date().toISOString() } as never)
+    await typedUpdate(supabase, 'workflow_definitions', { is_default: false, updated_at: new Date().toISOString() })
       .eq('company_id', ctx.companyId!)
       .eq('entity_type', entityType)
       .eq('is_default', true)
@@ -189,9 +188,7 @@ async function handlePut(req: NextRequest, ctx: ApiContext) {
 
   let data, error
   if (existing) {
-    const result = await supabase
-      .from('workflow_definitions')
-      .update(record as never)
+    const result = await typedUpdate(supabase, 'workflow_definitions', record)
       .eq('id', existing.id)
       .eq('company_id', ctx.companyId!)
       .select()
@@ -199,9 +196,7 @@ async function handlePut(req: NextRequest, ctx: ApiContext) {
     data = result.data
     error = result.error
   } else {
-    const result = await supabase
-      .from('workflow_definitions')
-      .insert(record as never)
+    const result = await typedInsert(supabase, 'workflow_definitions', record)
       .select()
       .single()
     data = result.data

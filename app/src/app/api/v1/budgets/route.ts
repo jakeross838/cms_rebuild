@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import { listBudgetsSchema, createBudgetSchema } from '@/lib/validation/schemas/budget'
 import type { Budget } from '@/types/budget'
@@ -101,16 +102,14 @@ export const POST = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: budget, error } = await (supabase
-      .from('budgets')
-      .insert({
+    const { data: budget, error } = await typedInsert(supabase, 'budgets', {
         ...body,
         company_id: ctx.companyId!,
         created_by: ctx.user!.id,
         version: 1,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: Budget | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !budget) {
       logger.error('Failed to create budget', { error: error?.message })

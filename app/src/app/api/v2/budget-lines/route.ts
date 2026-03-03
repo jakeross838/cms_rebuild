@@ -16,6 +16,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listBudgetLinesSchema, createBudgetLineSchema } from '@/lib/validation/schemas/budget-lines'
 
 // ============================================================================
@@ -118,9 +119,7 @@ export const POST = createApiHandler(
     if (existingBudget) {
       budgetId = (existingBudget as { id: string }).id
     } else {
-      const { data: newBudget, error: budgetError } = await supabase
-        .from('budgets')
-        .insert({
+      const { data: newBudget, error: budgetError } = await typedInsert(supabase, 'budgets', {
           company_id: ctx.companyId!,
           job_id: input.job_id,
           name: 'Primary Budget',
@@ -128,7 +127,7 @@ export const POST = createApiHandler(
           total_amount: 0,
           version: 1,
           created_by: ctx.user!.id,
-        } as never)
+        })
         .select('id')
         .single()
 
@@ -142,9 +141,7 @@ export const POST = createApiHandler(
       budgetId = (newBudget as { id: string }).id
     }
 
-    const { data, error } = await supabase
-      .from('budget_lines')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'budget_lines', {
         company_id: ctx.companyId!,
         job_id: input.job_id,
         budget_id: budgetId,
@@ -153,7 +150,7 @@ export const POST = createApiHandler(
         cost_code_id: input.cost_code_id ?? null,
         estimated_amount: input.estimated_amount ?? 0,
         notes: input.notes ?? null,
-      } as never)
+      })
       .select('id, budget_id, company_id, job_id, cost_code_id, phase, description, estimated_amount, committed_amount, actual_amount, projected_amount, variance_amount, sort_order, notes, created_at, updated_at')
       .single()
 

@@ -16,6 +16,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listJobPhotosSchema, createJobPhotoSchema } from '@/lib/validation/schemas/job-photos'
 
 // ============================================================================
@@ -96,9 +97,7 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('job_photos')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'job_photos', {
         company_id: ctx.companyId!,
         job_id: input.job_id,
         title: input.title,
@@ -110,7 +109,7 @@ export const POST = createApiHandler(
         taken_date: input.taken_date ?? null,
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
-      } as never)
+      })
       .select('id, company_id, job_id, title, description, photo_url, category, taken_date, taken_by, location, notes, created_by, created_at, updated_at')
       .single()
 

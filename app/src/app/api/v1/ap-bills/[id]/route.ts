@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsertMany, typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { updateBillSchema } from '@/lib/validation/schemas/accounting'
 import type { ApBill, ApBillLine } from '@/types/accounting'
@@ -98,16 +99,14 @@ export const PATCH = createApiHandler(
       )
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('ap_bills')
-      .update({
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'ap_bills', {
         ...billData,
         updated_at: new Date().toISOString(),
-      } as never)
+      })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: ApBill | null; error: { message: string } | null }>)
+      .single()
 
     if (updateError || !updated) {
       logger.error('Failed to update AP bill', { error: updateError?.message, targetId })
@@ -125,10 +124,8 @@ export const PATCH = createApiHandler(
 
       const lineInserts = lines.map((line) => ({ ...line, bill_id: targetId }))
 
-      const { data: newLines, error: linesError } = await (supabase
-        .from('ap_bill_lines')
-        .insert(lineInserts as never)
-        .select() as unknown as Promise<{ data: ApBillLine[] | null; error: { message: string } | null }>)
+      const { data: newLines, error: linesError } = await typedInsertMany(supabase, 'ap_bill_lines', lineInserts)
+        .select()
 
       if (linesError) {
         logger.error('Failed to replace AP bill lines', { error: linesError.message, targetId })
@@ -138,7 +135,7 @@ export const PATCH = createApiHandler(
           { status: mapped.status }
         )
       }
-      updatedLines = newLines
+      updatedLines = newLines as unknown as ApBillLine[]
     }
 
     logger.info('AP bill updated', { targetId, companyId: ctx.companyId! })
@@ -177,14 +174,12 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
     const now = new Date().toISOString()
 
-    const { data: deleted, error } = await (supabase
-      .from('ap_bills')
-      .update({ deleted_at: now, updated_at: now } as never)
+    const { data: deleted, error } = await typedUpdate(supabase, 'ap_bills', { deleted_at: now, updated_at: now })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .select('id, deleted_at')
-      .single() as unknown as Promise<{ data: { id: string; deleted_at: string } | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !deleted) {
       logger.warn('AP bill not found for soft delete', { targetId })

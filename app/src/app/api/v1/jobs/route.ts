@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import { createJobSchema, listJobsSchema, type CreateJobInput } from '@/lib/validation/schemas/jobs'
 import type { Job } from '@/types/database'
@@ -131,14 +132,12 @@ export const POST = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: job, error } = await (supabase
-      .from('jobs')
-      .insert({
+    const { data: job, error } = await typedInsert(supabase, 'jobs', {
         ...body,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: Job | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !job) {
       logger.error('Failed to create job', { error: error?.message })

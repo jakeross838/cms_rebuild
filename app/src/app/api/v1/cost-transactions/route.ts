@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import {
   listCostTransactionsSchema,
   createCostTransactionSchema,
@@ -135,16 +136,14 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: txn, error } = await (supabase
-      .from('cost_transactions')
-      .insert({
+    const { data: txn, error } = await typedInsert(supabase, 'cost_transactions', {
         ...body,
         company_id: ctx.companyId!,
         created_by: ctx.user!.id,
         transaction_date: (body.transaction_date as string) || new Date().toISOString().split('T')[0],
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: CostTransaction | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !txn) {
       logger.error('Failed to create cost transaction', { error: error?.message })

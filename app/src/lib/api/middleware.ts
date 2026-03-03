@@ -10,6 +10,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 import { canPerform, resolvePermissions } from '@/lib/auth/permissions'
+import { cacheGet, cacheSet, buildCacheKey, cacheInvalidatePattern } from '@/lib/cache'
 import { recordMetric, createLogger, recordAudit } from '@/lib/monitoring'
 import {
   checkCombinedRateLimit,
@@ -118,26 +119,34 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
           )
         }
 
-        // Get user profile with company
-        const { data: profile, error: profileError } = await supabase
-          .from('users')
-          .select('id, company_id, role, email')
-          .eq('id', user.id)
-          .single() as { data: { id: string; company_id: string; role: string; email: string } | null; error: { message: string } | null }
-
-        if (profileError) {
-          logger.error('Failed to fetch user profile', { error: profileError.message, userId: user.id })
-          return NextResponse.json(
-            { error: 'Internal Server Error', message: 'Failed to load user profile', requestId },
-            { status: 500 }
-          )
-        }
+        // Get user profile with company (cached — called on every authenticated request)
+        const profileCacheKey = `user:profile:${user.id}`
+        let profile = await cacheGet<{ id: string; company_id: string; role: string; email: string }>(profileCacheKey)
 
         if (!profile) {
-          return NextResponse.json(
-            { error: 'Forbidden', message: 'User profile not found', requestId },
-            { status: 403 }
-          )
+          const { data: fetchedProfile, error: profileError } = await supabase
+            .from('users')
+            .select('id, company_id, role, email')
+            .eq('id', user.id)
+            .single() as { data: { id: string; company_id: string; role: string; email: string } | null; error: { message: string } | null }
+
+          if (profileError) {
+            logger.error('Failed to fetch user profile', { error: profileError.message, userId: user.id })
+            return NextResponse.json(
+              { error: 'Internal Server Error', message: 'Failed to load user profile', requestId },
+              { status: 500 }
+            )
+          }
+
+          if (!fetchedProfile) {
+            return NextResponse.json(
+              { error: 'Forbidden', message: 'User profile not found', requestId },
+              { status: 403 }
+            )
+          }
+
+          profile = fetchedProfile
+          await cacheSet(profileCacheKey, profile, 300) // 5 min TTL
         }
 
         ctx.user = {
@@ -231,18 +240,28 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
 
       // 6. Permission check (reuses the same supabase client from step 2)
       if (permission && ctx.user) {
-        // Get company permissions_mode from settings
-        const { data: company, error: companyError } = await supabase
-          .from('companies')
-          .select('settings')
-          .eq('id', ctx.companyId!)
-          .single() as { data: { settings: Record<string, unknown> | null } | null; error: { message: string } | null }
+        // Get company permissions_mode from settings (cached — called on every permission-checked request)
+        const settingsCacheKey = buildCacheKey(ctx.companyId!, 'settings', 'permissions')
+        let companySettings = await cacheGet<{ permissions_mode: string }>(settingsCacheKey)
 
-        if (companyError) {
-          logger.error('Failed to fetch company settings', { error: companyError.message, companyId: ctx.companyId ?? undefined })
+        if (!companySettings) {
+          const { data: company, error: companyError } = await supabase
+            .from('companies')
+            .select('settings')
+            .eq('id', ctx.companyId!)
+            .single() as { data: { settings: Record<string, unknown> | null } | null; error: { message: string } | null }
+
+          if (companyError) {
+            logger.error('Failed to fetch company settings', { error: companyError.message, companyId: ctx.companyId ?? undefined })
+          }
+
+          companySettings = {
+            permissions_mode: (company?.settings?.permissions_mode as string) || 'open',
+          }
+          await cacheSet(settingsCacheKey, companySettings, 3600) // 1 hour TTL
         }
 
-        const permissionsMode = (company?.settings?.permissions_mode as PermissionsMode) || 'open'
+        const permissionsMode = (companySettings.permissions_mode as PermissionsMode) || 'open'
         const userPermissions = resolvePermissions(ctx.user.role as UserRole)
 
         if (!canPerform(ctx.user.role as UserRole, userPermissions, permission, permissionsMode)) {
@@ -372,6 +391,44 @@ export function paginatedResponse<T>(
     },
     ...(requestId ? { requestId } : {}),
   }
+}
+
+/**
+ * Cache a list endpoint response. Use in GET handlers to cache paginated results.
+ * Cache key is built from company_id + entity + serialized query params.
+ *
+ * Usage:
+ *   const cached = await getCachedList(ctx.companyId!, 'vendors', req.nextUrl.searchParams)
+ *   if (cached) return NextResponse.json(cached)
+ *   // ... fetch from DB ...
+ *   await setCachedList(ctx.companyId!, 'vendors', req.nextUrl.searchParams, result)
+ */
+export async function getCachedList<T>(
+  companyId: string,
+  entity: string,
+  params: URLSearchParams
+): Promise<T | null> {
+  const key = buildCacheKey(companyId, 'company', entity, 'list', params.toString())
+  return cacheGet<T>(key)
+}
+
+export async function setCachedList<T>(
+  companyId: string,
+  entity: string,
+  params: URLSearchParams,
+  data: T,
+  ttlSeconds: number = 300
+): Promise<void> {
+  const key = buildCacheKey(companyId, 'company', entity, 'list', params.toString())
+  await cacheSet(key, data, ttlSeconds)
+}
+
+/**
+ * Invalidate all cached lists for an entity when a mutation occurs.
+ * Call in POST/PATCH/DELETE handlers.
+ */
+export async function invalidateEntityCache(companyId: string, entity: string): Promise<void> {
+  await cacheInvalidatePattern(`company:${companyId}:${entity}:*`)
 }
 
 /**

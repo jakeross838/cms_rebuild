@@ -18,6 +18,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedInsertMany } from '@/lib/supabase/typed-queries'
 import {
   listPaymentsSchema,
   createPaymentSchema,
@@ -120,16 +121,14 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Step 1 — Insert the payment record
-    const { data: payment, error: paymentError } = await (supabase
-      .from('ap_payments')
-      .insert({
+    const { data: payment, error: paymentError } = await typedInsert(supabase, 'ap_payments', {
         ...paymentData,
         company_id: ctx.companyId!,
         created_by: ctx.user!.id,
         status: 'pending',
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: ApPayment | null; error: { message: string } | null }>)
+      .single()
 
     if (paymentError || !payment) {
       logger.error('Failed to create AP payment', { error: paymentError?.message })
@@ -147,10 +146,8 @@ export const POST = createApiHandler(
       amount: app.amount,
     }))
 
-    const { data: insertedApplications, error: appError } = await (supabase
-      .from('ap_payment_applications')
-      .insert(applicationInserts as never)
-      .select() as unknown as Promise<{ data: ApPaymentApplication[] | null; error: { message: string } | null }>)
+    const { data: insertedApplications, error: appError } = await typedInsertMany(supabase, 'ap_payment_applications', applicationInserts)
+      .select()
 
     if (appError) {
       logger.error('Failed to create AP payment applications', { error: appError.message, paymentId: payment.id })

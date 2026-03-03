@@ -16,6 +16,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listCommunicationsSchema, createCommunicationSchema } from '@/lib/validation/schemas/communications'
 
 // ============================================================================
@@ -104,9 +105,7 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('communications')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'communications', {
         company_id: ctx.companyId!,
         job_id: input.job_id,
         subject: input.subject,
@@ -117,7 +116,7 @@ export const POST = createApiHandler(
         recipient: input.recipient ?? null,
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
-      } as never)
+      })
       .select('id, company_id, job_id, subject, message_body, communication_type, priority, recipient, status, notes, created_by, created_at, updated_at')
       .single()
 

@@ -9,6 +9,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedUpdate } from '@/lib/supabase/typed-queries'
 import { updateRoleSchema, type UpdateRoleInput } from '@/lib/validation/schemas/roles'
 import type { RoleRow } from '@/types/database'
 
@@ -93,13 +94,11 @@ export const PATCH = createApiHandler(
     if (body.permissions !== undefined) updateData.permissions = body.permissions
     if (body.field_overrides !== undefined) updateData.field_overrides = body.field_overrides
 
-    const { data: updated, error: updateError } = await supabase
-      .from('roles')
-      .update(updateData as never)
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'roles', updateData)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as { data: RoleRow | null; error: { message: string; code?: string } | null }
+      .single() as { data: RoleRow | null; error: { message: string; code?: string } | null }
 
     if (updateError) {
       const mapped = mapDbError(updateError)
@@ -110,14 +109,14 @@ export const PATCH = createApiHandler(
     }
 
     const admin = createAdminClient()
-    await admin.from('auth_audit_log').insert({
+    await typedInsert(admin, 'auth_audit_log', {
       company_id: ctx.companyId!,
       user_id: ctx.user!.id,
       event_type: 'role.update',
       ip_address: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
       user_agent: req.headers.get('user-agent') ?? null,
       metadata: { role_id: id, changes: body },
-    } as never)
+    })
 
     return NextResponse.json({ data: updated, requestId: ctx.requestId })
   },
@@ -163,9 +162,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error: deleteError } = await supabase
-      .from('roles')
-      .update({ deleted_at: new Date().toISOString() } as never)
+    const { error: deleteError } = await typedUpdate(supabase, 'roles', { deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 
@@ -178,14 +175,14 @@ export const DELETE = createApiHandler(
     }
 
     const admin = createAdminClient()
-    await admin.from('auth_audit_log').insert({
+    await typedInsert(admin, 'auth_audit_log', {
       company_id: ctx.companyId!,
       user_id: ctx.user!.id,
       event_type: 'role.delete',
       ip_address: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
       user_agent: req.headers.get('user-agent') ?? null,
       metadata: { role_id: id, role_name: existing.name },
-    } as never)
+    })
 
     return NextResponse.json({ data: { success: true }, requestId: ctx.requestId })
   },

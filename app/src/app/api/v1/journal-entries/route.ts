@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedInsertMany } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import {
   listJournalEntriesSchema,
@@ -123,16 +124,14 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Step 1 — Insert the journal entry header
-    const { data: entry, error: entryError } = await (supabase
-      .from('gl_journal_entries')
-      .insert({
+    const { data: entry, error: entryError } = await typedInsert(supabase, 'gl_journal_entries', {
         ...entryData,
         company_id: ctx.companyId!,
         created_by: ctx.user!.id,
         status: 'draft',
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: GlJournalEntry | null; error: { message: string } | null }>)
+      .single()
 
     if (entryError || !entry) {
       logger.error('Failed to create journal entry', { error: entryError?.message })
@@ -149,10 +148,8 @@ export const POST = createApiHandler(
       journal_entry_id: entry.id,
     }))
 
-    const { data: insertedLines, error: linesError } = await (supabase
-      .from('gl_journal_lines')
-      .insert(lineInserts as never)
-      .select() as unknown as Promise<{ data: GlJournalLine[] | null; error: { message: string } | null }>)
+    const { data: insertedLines, error: linesError } = await typedInsertMany(supabase, 'gl_journal_lines', lineInserts)
+      .select()
 
     if (linesError) {
       logger.error('Failed to create journal lines', { error: linesError.message, entryId: entry.id })

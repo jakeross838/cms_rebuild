@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { updateWeatherRecordSchema } from '@/lib/validation/schemas/scheduling'
 import type { WeatherRecord } from '@/types/scheduling'
@@ -97,13 +98,11 @@ export const PATCH = createApiHandler(
       updated_at: new Date().toISOString(),
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('weather_records')
-      .update(updateData as never)
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'weather_records', updateData)
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: WeatherRecord | null; error: { message: string } | null }>)
+      .single() as { data: WeatherRecord | null; error: { message: string } | null }
 
     if (updateError || !updated) {
       logger.error('Failed to update weather record', { error: updateError?.message, targetId })
@@ -145,13 +144,11 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
     const now = new Date().toISOString()
 
-    const { data: deleted, error } = await (supabase
-      .from('weather_records')
-      .update({ deleted_at: now, updated_at: now } as never)
+    const { data: deleted, error } = await typedUpdate(supabase, 'weather_records', { deleted_at: now, updated_at: now })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select('id, deleted_at')
-      .single() as unknown as Promise<{ data: { id: string; deleted_at: string } | null; error: { message: string } | null }>)
+      .single() as { data: { id: string; deleted_at: string } | null; error: { message: string } | null }
 
     if (error || !deleted) {
       logger.warn('Weather record not found for soft delete', { targetId })

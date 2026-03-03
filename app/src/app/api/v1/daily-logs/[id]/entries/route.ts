@@ -14,6 +14,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { createLogEntrySchema } from '@/lib/validation/schemas/daily-logs'
 import type { DailyLogEntry } from '@/types/daily-logs'
@@ -117,15 +118,13 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: entry, error } = await (supabase
-      .from('daily_log_entries')
-      .insert({
+    const { data: entry, error } = await typedInsert(supabase, 'daily_log_entries', {
         ...body,
         daily_log_id: logId,
         created_by: ctx.user!.id,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: DailyLogEntry | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !entry) {
       logger.error('Failed to create log entry', { error: error?.message })

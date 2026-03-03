@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedInsertMany } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import {
   listBillsSchema,
@@ -127,17 +128,15 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Step 1 — Insert the bill header
-    const { data: bill, error: billError } = await (supabase
-      .from('ap_bills')
-      .insert({
+    const { data: bill, error: billError } = await typedInsert(supabase, 'ap_bills', {
         ...billData,
         company_id: ctx.companyId!,
         created_by: ctx.user!.id,
         status: 'draft',
         balance_due: billData.amount,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: ApBill | null; error: { message: string } | null }>)
+      .single()
 
     if (billError || !bill) {
       logger.error('Failed to create AP bill', { error: billError?.message })
@@ -156,10 +155,8 @@ export const POST = createApiHandler(
         bill_id: bill.id,
       }))
 
-      const { data: newLines, error: linesError } = await (supabase
-        .from('ap_bill_lines')
-        .insert(lineInserts as never)
-        .select() as unknown as Promise<{ data: ApBillLine[] | null; error: { message: string } | null }>)
+      const { data: newLines, error: linesError } = await typedInsertMany(supabase, 'ap_bill_lines', lineInserts)
+        .select()
 
       if (linesError) {
         logger.error('Failed to create AP bill lines', { error: linesError.message, billId: bill.id })
@@ -169,7 +166,7 @@ export const POST = createApiHandler(
           { status: mapped.status }
         )
       }
-      insertedLines = newLines
+      insertedLines = newLines as unknown as ApBillLine[]
     }
 
     logger.info('AP bill created', { billId: bill.id, vendorId: bill.vendor_id, companyId: ctx.companyId! })

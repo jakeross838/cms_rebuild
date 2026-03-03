@@ -19,6 +19,7 @@ import { sendWelcomeEmail } from '@/lib/email/resend'
 import { env } from '@/lib/env'
 import { logger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { typedInsert, typedInsertMany } from '@/lib/supabase/typed-queries'
 import { signupSchema, type SignupInput } from '@/lib/validation/schemas/auth'
 
 // Default system roles to seed for every new company
@@ -82,16 +83,14 @@ export const POST = createApiHandler(
 
     try {
       // Step 3: Create company
-      const { data: company, error: companyError } = await admin
-        .from('companies')
-        .insert({
+      const { data: company, error: companyError } = await typedInsert(admin, 'companies', {
           name: finalCompanyName,
           settings: { permissions_mode: 'open' },
           permissions_mode: 'open',
           subscription_tier: 'trial',
           subscription_status: 'active',
           trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-        } as never)
+        })
         .select()
         .single()
 
@@ -112,14 +111,14 @@ export const POST = createApiHandler(
       const companyId = (company as { id: string }).id
 
       // Step 4: Create user profile
-      const { error: userError } = await admin.from('users').insert({
+      const { error: userError } = await typedInsert(admin, 'users', {
         id: authUserId,
         company_id: companyId,
         email,
         name,
         role: 'owner',
         is_active: true,
-      } as never)
+      })
 
       if (userError) {
         logger.error('[Signup] Failed to create user profile', { error: userError?.message })
@@ -137,12 +136,12 @@ export const POST = createApiHandler(
       }
 
       // Step 5: Create membership linking user to company
-      await admin.from('user_company_memberships').insert({
+      await typedInsert(admin, 'user_company_memberships', {
         auth_user_id: authUserId,
         company_id: companyId,
         role: 'owner',
         status: 'active',
-      } as never)
+      })
 
       // Step 6: Seed default roles for the company
       const rolesToInsert = SYSTEM_ROLES.map((role) => ({
@@ -153,17 +152,17 @@ export const POST = createApiHandler(
         description: role.description,
         permissions: [],
       }))
-      await admin.from('roles').insert(rolesToInsert as never)
+      await typedInsertMany(admin, 'roles', rolesToInsert)
 
       // Step 7: Log the signup event
-      await admin.from('auth_audit_log').insert({
+      await typedInsert(admin, 'auth_audit_log', {
         company_id: companyId,
         user_id: authUserId,
         event_type: 'signup',
         ip_address: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
         user_agent: req.headers.get('user-agent') ?? null,
         metadata: { email, company_name: finalCompanyName },
-      } as never)
+      })
       // Step 8: Send verification email via Supabase (it handles this automatically on createUser with email_confirm: false)
       // Also send welcome email via Resend
       const appUrl = env.NEXT_PUBLIC_APP_URL

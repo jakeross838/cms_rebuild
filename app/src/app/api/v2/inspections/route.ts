@@ -18,6 +18,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listInspectionsSchema, createInspectionSchema } from '@/lib/validation/schemas/inspections'
 
 // ============================================================================
@@ -105,9 +106,7 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('permit_inspections')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'permit_inspections', {
         company_id: ctx.companyId!,
         job_id: input.job_id,
         permit_id: input.permit_id,
@@ -122,7 +121,7 @@ export const POST = createApiHandler(
         completed_at: input.completed_at ?? null,
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
-      } as never)
+      })
       .select('id, company_id, permit_id, job_id, inspection_type, status, scheduled_date, scheduled_time, inspector_name, inspector_phone, notes, completed_at, is_reinspection, original_inspection_id, created_by, created_at, updated_at')
       .single()
 

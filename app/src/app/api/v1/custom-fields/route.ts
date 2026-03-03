@@ -11,6 +11,7 @@ import { z } from 'zod'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 
 const fieldTypeEnum = z.enum([
   'text', 'number', 'currency', 'percent', 'date', 'datetime',
@@ -144,9 +145,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
     sortOrder = ((maxData as { sort_order: number } | null)?.sort_order ?? -1) + 1
   }
 
-  const { data, error } = await supabase
-    .from('custom_field_definitions')
-    .insert({
+  const { data, error } = await typedInsert(supabase, 'custom_field_definitions', {
       company_id: companyId,
       entity_type: body.entityType,
       field_key: body.fieldKey,
@@ -166,7 +165,7 @@ async function handlePost(_req: NextRequest, ctx: ApiContext) {
       show_in_list_view: body.showInListView,
       is_required: body.isRequired,
       is_active: true,
-    } as never)
+    })
     .select()
     .single()
 

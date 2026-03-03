@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { z } from 'zod'
 
@@ -163,16 +164,14 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: rating, error } = await (supabase
-      .from('vendor_ratings')
-      .insert({
+    const { data: rating, error } = await typedInsert(supabase, 'vendor_ratings', {
         ...body,
         vendor_id: vendorId,
         company_id: ctx.companyId!,
         rated_by: ctx.user!.id,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: VendorRating | null; error: { message: string } | null }>)
+      .single() as { data: VendorRating | null; error: { message: string } | null }
 
     if (error || !rating) {
       logger.error('Failed to create vendor rating', { error: error?.message, vendorId })

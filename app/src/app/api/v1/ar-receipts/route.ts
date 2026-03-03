@@ -18,6 +18,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedInsertMany } from '@/lib/supabase/typed-queries'
 import {
   listReceiptsSchema,
   createReceiptSchema,
@@ -120,16 +121,14 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Step 1 — Insert the receipt record
-    const { data: receipt, error: receiptError } = await (supabase
-      .from('ar_receipts')
-      .insert({
+    const { data: receipt, error: receiptError } = await typedInsert(supabase, 'ar_receipts', {
         ...receiptData,
         company_id: ctx.companyId!,
         created_by: ctx.user!.id,
         status: 'pending',
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: ArReceipt | null; error: { message: string } | null }>)
+      .single()
 
     if (receiptError || !receipt) {
       logger.error('Failed to create AR receipt', { error: receiptError?.message })
@@ -147,10 +146,8 @@ export const POST = createApiHandler(
       amount: app.amount,
     }))
 
-    const { data: insertedApplications, error: appError } = await (supabase
-      .from('ar_receipt_applications')
-      .insert(applicationInserts as never)
-      .select() as unknown as Promise<{ data: ArReceiptApplication[] | null; error: { message: string } | null }>)
+    const { data: insertedApplications, error: appError } = await typedInsertMany(supabase, 'ar_receipt_applications', applicationInserts)
+      .select()
 
     if (appError) {
       logger.error('Failed to create AR receipt applications', { error: appError.message, receiptId: receipt.id })

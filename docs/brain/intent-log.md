@@ -1,5 +1,23 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-03: Session 56 — Quality Hardening, Deploy Prep, Performance, E2E Coverage
+
+### Why
+- **Root middleware missing**: The entire auth session refresh mechanism (`updateSession()`) existed in `lib/supabase/middleware.ts` but was never wired into Next.js's root middleware. This meant auth tokens weren't being refreshed on navigation, leading to potential session expiration issues in production.
+- **126 `as never` casts in API routes**: Session 55 cleaned UI pages but left 128 `as never` casts across all API routes. These were caused by Supabase's strict generic types not accepting Zod-validated payloads. A centralized helper eliminates the pattern.
+- **Zero cache usage**: Despite a full cache layer at `lib/cache/index.ts`, no API route or middleware used it. The two hottest paths — user profile lookup (every authenticated request) and company settings lookup (every permission check) — hit the database on every single request.
+- **No Dockerfile or production build config**: The app had no Docker support and no CI/CD pipeline for automated testing beyond a basic lint step.
+- **E2E coverage gap**: Only 6 E2E test files existed covering ~30 of 68 feature areas. Added 5 more files covering 38 additional test scenarios across company pages, financial pages, admin settings, search/filter, and job-scoped CRUD.
+
+### Decisions
+- **`any` params in typed-queries.ts**: After 3 iterations trying `Tables[T]['Insert']` (failed — Supabase generics too strict) and `Record<string, unknown>` (failed — interfaces lack index signatures), settled on `any` parameter types with `as never` centralized in the helper body. This is the pragmatic choice — the data is already Zod-validated upstream.
+- **Conditional standalone output**: `output: 'standalone'` causes `middleware.js.nft.json` ENOENT in Next.js 16 normal builds. Made it conditional on `DOCKER_BUILD` env var so Docker builds get standalone and dev/CI builds work normally.
+- **Profile cache 5min / settings cache 1hr**: Profile changes rarely but 5 min is safe. Company settings almost never change, 1 hour is safe. Both use the existing tenant-aware cache layer.
+
+### Discovered
+- Pre-existing type mismatches in 5 files (ap-bills, ar-invoices, journal-entries) were hidden by `as unknown as Promise<...>` wrappers around entire query chains. Removing the wrappers exposed nullable field mismatches (`created_at: string | null` vs `created_at: string`). Fixed with targeted `as unknown as Type[]` on result assignments.
+- `npx tsc` installs the wrong npm package (`tsc` not TypeScript). Must use `npm run typecheck`.
+
 ## 2026-03-02: Session 55 — Remove as any Casts + Add Dropdown Error States
 
 ### Why

@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedUpdate } from '@/lib/supabase/typed-queries'
 import { loginSchema, type LoginInput } from '@/lib/validation/schemas/auth'
 import type { AuthAuditLogInsert } from '@/types/auth'
 import type { User } from '@/types/database'
@@ -48,7 +49,7 @@ export const POST = createApiHandler(
           user_agent: userAgent,
           metadata: { email, reason: authError?.message ?? 'Unknown error' },
         }
-        await admin.from('auth_audit_log').insert(failedEntry as never)
+        await typedInsert(admin, 'auth_audit_log', failedEntry)
       } catch {
         // Don't block login response if audit logging fails
       }
@@ -107,13 +108,11 @@ export const POST = createApiHandler(
 
     await Promise.all([
       // Update last_login_at on the users table
-      admin
-        .from('users')
-        .update({ last_login_at: new Date().toISOString(), updated_at: new Date().toISOString() } as never)
+      typedUpdate(admin, 'users', { last_login_at: new Date().toISOString(), updated_at: new Date().toISOString() })
         .eq('id', authData.user.id),
 
       // Insert audit log entry
-      admin.from('auth_audit_log').insert(auditEntry as never),
+      typedInsert(admin, 'auth_audit_log', auditEntry),
     ])
 
     return NextResponse.json({

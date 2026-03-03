@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import {
   listScheduleTasksSchema,
@@ -118,14 +119,12 @@ export const POST = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: task, error } = await (supabase
-      .from('schedule_tasks')
-      .insert({
+    const { data: task, error } = await typedInsert(supabase, 'schedule_tasks', {
         ...body,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: ScheduleTask | null; error: { message: string } | null }>)
+      .single() as { data: ScheduleTask | null; error: { message: string } | null }
 
     if (error || !task) {
       logger.error('Failed to create schedule task', { error: error?.message })

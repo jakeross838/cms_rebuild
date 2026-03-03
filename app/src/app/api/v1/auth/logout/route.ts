@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import type { AuthAuditLogInsert } from '@/types/auth'
 
 export const POST = createApiHandler(
@@ -43,7 +44,7 @@ export const POST = createApiHandler(
         user_agent: userAgent,
         metadata: { email: ctx.user.email },
       }
-      await admin.from('auth_audit_log').insert(auditEntry as never)
+      await typedInsert(admin, 'auth_audit_log', auditEntry)
     }
 
     const response = NextResponse.json({

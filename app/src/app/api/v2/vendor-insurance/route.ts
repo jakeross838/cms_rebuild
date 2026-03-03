@@ -16,6 +16,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listVendorInsuranceSchema, createVendorInsuranceSchema } from '@/lib/validation/schemas/vendor-insurance-flat'
 
 // ============================================================================
@@ -100,9 +101,7 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('vendor_insurance')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'vendor_insurance', {
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,
         insurance_type: input.insurance_type,
@@ -112,7 +111,7 @@ export const POST = createApiHandler(
         coverage_amount: input.coverage_amount ?? null,
         status: input.status ?? 'active',
         certificate_document_id: input.certificate_document_id ?? null,
-      } as never)
+      })
       .select('id, vendor_id, company_id, insurance_type, carrier_name, policy_number, coverage_amount, expiration_date, certificate_document_id, status, verified_at, verified_by, created_at, updated_at')
       .single()
 

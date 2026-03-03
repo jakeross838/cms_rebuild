@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { updateDailyLogSchema } from '@/lib/validation/schemas/daily-logs'
 import type { DailyLog } from '@/types/daily-logs'
@@ -104,13 +105,11 @@ export const PATCH = createApiHandler(
       updated_at: new Date().toISOString(),
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('daily_logs')
-      .update(updateData as never)
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'daily_logs', updateData)
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: DailyLog | null; error: { message: string } | null }>)
+      .single()
 
     if (updateError || !updated) {
       logger.error('Failed to update daily log', { error: updateError?.message, targetId })
@@ -152,13 +151,11 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
     const now = new Date().toISOString()
 
-    const { data: deleted, error } = await (supabase
-      .from('daily_logs')
-      .update({ deleted_at: now, updated_at: now } as never)
+    const { data: deleted, error } = await typedUpdate(supabase, 'daily_logs', { deleted_at: now, updated_at: now })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select('id, deleted_at')
-      .single() as unknown as Promise<{ data: { id: string; deleted_at: string } | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !deleted) {
       logger.warn('Daily log not found for soft delete', { targetId })

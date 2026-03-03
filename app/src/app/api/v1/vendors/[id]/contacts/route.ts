@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { z } from 'zod'
 
@@ -152,15 +153,13 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: contact, error } = await (supabase
-      .from('vendor_contacts')
-      .insert({
+    const { data: contact, error } = await typedInsert(supabase, 'vendor_contacts', {
         ...body,
         vendor_id: vendorId,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: VendorContact | null; error: { message: string } | null }>)
+      .single() as { data: VendorContact | null; error: { message: string } | null }
 
     if (error || !contact) {
       logger.error('Failed to create vendor contact', { error: error?.message, vendorId })

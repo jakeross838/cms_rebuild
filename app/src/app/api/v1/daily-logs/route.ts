@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import {
   listDailyLogsSchema,
   createDailyLogSchema,
@@ -124,16 +125,14 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: log, error } = await (supabase
-      .from('daily_logs')
-      .insert({
+    const { data: log, error } = await typedInsert(supabase, 'daily_logs', {
         ...body,
         company_id: ctx.companyId!,
         status: 'draft',
         created_by: ctx.user!.id,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: DailyLog | null; error: { message: string; code?: string } | null }>)
+      .single()
 
     if (error || !log) {
       // Handle unique constraint (one log per job per day)

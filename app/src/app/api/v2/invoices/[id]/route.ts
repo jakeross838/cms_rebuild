@@ -13,6 +13,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { updateInvoiceSchema } from '@/lib/validation/schemas/invoices'
 
 // ============================================================================
@@ -84,9 +85,7 @@ export const PATCH = createApiHandler(
       if (val !== undefined) updates[key] = val
     }
 
-    const { data, error } = await supabase
-      .from('invoices')
-      .update(updates as never)
+    const { data, error } = await typedUpdate(supabase, 'invoices', updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .select('id, company_id, job_id, vendor_id, invoice_number, amount, status, invoice_date, due_date, notes, created_at, updated_at')
@@ -144,9 +143,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await supabase
-      .from('invoices')
-      .update({ status: 'denied', updated_at: new Date().toISOString() } as never)
+    const { error } = await typedUpdate(supabase, 'invoices', { status: 'denied', updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 

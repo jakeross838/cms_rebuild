@@ -9,6 +9,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { updateLaborRateSchema } from '@/lib/validation/schemas/time-tracking'
 
 // ============================================================================
@@ -81,9 +82,7 @@ export const DELETE = createApiHandler(
 
     // Soft-delete: set end_date to today and mark deleted_at
     const now = new Date().toISOString()
-    const { data, error } = await supabase
-      .from('labor_rates')
-      .update({ end_date: now.split('T')[0], deleted_at: now, updated_at: now } as never)
+    const { data, error } = await typedUpdate(supabase, 'labor_rates', { end_date: now.split('T')[0], deleted_at: now, updated_at: now })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)

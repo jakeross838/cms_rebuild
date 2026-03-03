@@ -15,6 +15,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { escapeLike } from '@/lib/utils'
 import { listApiKeysSchema, createApiKeySchema } from '@/lib/validation/schemas/api-marketplace'
 
@@ -110,9 +111,7 @@ export const POST = createApiHandler(
       insertData.expires_at = input.expires_at
     }
 
-    const { data, error } = await supabase
-      .from('api_keys')
-      .insert(insertData as never)
+    const { data, error } = await typedInsert(supabase, 'api_keys', insertData)
       .select('id, company_id, name, key_prefix, permissions, status, rate_limit_per_minute, last_used_at, expires_at, revoked_at, revoked_by, created_by, created_at, updated_at')
       .single()
 

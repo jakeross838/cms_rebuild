@@ -13,6 +13,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsertMany, typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { updateJournalEntrySchema } from '@/lib/validation/schemas/accounting'
 import type { GlJournalEntry, GlJournalLine } from '@/types/accounting'
@@ -108,13 +109,11 @@ export const PATCH = createApiHandler(
       updatePayload.posted_by = ctx.user!.id
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('gl_journal_entries')
-      .update(updatePayload as never)
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'gl_journal_entries', updatePayload)
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: GlJournalEntry | null; error: { message: string } | null }>)
+      .single()
 
     if (updateError || !updated) {
       logger.error('Failed to update journal entry', { error: updateError?.message, targetId })
@@ -137,10 +136,8 @@ export const PATCH = createApiHandler(
         journal_entry_id: targetId,
       }))
 
-      const { data: newLines, error: linesError } = await (supabase
-        .from('gl_journal_lines')
-        .insert(lineInserts as never)
-        .select() as unknown as Promise<{ data: GlJournalLine[] | null; error: { message: string } | null }>)
+      const { data: newLines, error: linesError } = await typedInsertMany(supabase, 'gl_journal_lines', lineInserts)
+        .select()
 
       if (linesError) {
         logger.error('Failed to replace journal lines', { error: linesError.message, targetId })
@@ -150,7 +147,7 @@ export const PATCH = createApiHandler(
           { status: mapped.status }
         )
       }
-      updatedLines = newLines
+      updatedLines = newLines as unknown as GlJournalLine[]
     }
 
     logger.info('Journal entry updated', { targetId, companyId: ctx.companyId! })

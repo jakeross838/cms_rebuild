@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import { createCostCodeSchema, listCostCodesSchema, type CreateCostCodeInput } from '@/lib/validation/schemas/cost-codes'
 import type { CostCode } from '@/types/database'
@@ -120,14 +121,12 @@ export const POST = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: costCode, error } = await (supabase
-      .from('cost_codes')
-      .insert({
+    const { data: costCode, error } = await typedInsert(supabase, 'cost_codes', {
         ...body,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: CostCode | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !costCode) {
       logger.error('Failed to create cost code', { error: error?.message })

@@ -14,6 +14,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { updateBudgetLineSchema } from '@/lib/validation/schemas/budget-lines'
 
 // ============================================================================
@@ -87,9 +88,7 @@ export const PATCH = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('budget_lines')
-      .update({ ...parseResult.data, updated_at: new Date().toISOString() } as never)
+    const { data, error } = await typedUpdate(supabase, 'budget_lines', { ...parseResult.data, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .select('id, budget_id, company_id, job_id, cost_code_id, phase, description, estimated_amount, committed_amount, actual_amount, projected_amount, variance_amount, sort_order, notes, created_at, updated_at')
@@ -154,9 +153,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await supabase
-      .from('budget_lines')
-      .update({ deleted_at: new Date().toISOString() } as never)
+    const { error } = await typedUpdate(supabase, 'budget_lines', { deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
 

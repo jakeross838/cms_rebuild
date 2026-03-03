@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import {
   listGlAccountsSchema,
@@ -112,14 +113,12 @@ export const POST = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: account, error } = await (supabase
-      .from('gl_accounts')
-      .insert({
+    const { data: account, error } = await typedInsert(supabase, 'gl_accounts', {
         ...body,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: GlAccount | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !account) {
       logger.error('Failed to create GL account', { error: error?.message })

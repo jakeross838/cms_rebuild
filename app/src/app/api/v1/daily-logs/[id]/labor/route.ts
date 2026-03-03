@@ -14,6 +14,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { createLogLaborSchema } from '@/lib/validation/schemas/daily-logs'
 import type { DailyLogLabor } from '@/types/daily-logs'
@@ -117,15 +118,13 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: labor, error } = await (supabase
-      .from('daily_log_labor')
-      .insert({
+    const { data: labor, error } = await typedInsert(supabase, 'daily_log_labor', {
         ...body,
         daily_log_id: logId,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: DailyLogLabor | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !labor) {
       logger.error('Failed to create labor entry', { error: error?.message })

@@ -12,6 +12,7 @@ import { z } from 'zod'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 
 function extractId(req: Request): string | null {
   const segments = new URL(req.url).pathname.split('/')
@@ -140,9 +141,7 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
   if (body.isRequired !== undefined) updates.is_required = body.isRequired
   if (body.isActive !== undefined) updates.is_active = body.isActive
 
-  const { data, error } = await supabase
-    .from('custom_field_definitions')
-    .update(updates as never)
+  const { data, error } = await typedUpdate(supabase, 'custom_field_definitions', updates)
     .eq('id', id)
     .eq('company_id', ctx.companyId!)
     .select()
@@ -181,9 +180,7 @@ async function handleDelete(req: NextRequest, ctx: ApiContext) {
   const supabase = await createClient()
   const now = new Date().toISOString()
 
-  const { data, error } = await supabase
-    .from('custom_field_definitions')
-    .update({ deleted_at: now, updated_at: now } as never)
+  const { data, error } = await typedUpdate(supabase, 'custom_field_definitions', { deleted_at: now, updated_at: now })
     .eq('id', id)
     .eq('company_id', ctx.companyId!)
     .is('deleted_at', null)

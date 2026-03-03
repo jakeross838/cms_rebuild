@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { listBudgetLinesSchema, createBudgetLineSchema } from '@/lib/validation/schemas/budget'
 import type { BudgetLine } from '@/types/budget'
@@ -157,16 +158,14 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: line, error } = await (supabase
-      .from('budget_lines')
-      .insert({
+    const { data: line, error } = await typedInsert(supabase, 'budget_lines', {
         ...body,
         budget_id: budgetId,
         job_id: budgetCheck.job_id,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: BudgetLine | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !line) {
       logger.error('Failed to create budget line', { error: error?.message })

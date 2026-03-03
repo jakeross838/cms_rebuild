@@ -18,6 +18,7 @@ import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
 import { hashToken } from '@/lib/auth/tokens'
 import { logger } from '@/lib/monitoring'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { typedInsert, typedUpdate } from '@/lib/supabase/typed-queries'
 import { acceptInviteSchema, type AcceptInviteInput } from '@/lib/validation/schemas/auth'
 
 export const POST = createApiHandler(
@@ -174,14 +175,14 @@ export const POST = createApiHandler(
     }
 
     // Create user profile
-    const { error: profileError } = await admin.from('users').insert({
+    const { error: profileError } = await typedInsert(admin, 'users', {
       id: authUserId,
       company_id: invitation.company_id,
       email: invitation.email,
       name: finalName,
       role: invitation.role,
       is_active: true,
-    } as never)
+    })
 
     if (profileError) {
       // Check if it's a duplicate (user already exists in this company)
@@ -212,13 +213,11 @@ export const POST = createApiHandler(
     }
 
     // Mark invitation as accepted
-    await admin
-      .from('user_invitations')
-      .update({ accepted_at: new Date().toISOString(), updated_at: new Date().toISOString() } as never)
+    await typedUpdate(admin, 'user_invitations', { accepted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq('id', invitation.id)
 
     // Log the event
-    await admin.from('auth_audit_log').insert({
+    await typedInsert(admin, 'auth_audit_log', {
       company_id: invitation.company_id,
       user_id: authUserId,
       event_type: 'invite_accepted',
@@ -229,7 +228,7 @@ export const POST = createApiHandler(
         role: invitation.role,
         invitation_id: invitation.id,
       },
-    } as never)
+    })
 
     return NextResponse.json({
       success: true,

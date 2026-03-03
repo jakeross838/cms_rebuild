@@ -17,6 +17,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listProjectUserRolesSchema, createProjectUserRoleSchema } from '@/lib/validation/schemas/project-user-roles'
 
 // ============================================================================
@@ -93,16 +94,14 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('project_user_roles')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'project_user_roles', {
         company_id: ctx.companyId!,
         job_id: input.job_id,
         user_id: input.user_id,
         role_id: input.role_id ?? null,
         role_override: input.role_override ?? null,
         granted_by: ctx.user!.id,
-      } as never)
+      })
       .select('id, company_id, user_id, job_id, role_id, role_override, granted_by, created_at')
       .single()
 

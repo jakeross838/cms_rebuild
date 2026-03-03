@@ -10,6 +10,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { updateUserSchema, type UpdateUserInput } from '@/lib/validation/schemas/users'
 import type { User } from '@/types/database'
@@ -151,13 +152,11 @@ export const PATCH = createApiHandler(
 
     updateData.updated_at = new Date().toISOString()
 
-    const { data: updatedUser, error: updateError } = await (supabase
-      .from('users')
-      .update(updateData as never)
+    const { data: updatedUser, error: updateError } = await typedUpdate(supabase, 'users', updateData)
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: User | null; error: { message: string } | null }>)
+      .single() as { data: User | null; error: { message: string } | null }
 
     if (updateError || !updatedUser) {
       logger.error('Failed to update user', { error: updateError?.message ?? 'Unknown', targetId })

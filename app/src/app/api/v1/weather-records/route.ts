@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import {
   listWeatherRecordsSchema,
   createWeatherRecordSchema,
@@ -118,14 +119,12 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: record, error } = await (supabase
-      .from('weather_records')
-      .insert({
+    const { data: record, error } = await typedInsert(supabase, 'weather_records', {
         ...body,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: WeatherRecord | null; error: { message: string } | null }>)
+      .single() as { data: WeatherRecord | null; error: { message: string } | null }
 
     if (error || !record) {
       logger.error('Failed to create weather record', { error: error?.message })

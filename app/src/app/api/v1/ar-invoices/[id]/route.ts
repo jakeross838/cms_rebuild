@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsertMany, typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { updateArInvoiceSchema } from '@/lib/validation/schemas/accounting'
 import type { ArInvoice, ArInvoiceLine } from '@/types/accounting'
@@ -98,16 +99,14 @@ export const PATCH = createApiHandler(
       )
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('ar_invoices')
-      .update({
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'ar_invoices', {
         ...invoiceData,
         updated_at: new Date().toISOString(),
-      } as never)
+      })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: ArInvoice | null; error: { message: string } | null }>)
+      .single()
 
     if (updateError || !updated) {
       logger.error('Failed to update AR invoice', { error: updateError?.message, targetId })
@@ -125,10 +124,8 @@ export const PATCH = createApiHandler(
 
       const lineInserts = lines.map((line) => ({ ...line, invoice_id: targetId }))
 
-      const { data: newLines, error: linesError } = await (supabase
-        .from('ar_invoice_lines')
-        .insert(lineInserts as never)
-        .select() as unknown as Promise<{ data: ArInvoiceLine[] | null; error: { message: string } | null }>)
+      const { data: newLines, error: linesError } = await typedInsertMany(supabase, 'ar_invoice_lines', lineInserts)
+        .select()
 
       if (linesError) {
         logger.error('Failed to replace AR invoice lines', { error: linesError.message, targetId })
@@ -138,7 +135,7 @@ export const PATCH = createApiHandler(
           { status: mapped.status }
         )
       }
-      updatedLines = newLines
+      updatedLines = newLines as unknown as ArInvoiceLine[]
     }
 
     logger.info('AR invoice updated', { targetId, companyId: ctx.companyId! })
@@ -177,14 +174,12 @@ export const DELETE = createApiHandler(
     const supabase = await createClient()
     const now = new Date().toISOString()
 
-    const { data: deleted, error } = await (supabase
-      .from('ar_invoices')
-      .update({ deleted_at: now, updated_at: now } as never)
+    const { data: deleted, error } = await typedUpdate(supabase, 'ar_invoices', { deleted_at: now, updated_at: now })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
       .select('id, deleted_at')
-      .single() as unknown as Promise<{ data: { id: string; deleted_at: string } | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !deleted) {
       logger.warn('AR invoice not found for soft delete', { targetId })

@@ -12,6 +12,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import type { ApPayment, ApPaymentApplication } from '@/types/accounting'
 
@@ -96,16 +97,14 @@ export const PATCH = createApiHandler(
       )
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('ap_payments')
-      .update({
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'ap_payments', {
         status: 'voided',
         updated_at: new Date().toISOString(),
-      } as never)
+      })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: ApPayment | null; error: { message: string } | null }>)
+      .single()
 
     if (updateError || !updated) {
       logger.error('Failed to void AP payment', { error: updateError?.message, targetId })

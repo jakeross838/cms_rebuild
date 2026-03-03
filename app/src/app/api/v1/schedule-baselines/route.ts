@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import {
   listBaselinesSchema,
   createBaselineSchema,
@@ -124,11 +125,9 @@ export const POST = createApiHandler(
       baseline_data: snapshotData,
     }
 
-    const { data: baseline, error } = await (supabase
-      .from('schedule_baselines')
-      .insert(insertData as never)
+    const { data: baseline, error } = await typedInsert(supabase, 'schedule_baselines', insertData)
       .select()
-      .single() as unknown as Promise<{ data: ScheduleBaseline | null; error: { message: string } | null }>)
+      .single() as { data: ScheduleBaseline | null; error: { message: string } | null }
 
     if (error || !baseline) {
       logger.error('Failed to create baseline', { error: error?.message })

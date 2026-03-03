@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import { createVendorSchema, listVendorsSchema, type CreateVendorInput } from '@/lib/validation/schemas/vendors'
 import type { Vendor } from '@/types/database'
@@ -110,14 +111,12 @@ export const POST = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: vendor, error } = await (supabase
-      .from('vendors')
-      .insert({
+    const { data: vendor, error } = await typedInsert(supabase, 'vendors', {
         ...body,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: Vendor | null; error: { message: string } | null }>)
+      .single() as { data: Vendor | null; error: { message: string } | null }
 
     if (error || !vendor) {
       logger.error('Failed to create vendor', { error: error?.message })

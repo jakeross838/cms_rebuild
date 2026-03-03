@@ -10,6 +10,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { updateJobPhotoSchema } from '@/lib/validation/schemas/job-photos'
 
 // ============================================================================
@@ -82,9 +83,7 @@ export const PATCH = createApiHandler(
       if (val !== undefined) updates[key] = val
     }
 
-    const { data, error } = await supabase
-      .from('job_photos')
-      .update(updates as never)
+    const { data, error } = await typedUpdate(supabase, 'job_photos', updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)
@@ -144,9 +143,7 @@ export const DELETE = createApiHandler(
       )
     }
 
-    const { error } = await supabase
-      .from('job_photos')
-      .update({ deleted_at: new Date().toISOString() } as never)
+    const { error } = await typedUpdate(supabase, 'job_photos', { deleted_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .is('deleted_at', null)

@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import { createClientSchema, listClientsSchema, type CreateClientInput } from '@/lib/validation/schemas/clients'
 import type { Client } from '@/types/database'
@@ -104,14 +105,12 @@ export const POST = createApiHandler(
 
     const supabase = await createClient()
 
-    const { data: client, error } = await (supabase
-      .from('clients')
-      .insert({
+    const { data: client, error } = await typedInsert(supabase, 'clients', {
         ...body,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: Client | null; error: { message: string } | null }>)
+      .single()
 
     if (error || !client) {
       logger.error('Failed to create client', { error: error?.message })

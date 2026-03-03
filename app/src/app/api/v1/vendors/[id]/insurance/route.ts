@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { z } from 'zod'
 
@@ -164,15 +165,13 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: record, error } = await (supabase
-      .from('vendor_insurance')
-      .insert({
+    const { data: record, error } = await typedInsert(supabase, 'vendor_insurance', {
         ...body,
         vendor_id: vendorId,
         company_id: ctx.companyId!,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: VendorInsurance | null; error: { message: string } | null }>)
+      .single() as { data: VendorInsurance | null; error: { message: string } | null }
 
     if (error || !record) {
       logger.error('Failed to create vendor insurance', { error: error?.message, vendorId })

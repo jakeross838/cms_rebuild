@@ -1,5 +1,53 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 56 — Quality Hardening, Deploy Prep, Performance, E2E Coverage (2026-03-03)
+
+### Root Middleware
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| `app/middleware.ts` exists | File present with `updateSession` call | PASS |
+| Matcher excludes static assets | Regex matcher configured | PASS |
+
+### `as never` Elimination (API Routes)
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Zero `as never` in API route files | `grep "as never" app/src/app/api/` returns 0 | PASS |
+| `typed-queries.ts` centralizes all casts | 4 helper functions exported | PASS |
+| TypeScript compilation | 0 errors | PASS |
+| Unit + integration tests | 56 files, 3306 tests pass | PASS |
+
+### Performance — Middleware Caching
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| User profile cached on auth requests | `cacheGet`/`cacheSet` with 300s TTL | PASS |
+| Company settings cached | `cacheGet`/`cacheSet` with 3600s TTL | PASS |
+| Cache helpers exported | `getCachedList`, `setCachedList`, `invalidateEntityCache` | PASS |
+
+### Deploy Prep
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Dockerfile multi-stage build | 3 stages (deps, builder, runner) | PASS |
+| Non-root user in production | `nextjs` user with UID 1001 | PASS |
+| `.dockerignore` excludes dev files | node_modules, .next, tests excluded | PASS |
+| Standalone output conditional | Only when `DOCKER_BUILD=1` | PASS |
+| CI pipeline has lint, test, build, e2e jobs | 4 jobs in `ci.yml` | PASS |
+| `npm run build` succeeds | Clean build with placeholder env vars | PASS |
+
+### Compound Indexes
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Migration file exists | `20260303000000_add_compound_indexes.sql` | PASS |
+| Uses `IF NOT EXISTS` | Safe for re-runs | PASS |
+
+### E2E Coverage Expansion
+| Test Case | Expected | Status |
+|-----------|----------|--------|
+| Company pages E2E | 12 tests across dashboard, clients, vendors, etc. | PASS |
+| Financial pages E2E | 6 tests across AP, AR, GL, journal entries | PASS |
+| Admin settings E2E | 7 tests across settings, users, roles, audit | PASS |
+| Search/filter E2E | 5 tests across list pages | PASS |
+| Job-scoped CRUD E2E | 8 tests across change orders, POs, etc. | PASS |
+
 ## Session 55 — Remove as any + Dropdown Error States (2026-03-02)
 
 ### as any Removal

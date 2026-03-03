@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '10mb',
     },
   },
+  output: process.env.DOCKER_BUILD === '1' ? 'standalone' : undefined,
   serverExternalPackages: ['@supabase/supabase-js'],
   logging: {
     fetches: {

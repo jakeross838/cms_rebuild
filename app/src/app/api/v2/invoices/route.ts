@@ -19,6 +19,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listInvoicesSchema, createInvoiceSchema } from '@/lib/validation/schemas/invoices'
 
 // ============================================================================
@@ -102,9 +103,7 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('invoices')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'invoices', {
         company_id: ctx.companyId!,
         amount: input.amount,
         invoice_number: input.invoice_number ?? null,
@@ -114,7 +113,7 @@ export const POST = createApiHandler(
         vendor_id: input.vendor_id ?? null,
         status: input.status ?? 'draft',
         notes: input.notes ?? null,
-      } as never)
+      })
       .select('id, company_id, job_id, vendor_id, invoice_number, amount, status, invoice_date, due_date, notes, created_at, updated_at')
       .single()
 

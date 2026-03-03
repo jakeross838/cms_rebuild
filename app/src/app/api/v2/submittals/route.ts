@@ -16,6 +16,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listSubmittalsSchema, createSubmittalSchema } from '@/lib/validation/schemas/submittals'
 
 // ============================================================================
@@ -100,9 +101,7 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('submittals')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'submittals', {
         company_id: ctx.companyId!,
         job_id: input.job_id,
         title: input.title,
@@ -117,7 +116,7 @@ export const POST = createApiHandler(
         submitted_to: input.submitted_to ?? null,
         notes: input.notes ?? null,
         created_by: ctx.user!.id,
-      } as never)
+      })
       .select('id, company_id, job_id, submittal_number, title, description, spec_section, submitted_to, submitted_by, submission_date, required_date, status, priority, notes, created_by, created_at, updated_at')
       .single()
 

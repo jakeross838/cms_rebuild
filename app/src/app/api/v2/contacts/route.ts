@@ -16,6 +16,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { listContactsSchema, createContactSchema } from '@/lib/validation/schemas/contacts'
 
 // ============================================================================
@@ -92,9 +93,7 @@ export const POST = createApiHandler(
     const input = parseResult.data
     const supabase = await createClient()
 
-    const { data, error } = await supabase
-      .from('vendor_contacts')
-      .insert({
+    const { data, error } = await typedInsert(supabase, 'vendor_contacts', {
         company_id: ctx.companyId!,
         vendor_id: input.vendor_id,
         name: input.name,
@@ -102,7 +101,7 @@ export const POST = createApiHandler(
         email: input.email ?? null,
         phone: input.phone ?? null,
         is_primary: input.is_primary ?? null,
-      } as never)
+      })
       .select('id, vendor_id, company_id, name, title, email, phone, is_primary, created_at, updated_at')
       .single()
 

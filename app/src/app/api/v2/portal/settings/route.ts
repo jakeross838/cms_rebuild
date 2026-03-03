@@ -13,6 +13,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpsert } from '@/lib/supabase/typed-queries'
 import {
   getPortalSettingsSchema,
   updatePortalSettingsSchema,
@@ -110,9 +111,7 @@ export const PUT = createApiHandler(
     if (input.show_photos !== undefined) payload.show_photos = input.show_photos
     if (input.show_daily_logs !== undefined) payload.show_daily_logs = input.show_daily_logs
 
-    const { data, error } = await supabase
-      .from('portal_settings')
-      .upsert(payload as never, { onConflict: 'company_id,job_id' })
+    const { data, error } = await typedUpsert(supabase, 'portal_settings', payload, { onConflict: 'company_id,job_id' })
       .select('id, company_id, job_id, is_enabled, branding_logo_url, branding_primary_color, welcome_message, show_budget, show_schedule, show_documents, show_photos, show_daily_logs, created_at, updated_at')
       .single()
 

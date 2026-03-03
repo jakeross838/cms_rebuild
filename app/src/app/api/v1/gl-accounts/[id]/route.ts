@@ -12,6 +12,7 @@ import { NextResponse } from 'next/server'
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedUpdate } from '@/lib/supabase/typed-queries'
 import { uuidSchema } from '@/lib/validation/schemas/common'
 import { updateGlAccountSchema } from '@/lib/validation/schemas/accounting'
 import type { GlAccount } from '@/types/accounting'
@@ -95,16 +96,14 @@ export const PATCH = createApiHandler(
       )
     }
 
-    const { data: updated, error: updateError } = await (supabase
-      .from('gl_accounts')
-      .update({
+    const { data: updated, error: updateError } = await typedUpdate(supabase, 'gl_accounts', {
         ...body,
         updated_at: new Date().toISOString(),
-      } as never)
+      })
       .eq('id', targetId)
       .eq('company_id', ctx.companyId!)
       .select()
-      .single() as unknown as Promise<{ data: GlAccount | null; error: { message: string } | null }>)
+      .single()
 
     if (updateError || !updated) {
       logger.error('Failed to update GL account', { error: updateError?.message, targetId })

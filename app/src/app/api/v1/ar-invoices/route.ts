@@ -16,6 +16,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert, typedInsertMany } from '@/lib/supabase/typed-queries'
 import { safeOrIlike } from '@/lib/utils'
 import {
   listArInvoicesSchema,
@@ -127,17 +128,15 @@ export const POST = createApiHandler(
     const supabase = await createClient()
 
     // Step 1 — Insert the invoice header
-    const { data: invoice, error: invoiceError } = await (supabase
-      .from('ar_invoices')
-      .insert({
+    const { data: invoice, error: invoiceError } = await typedInsert(supabase, 'ar_invoices', {
         ...invoiceData,
         company_id: ctx.companyId!,
         created_by: ctx.user!.id,
         status: 'draft',
         balance_due: invoiceData.amount,
-      } as never)
+      })
       .select()
-      .single() as unknown as Promise<{ data: ArInvoice | null; error: { message: string } | null }>)
+      .single()
 
     if (invoiceError || !invoice) {
       logger.error('Failed to create AR invoice', { error: invoiceError?.message })
@@ -156,10 +155,8 @@ export const POST = createApiHandler(
         invoice_id: invoice.id,
       }))
 
-      const { data: newLines, error: linesError } = await (supabase
-        .from('ar_invoice_lines')
-        .insert(lineInserts as never)
-        .select() as unknown as Promise<{ data: ArInvoiceLine[] | null; error: { message: string } | null }>)
+      const { data: newLines, error: linesError } = await typedInsertMany(supabase, 'ar_invoice_lines', lineInserts)
+        .select()
 
       if (linesError) {
         logger.error('Failed to create AR invoice lines', { error: linesError.message, invoiceId: invoice.id })
@@ -169,7 +166,7 @@ export const POST = createApiHandler(
           { status: mapped.status }
         )
       }
-      insertedLines = newLines
+      insertedLines = newLines as unknown as ArInvoiceLine[]
     }
 
     logger.info('AR invoice created', { invoiceId: invoice.id, clientId: invoice.client_id, companyId: ctx.companyId! })

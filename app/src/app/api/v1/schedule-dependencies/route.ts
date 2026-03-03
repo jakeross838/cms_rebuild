@@ -14,6 +14,7 @@ import {
 } from '@/lib/api/middleware'
 import { createLogger } from '@/lib/monitoring'
 import { createClient } from '@/lib/supabase/server'
+import { typedInsert } from '@/lib/supabase/typed-queries'
 import { createDependencySchema } from '@/lib/validation/schemas/scheduling'
 import type { ScheduleDependency } from '@/types/scheduling'
 
@@ -126,11 +127,9 @@ export const POST = createApiHandler(
       )
     }
 
-    const { data: dep, error } = await (supabase
-      .from('schedule_dependencies')
-      .insert(body as never)
+    const { data: dep, error } = await typedInsert(supabase, 'schedule_dependencies', body)
       .select()
-      .single() as unknown as Promise<{ data: ScheduleDependency | null; error: { message: string } | null }>)
+      .single() as { data: ScheduleDependency | null; error: { message: string } | null }
 
     if (error || !dep) {
       logger.error('Failed to create dependency', { error: error?.message })
