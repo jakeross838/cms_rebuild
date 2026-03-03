@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatCurrency, getStatusColor, formatStatus} from '@/lib/utils'
 
@@ -149,13 +150,19 @@ export default async function EquipmentPage({
                       {item.serial_number ? ` • SN: ${item.serial_number}` : ''}
                     </div>
                   </div>
-                  <div className="text-right">
-                    {item.daily_rate != null && (
-                      <div className="font-medium">{formatCurrency(item.daily_rate)}/day</div>
-                    )}
-                    {item.current_value != null && (
-                      <div className="text-xs text-muted-foreground">Value: {formatCurrency(item.current_value)}</div>
-                    )}
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      {item.daily_rate != null && (
+                        <div className="font-medium">{formatCurrency(item.daily_rate)}/day</div>
+                      )}
+                      {item.current_value != null && (
+                        <div className="text-xs text-muted-foreground">Value: {formatCurrency(item.current_value)}</div>
+                      )}
+                    </div>
+                    <RowActions
+                      editHref={`/equipment/${item.id}`}
+                      archiveAction={{ entityId: item.id, entityType: 'equipment', entityName: 'equipment' }}
+                    />
                   </div>
                 </div>
               </Link>

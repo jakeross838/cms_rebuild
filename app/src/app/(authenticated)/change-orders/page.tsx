@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatCurrency, formatDate, getStatusColor , formatStatus } from '@/lib/utils'
 
@@ -190,13 +191,19 @@ export default async function ChangeOrdersPage({
                         </div>
                       </div>
                     </div>
-                    <div className="text-right hidden sm:block">
-                      <div className="font-medium text-foreground">
-                        {formatCurrency(co.amount)}
+                    <div className="flex items-center gap-3">
+                      <div className="text-right hidden sm:block">
+                        <div className="font-medium text-foreground">
+                          {formatCurrency(co.amount)}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {formatDate(co.created_at)}
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatDate(co.created_at)}
-                      </div>
+                      <RowActions
+                        editHref={`/change-orders/${co.id}`}
+                        archiveAction={{ entityId: co.id, entityType: 'change-orders', entityName: 'change order' }}
+                      />
                     </div>
                   </div>
                 </Link>

@@ -95,8 +95,11 @@ export const GET = createApiHandler(
       paginatedResponse(vendors ?? [], count ?? 0, page, limit, ctx.requestId)
     )
   },
-  { requireAuth: true, rateLimit: 'api',
+  {
+    requireAuth: true,
+    rateLimit: 'api',
     permission: 'vendors:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/vendors' },
   }
 )
 
@@ -131,10 +134,13 @@ export const POST = createApiHandler(
 
     return NextResponse.json({ data: vendor, requestId: ctx.requestId }, { status: 201 })
   },
-  { requireAuth: true, rateLimit: 'api',
+  {
+    requireAuth: true,
+    rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     schema: createVendorSchema,
     permission: 'vendors:create:all',
     auditAction: 'vendor.create',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/vendors' },
   }
 )

@@ -108,7 +108,12 @@ export const GET = createApiHandler(
 
     return NextResponse.json(paginatedResponse(transactions ?? [], count ?? 0, page, limit, ctx.requestId))
   },
-  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
+  {
+    requireAuth: true,
+    rateLimit: 'api',
+    permission: 'jobs:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/cost-transactions' },
+  }
 )
 
 // ── POST /api/v1/cost-transactions ──────────────────────────────────────
@@ -165,5 +170,6 @@ export const POST = createApiHandler(
     schema: createCostTransactionSchema,
     permission: 'jobs:update:all',
     auditAction: 'cost_transaction.create',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/cost-transactions' },
   }
 )

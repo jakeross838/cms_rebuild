@@ -114,7 +114,12 @@ export const GET = createApiHandler(
       paginatedResponse(contacts ?? [], count ?? 0, page, limit, ctx.requestId)
     )
   },
-  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
+  {
+    requireAuth: true,
+    rateLimit: 'api',
+    permission: 'jobs:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/vendors' },
+  }
 )
 
 // ============================================================================
@@ -181,5 +186,6 @@ export const POST = createApiHandler(
     schema: createVendorContactSchema,
     permission: 'jobs:update:all',
     auditAction: 'vendor_contact.create',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/vendors' },
   }
 )

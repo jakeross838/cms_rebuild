@@ -57,7 +57,12 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: log, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
+  {
+    requireAuth: true,
+    rateLimit: 'api',
+    permission: 'jobs:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
+  }
 )
 
 // ── PATCH /api/v1/daily-logs/[id] ───────────────────────────────────────
@@ -131,6 +136,7 @@ export const PATCH = createApiHandler(
     schema: updateDailyLogSchema,
     permission: 'jobs:update:all',
     auditAction: 'daily_log.update',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
   }
 )
 
@@ -175,5 +181,6 @@ export const DELETE = createApiHandler(
     requiredRoles: ['owner', 'admin', 'pm'],
     permission: 'jobs:delete:all',
     auditAction: 'daily_log.delete',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
   }
 )

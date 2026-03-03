@@ -75,7 +75,12 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: labor ?? [], requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
+  {
+    requireAuth: true,
+    rateLimit: 'api',
+    permission: 'jobs:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
+  }
 )
 
 // ── POST /api/v1/daily-logs/[id]/labor ──────────────────────────────────
@@ -146,5 +151,6 @@ export const POST = createApiHandler(
     schema: createLogLaborSchema,
     permission: 'jobs:update:all',
     auditAction: 'daily_log_labor.create',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
   }
 )

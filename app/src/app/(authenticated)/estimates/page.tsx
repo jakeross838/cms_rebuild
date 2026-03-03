@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 
@@ -150,11 +151,17 @@ export default async function EstimatesPage({
                       {est.jobs?.name || 'No job'} {est.estimate_type ? `• ${formatStatus(est.estimate_type)}` : ''}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-medium">{formatCurrency(est.total)}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {est.valid_until ? `Valid until ${formatDate(est.valid_until)}` : est.created_at ? formatDate(est.created_at) : ''}
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <div className="font-medium">{formatCurrency(est.total)}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {est.valid_until ? `Valid until ${formatDate(est.valid_until)}` : est.created_at ? formatDate(est.created_at) : ''}
+                      </div>
                     </div>
+                    <RowActions
+                      editHref={`/estimates/${est.id}`}
+                      archiveAction={{ entityId: est.id, entityType: 'estimates', entityName: 'estimate' }}
+                    />
                   </div>
                 </div>
               </Link>

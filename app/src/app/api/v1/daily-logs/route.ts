@@ -97,7 +97,12 @@ export const GET = createApiHandler(
 
     return NextResponse.json(paginatedResponse(logs ?? [], count ?? 0, page, limit, ctx.requestId))
   },
-  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
+  {
+    requireAuth: true,
+    rateLimit: 'api',
+    permission: 'jobs:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
+  }
 )
 
 // ── POST /api/v1/daily-logs ─────────────────────────────────────────────
@@ -161,5 +166,6 @@ export const POST = createApiHandler(
     schema: createDailyLogSchema,
     permission: 'jobs:update:all',
     auditAction: 'daily_log.create',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
   }
 )

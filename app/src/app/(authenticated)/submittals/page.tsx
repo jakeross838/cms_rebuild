@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
@@ -103,6 +104,10 @@ export default async function SubmittalsPage({
                         {submittal.required_date && <span>Due: {formatDate(submittal.required_date)}</span>}
                       </div>
                     </div>
+                    <RowActions
+                      editHref={`/submittals/${submittal.id}`}
+                      archiveAction={{ entityId: submittal.id, entityType: 'submittals', entityName: 'submittal' }}
+                    />
                   </div>
                 </Link>
               ))}

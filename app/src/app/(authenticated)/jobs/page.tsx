@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 import type { JobStatus } from '@/types/database'
@@ -187,13 +188,19 @@ export default async function JobsPage({
                       </div>
                     </div>
                   </div>
-                  <div className="text-right hidden sm:block">
-                    <div className="font-medium text-foreground">
-                      {formatCurrency(job.contract_amount)}
+                  <div className="flex items-center gap-3">
+                    <div className="text-right hidden sm:block">
+                      <div className="font-medium text-foreground">
+                        {formatCurrency(job.contract_amount)}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {job.start_date ? `Started ${formatDate(job.start_date)}` : 'Not started'}
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {job.start_date ? `Started ${formatDate(job.start_date)}` : 'Not started'}
-                    </div>
+                    <RowActions
+                      editHref={`/jobs/${job.id}`}
+                      archiveAction={{ entityId: job.id, entityType: 'jobs', entityName: 'job' }}
+                    />
                   </div>
                 </div>
               </Link>

@@ -90,5 +90,6 @@ export const POST = createApiHandler(
     schema: submitDailyLogSchema,
     permission: 'jobs:update:all',
     auditAction: 'daily_log.submit',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
   }
 )

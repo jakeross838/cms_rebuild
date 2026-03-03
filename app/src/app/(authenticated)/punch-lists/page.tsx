@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
@@ -103,17 +104,25 @@ export default async function PunchListsPage({
             <Link key={item.id} href={`/punch-lists/${item.id}`} className="block hover:bg-accent/50 rounded-md transition-colors">
               <Card>
                 <CardContent className="p-3">
-                  <div className="flex items-center gap-2">
-                    <CheckSquare className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{item.title ?? 'Untitled'}</span>
-                    <Badge className={getStatusColor(item.status ?? 'open')}>{formatStatus((item.status ?? 'open'))}</Badge>
-                    {item.priority && <Badge className={getStatusColor(item.priority)}>{formatStatus(item.priority)}</Badge>}
-                  </div>
-                  <div className="flex items-center gap-3 ml-6 mt-1 text-xs text-muted-foreground">
-                    {item.location && <span>{item.location}</span>}
-                    {item.room && <span>{item.room}</span>}
-                    {item.category && <span>{item.category}</span>}
-                    {item.due_date && <span>Due: {formatDate(item.due_date)}</span>}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <CheckSquare className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{item.title ?? 'Untitled'}</span>
+                        <Badge className={getStatusColor(item.status ?? 'open')}>{formatStatus((item.status ?? 'open'))}</Badge>
+                        {item.priority && <Badge className={getStatusColor(item.priority)}>{formatStatus(item.priority)}</Badge>}
+                      </div>
+                      <div className="flex items-center gap-3 ml-6 mt-1 text-xs text-muted-foreground">
+                        {item.location && <span>{item.location}</span>}
+                        {item.room && <span>{item.room}</span>}
+                        {item.category && <span>{item.category}</span>}
+                        {item.due_date && <span>Due: {formatDate(item.due_date)}</span>}
+                      </div>
+                    </div>
+                    <RowActions
+                      editHref={`/punch-lists/${item.id}`}
+                      archiveAction={{ entityId: item.id, entityType: 'punch-lists', entityName: 'punch item' }}
+                    />
                   </div>
                 </CardContent>
               </Card>

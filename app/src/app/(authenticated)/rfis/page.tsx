@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
@@ -144,6 +145,10 @@ export default async function RfisPage({
                         <span>Created: {formatDate(rfi.created_at)}</span>
                       </div>
                     </div>
+                    <RowActions
+                      editHref={`/rfis/${rfi.id}`}
+                      archiveAction={{ entityId: rfi.id, entityType: 'rfis', entityName: 'RFI' }}
+                    />
                   </div>
                 </Link>
               ))}

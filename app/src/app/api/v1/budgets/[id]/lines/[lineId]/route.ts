@@ -59,7 +59,12 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: line, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
+  {
+    requireAuth: true,
+    rateLimit: 'api',
+    permission: 'jobs:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/budgets' },
+  }
 )
 
 // ── PATCH /api/v1/budgets/[id]/lines/[lineId] ──────────────────────────
@@ -136,6 +141,7 @@ export const PATCH = createApiHandler(
     schema: updateBudgetLineSchema,
     permission: 'jobs:update:all',
     auditAction: 'budget_line.update',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/budgets' },
   }
 )
 
@@ -208,5 +214,6 @@ export const DELETE = createApiHandler(
     requiredRoles: ['owner', 'admin', 'pm'],
     permission: 'jobs:delete:all',
     auditAction: 'budget_line.delete',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/budgets' },
   }
 )

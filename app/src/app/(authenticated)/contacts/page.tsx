@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike } from '@/lib/utils'
 
@@ -87,6 +88,10 @@ export default async function ContactsPage({
                         {contact.phone && <span> &bull; {contact.phone}</span>}
                       </div>
                     </div>
+                    <RowActions
+                      editHref={`/contacts/${contact.id}`}
+                      archiveAction={{ entityId: contact.id, entityType: 'contacts', entityName: 'contact' }}
+                    />
                   </div>
                 </CardContent>
               </Card>

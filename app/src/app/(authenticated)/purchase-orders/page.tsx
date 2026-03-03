@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
@@ -186,15 +187,21 @@ export default async function PurchaseOrdersPage({
                         </div>
                       </div>
                     </div>
-                    <div className="text-right hidden sm:block">
-                      <div className="font-medium text-foreground">
-                        {formatCurrency(po.total_amount)}
+                    <div className="flex items-center gap-3">
+                      <div className="text-right hidden sm:block">
+                        <div className="font-medium text-foreground">
+                          {formatCurrency(po.total_amount)}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {po.delivery_date
+                            ? `Delivery ${formatDate(po.delivery_date)}`
+                            : formatDate(po.created_at)}
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {po.delivery_date
-                          ? `Delivery ${formatDate(po.delivery_date)}`
-                          : formatDate(po.created_at)}
-                      </div>
+                      <RowActions
+                        editHref={`/purchase-orders/${po.id}`}
+                        archiveAction={{ entityId: po.id, entityType: 'purchase-orders', entityName: 'purchase order' }}
+                      />
                     </div>
                   </div>
                 </Link>

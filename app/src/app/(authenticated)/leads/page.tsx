@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 
@@ -151,11 +152,17 @@ export default async function LeadsPage({
                       {lead.email || 'No email'} {lead.source ? `• ${lead.source}` : ''} {lead.project_type ? `• ${formatStatus(lead.project_type)}` : ''}
                     </div>
                   </div>
-                  <div className="text-right">
-                    {lead.expected_contract_value && (
-                      <div className="font-medium">{formatCurrency(lead.expected_contract_value)}</div>
-                    )}
-                    <div className="text-xs text-muted-foreground">{lead.created_at ? formatDate(lead.created_at) : ''}</div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      {lead.expected_contract_value && (
+                        <div className="font-medium">{formatCurrency(lead.expected_contract_value)}</div>
+                      )}
+                      <div className="text-xs text-muted-foreground">{lead.created_at ? formatDate(lead.created_at) : ''}</div>
+                    </div>
+                    <RowActions
+                      editHref={`/leads/${lead.id}`}
+                      archiveAction={{ entityId: lead.id, entityType: 'leads', entityName: 'lead' }}
+                    />
                   </div>
                 </div>
               </Link>

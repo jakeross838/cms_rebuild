@@ -75,7 +75,12 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: entries ?? [], requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
+  {
+    requireAuth: true,
+    rateLimit: 'api',
+    permission: 'jobs:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
+  }
 )
 
 // ── POST /api/v1/daily-logs/[id]/entries ────────────────────────────────
@@ -146,5 +151,6 @@ export const POST = createApiHandler(
     schema: createLogEntrySchema,
     permission: 'jobs:update:all',
     auditAction: 'daily_log_entry.create',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/daily-logs' },
   }
 )

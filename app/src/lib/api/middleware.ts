@@ -52,6 +52,13 @@ export interface ApiHandlerOptions {
   schema?: z.ZodType
   /** Permission string to check (e.g., 'jobs:create:all') */
   permission?: string
+  /** Mark this endpoint as deprecated with a sunset date and successor URL */
+  deprecated?: {
+    /** ISO date when v1 will be removed (e.g., '2026-09-01') */
+    sunset: string
+    /** v2 endpoint path (e.g., '/api/v2/daily-logs') */
+    alternative: string
+  }
 }
 
 type ApiHandler = (
@@ -70,6 +77,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
     auditAction,
     schema,
     permission,
+    deprecated,
   } = options
 
   return async (req: NextRequest): Promise<NextResponse | Response> => {
@@ -302,6 +310,13 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
       // Add standard headers to response
       if (response instanceof NextResponse) {
         response.headers.set('X-Request-ID', requestId)
+
+        // Deprecation headers (RFC 8594 / draft-ietf-httpapi-deprecation-header)
+        if (deprecated) {
+          response.headers.set('Deprecation', 'true')
+          response.headers.set('Sunset', new Date(deprecated.sunset).toUTCString())
+          response.headers.set('Link', `<${deprecated.alternative}>; rel="successor-version"`)
+        }
 
         // Cache-Control: never cache mutating requests or errors
         const status = response.status

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus} from '@/lib/utils'
 
@@ -148,9 +149,15 @@ export default async function InvoicesPage({
                       {inv.due_date ? ` • Due ${formatDate(inv.due_date)}` : ''}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-bold font-mono">{formatCurrency(inv.amount)}</div>
-                    <div className="text-xs text-muted-foreground">{inv.invoice_date ? formatDate(inv.invoice_date) : ''}</div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <div className="font-bold font-mono">{formatCurrency(inv.amount)}</div>
+                      <div className="text-xs text-muted-foreground">{inv.invoice_date ? formatDate(inv.invoice_date) : ''}</div>
+                    </div>
+                    <RowActions
+                      editHref={`/invoices/${inv.id}`}
+                      archiveAction={{ entityId: inv.id, entityType: 'invoices', entityName: 'invoice' }}
+                    />
                   </div>
                 </div>
               </Link>

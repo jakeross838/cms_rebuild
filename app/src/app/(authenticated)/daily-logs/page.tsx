@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
@@ -115,6 +116,10 @@ export default async function DailyLogsPage({
                       </div>
                     </div>
                   </div>
+                  <RowActions
+                    editHref={`/daily-logs/${log.id}`}
+                    archiveAction={{ entityId: log.id, entityType: 'daily-logs', entityName: 'daily log' }}
+                  />
                 </div>
               </Link>
             ))}

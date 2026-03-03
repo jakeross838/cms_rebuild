@@ -115,7 +115,12 @@ export const GET = createApiHandler(
 
     return NextResponse.json(paginatedResponse(lines ?? [], count ?? 0, page, limit, ctx.requestId))
   },
-  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
+  {
+    requireAuth: true,
+    rateLimit: 'api',
+    permission: 'jobs:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/budgets' },
+  }
 )
 
 // ── POST /api/v1/budgets/[id]/lines ─────────────────────────────────────
@@ -187,5 +192,6 @@ export const POST = createApiHandler(
     schema: createBudgetLineSchema,
     permission: 'jobs:update:all',
     auditAction: 'budget_line.create',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/budgets' },
   }
 )

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike } from '@/lib/utils'
 
@@ -149,6 +150,10 @@ export default async function VendorsPage({
                       </div>
                     </div>
                   </div>
+                  <RowActions
+                    editHref={`/vendors/${vendor.id}`}
+                    archiveAction={{ entityId: vendor.id, entityType: 'vendors', entityName: 'vendor' }}
+                  />
                 </div>
               </Link>
             ))}

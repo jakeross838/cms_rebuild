@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatDate } from '@/lib/utils'
 
@@ -145,13 +146,19 @@ export default async function ClientsPage({
                       </div>
                     </div>
                   </div>
-                  <div className="text-right hidden sm:block">
-                    <div className="text-sm font-medium text-foreground">
-                      {client.jobs?.length || 0} job{client.jobs?.length !== 1 ? 's' : ''}
+                  <div className="flex items-center gap-3">
+                    <div className="text-right hidden sm:block">
+                      <div className="text-sm font-medium text-foreground">
+                        {client.jobs?.length || 0} job{client.jobs?.length !== 1 ? 's' : ''}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Since {formatDate(client.created_at)}
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      Since {formatDate(client.created_at)}
-                    </div>
+                    <RowActions
+                      editHref={`/clients/${client.id}`}
+                      archiveAction={{ entityId: client.id, entityType: 'clients', entityName: 'client' }}
+                    />
                   </div>
                 </div>
               </Link>

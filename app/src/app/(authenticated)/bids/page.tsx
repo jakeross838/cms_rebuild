@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ListPagination } from '@/components/ui/list-pagination'
+import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
 
@@ -142,6 +143,10 @@ export default async function BidsPage({
                         )}
                       </div>
                     </div>
+                    <RowActions
+                      editHref={`/bids/${bid.id}`}
+                      archiveAction={{ entityId: bid.id, entityType: 'bids', entityName: 'bid package' }}
+                    />
                   </div>
                 </Link>
               ))}

@@ -59,8 +59,11 @@ export const GET = createApiHandler(
 
     return NextResponse.json({ data: vendor, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api',
+  {
+    requireAuth: true,
+    rateLimit: 'api',
     permission: 'vendors:read:all',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/vendors' },
   }
 )
 
@@ -123,11 +126,14 @@ export const PATCH = createApiHandler(
 
     return NextResponse.json({ data: updated, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api',
+  {
+    requireAuth: true,
+    rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     schema: updateVendorSchema,
     permission: 'vendors:update:all',
     auditAction: 'vendor.update',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/vendors' },
   }
 )
 
@@ -168,9 +174,12 @@ export const DELETE = createApiHandler(
 
     return NextResponse.json({ data: deleted, requestId: ctx.requestId })
   },
-  { requireAuth: true, rateLimit: 'api',
+  {
+    requireAuth: true,
+    rateLimit: 'api',
     requiredRoles: ['owner', 'admin'],
     permission: 'vendors:delete:all',
     auditAction: 'vendor.delete',
+    deprecated: { sunset: '2026-09-01', alternative: '/api/v2/vendors' },
   }
 )
