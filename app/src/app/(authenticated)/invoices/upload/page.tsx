@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -27,12 +27,19 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   useUploadInvoice,
+  useUploadInvoiceBatch,
   useExtractions,
   useExtraction,
   useConfirmExtraction,
+  DuplicateError,
+  type BatchUploadResultItem,
 } from '@/hooks/use-invoices'
+import { useVendors } from '@/hooks/use-vendors'
+import { useJobs } from '@/hooks/use-jobs'
+import { useCostCodes } from '@/hooks/use-cost-codes'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -49,6 +56,36 @@ interface ExtractionLineItem {
   cost_code_label: string | null
 }
 
+interface VendorMatchMeta {
+  auto_assigned: boolean
+  confidence: number | null
+  matched_vendor_id: string | null
+  matched_vendor_name: string | null
+  suggestions: Array<{ vendor_id: string; vendor_name: string; confidence: number }>
+}
+
+interface CostCodeMatchMeta {
+  invoice_level: {
+    auto_assigned: boolean
+    confidence: number | null
+    matched_cost_code_id: string | null
+    matched_cost_code: string | null
+    matched_cost_code_name: string | null
+    suggestions: Array<{ cost_code_id: string; code: string; name: string; confidence: number }>
+  } | null
+  line_item_matches: unknown[]
+}
+
+interface DuplicateCheckMeta {
+  has_duplicate: boolean
+  match_type: string | null
+  confidence: number | null
+  duplicate_invoice_id: string | null
+  duplicate_invoice_number: string | null
+  duplicate_amount: number | null
+  reason: string | null
+}
+
 interface ExtractionRecord {
   id: string
   filename: string
@@ -56,10 +93,12 @@ interface ExtractionRecord {
   confidence: number | null
   vendor_name: string | null
   vendor_id: string | null
+  vendor_match: VendorMatchMeta | null
   job_name: string | null
   job_id: string | null
   cost_code_id: string | null
   cost_code_label: string | null
+  cost_code_match: CostCodeMatchMeta | null
   invoice_number: string | null
   invoice_date: string | null
   due_date: string | null
@@ -67,6 +106,9 @@ interface ExtractionRecord {
   description: string | null
   line_items: ExtractionLineItem[]
   field_confidences: Record<string, number>
+  file_url: string | null
+  duplicate_check: DuplicateCheckMeta | null
+  error_message: string | null
   created_at: string
 }
 
@@ -137,8 +179,20 @@ export default function InvoiceUploadPage() {
 
   // Hooks
   const uploadMutation = useUploadInvoice()
+  const batchUploadMutation = useUploadInvoiceBatch()
   const { data: extractionsData, isLoading: extractionsLoading } = useExtractions({ limit: 20 })
   const extractions: ExtractionRecord[] = (extractionsData as { data?: ExtractionRecord[] })?.data ?? (Array.isArray(extractionsData) ? extractionsData as ExtractionRecord[] : [])
+
+  // Auto-poll when any extraction is still processing
+  const hasProcessing = extractions.some(e => e.status === 'processing' || e.status === 'pending')
+  const queryClient = useQueryClient()
+  useEffect(() => {
+    if (!hasProcessing) return
+    const interval = setInterval(() => {
+      queryClient.invalidateQueries({ queryKey: ['extractions'] })
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [hasProcessing, queryClient])
 
   // ---------------------------------------------------------------------------
   // File Handling
@@ -148,30 +202,64 @@ export default function InvoiceUploadPage() {
     if (isProcessingRef.current) return
     isProcessingRef.current = true
 
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i]
-      if (item.status !== 'queued') continue
+    const queuedItems = items.filter(item => item.status === 'queued')
 
-      setQueue(prev => prev.map((q, idx) =>
-        q.file === item.file ? { ...q, status: 'uploading' as const } : q
+    if (queuedItems.length > 1) {
+      // Batch upload: mark all queued items as uploading
+      setQueue(prev => prev.map(q =>
+        q.status === 'queued' ? { ...q, status: 'uploading' as const } : q
       ))
 
       try {
-        await uploadMutation.mutateAsync(item.file)
-        setQueue(prev => prev.map(q =>
-          q.file === item.file ? { ...q, status: 'done' as const } : q
-        ))
+        const result = await batchUploadMutation.mutateAsync(
+          queuedItems.map(item => item.file)
+        )
+
+        // Map batch results back to individual queue items
+        setQueue(prev => prev.map(q => {
+          if (q.status !== 'uploading') return q
+          const batchItem = result.data.items.find(
+            (r: BatchUploadResultItem) => r.filename === q.file.name
+          )
+          if (!batchItem) return { ...q, status: 'done' as const }
+          if (batchItem.status === 'error') {
+            return { ...q, status: 'error' as const, error: batchItem.error || 'Batch upload failed' }
+          }
+          return { ...q, status: 'done' as const }
+        }))
       } catch (err) {
+        // Batch request itself failed — mark all uploading items as error
+        const errorMsg = err instanceof Error ? err.message : 'Batch upload failed'
         setQueue(prev => prev.map(q =>
-          q.file === item.file
-            ? { ...q, status: 'error' as const, error: err instanceof Error ? err.message : 'Upload failed' }
+          q.status === 'uploading'
+            ? { ...q, status: 'error' as const, error: errorMsg }
             : q
         ))
+      }
+    } else {
+      // Single file: use the original single-file upload
+      for (const item of queuedItems) {
+        setQueue(prev => prev.map(q =>
+          q.file === item.file ? { ...q, status: 'uploading' as const } : q
+        ))
+
+        try {
+          await uploadMutation.mutateAsync(item.file)
+          setQueue(prev => prev.map(q =>
+            q.file === item.file ? { ...q, status: 'done' as const } : q
+          ))
+        } catch (err) {
+          setQueue(prev => prev.map(q =>
+            q.file === item.file
+              ? { ...q, status: 'error' as const, error: err instanceof Error ? err.message : 'Upload failed' }
+              : q
+          ))
+        }
       }
     }
 
     isProcessingRef.current = false
-  }, [uploadMutation])
+  }, [uploadMutation, batchUploadMutation])
 
   const addFiles = useCallback((files: FileList | File[]) => {
     const validFiles = Array.from(files).filter(f => ACCEPTED_TYPES.includes(f.type))
@@ -569,43 +657,94 @@ function ReviewPanel({
   onClose: () => void
 }) {
   const { data: rawData, isLoading } = useExtraction(extractionId)
-  const extraction = rawData as ExtractionRecord | undefined
+  const extraction = (rawData as { data?: ExtractionRecord })?.data ?? rawData as ExtractionRecord | undefined
   const confirmMutation = useConfirmExtraction(extractionId)
+
+  // Load vendors, jobs, cost codes for dropdowns
+  const { data: vendorsRaw } = useVendors()
+  const { data: jobsRaw } = useJobs()
+  const { data: costCodesRaw } = useCostCodes()
+
+  const vendors = ((vendorsRaw as { data?: Array<{ id: string; name: string }> })?.data ?? []) as Array<{ id: string; name: string }>
+  const jobs = ((jobsRaw as { data?: Array<{ id: string; name: string; job_number: string | null }> })?.data ?? []) as Array<{ id: string; name: string; job_number: string | null }>
+  const costCodes = ((costCodesRaw as { data?: Array<{ id: string; code: string; name: string; division: string }> })?.data ?? []) as Array<{ id: string; code: string; name: string; division: string }>
 
   // Form state for corrections
   const [corrections, setCorrections] = useState<Record<string, string>>({})
   const [vendorId, setVendorId] = useState('')
   const [jobId, setJobId] = useState('')
   const [costCodeId, setCostCodeId] = useState('')
+  const [duplicateWarning, setDuplicateWarning] = useState<DuplicateCheckMeta | null>(null)
+  const [vendorSearch, setVendorSearch] = useState('')
+  const [jobSearch, setJobSearch] = useState('')
+  const [costCodeSearch, setCostCodeSearch] = useState('')
+
+  // Pre-populate from AI matches when extraction loads
+  const prevExtractionIdRef = useRef<string | null>(null)
+  if (extraction && prevExtractionIdRef.current !== extraction.id) {
+    prevExtractionIdRef.current = extraction.id
+    // Auto-set vendor if AI matched one
+    if (extraction.vendor_match?.matched_vendor_id && !vendorId) {
+      setVendorId(extraction.vendor_match.matched_vendor_id)
+    } else if (extraction.vendor_id && !vendorId) {
+      setVendorId(extraction.vendor_id)
+    }
+    // Auto-set cost code if AI matched one
+    if (extraction.cost_code_match?.invoice_level?.matched_cost_code_id && !costCodeId) {
+      setCostCodeId(extraction.cost_code_match.invoice_level.matched_cost_code_id)
+    } else if (extraction.cost_code_id && !costCodeId) {
+      setCostCodeId(extraction.cost_code_id)
+    }
+    // Show duplicate warning from extraction-time check
+    if (extraction.duplicate_check?.has_duplicate) {
+      setDuplicateWarning(extraction.duplicate_check)
+    }
+  }
 
   const updateCorrection = (field: string, value: string) => {
     setCorrections(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleConfirm = async () => {
+  // Filter dropdowns
+  const filteredVendors = vendorSearch
+    ? vendors.filter(v => v.name.toLowerCase().includes(vendorSearch.toLowerCase()))
+    : vendors
+
+  const filteredJobs = jobSearch
+    ? jobs.filter(j => j.name.toLowerCase().includes(jobSearch.toLowerCase()) || j.job_number?.toLowerCase().includes(jobSearch.toLowerCase()))
+    : jobs
+
+  const filteredCostCodes = costCodeSearch
+    ? costCodes.filter(c => c.code.toLowerCase().includes(costCodeSearch.toLowerCase()) || c.name.toLowerCase().includes(costCodeSearch.toLowerCase()))
+    : costCodes
+
+  const handleConfirm = async (force?: boolean) => {
+    setDuplicateWarning(null)
     try {
       await confirmMutation.mutateAsync({
         corrections: Object.keys(corrections).length > 0 ? corrections : undefined,
         vendor_id: vendorId || undefined,
         job_id: jobId || undefined,
         cost_code_id: costCodeId || undefined,
+        force,
       })
       onClose()
-    } catch {
-      // Error is handled by mutation state
+    } catch (err) {
+      if (err instanceof DuplicateError) {
+        setDuplicateWarning(err.duplicate)
+      }
+      // Other errors handled by mutation state
     }
   }
 
   const handleReject = async () => {
-    // For now, use confirm with a rejection flag
-    // The API can handle this or we can add a dedicated reject endpoint
     try {
       await confirmMutation.mutateAsync({
         corrections: { status: 'failed' },
       })
       onClose()
     } catch {
-      // Error is handled by mutation state
+      // Error handled by mutation state
     }
   }
 
@@ -660,6 +799,51 @@ function ReviewPanel({
       </div>
 
       <div className="p-4 space-y-5 max-h-[calc(100vh-16rem)] overflow-y-auto">
+        {/* Duplicate Warning Banner */}
+        {duplicateWarning && (
+          <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 space-y-2">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-amber-800">
+                  Potential Duplicate Invoice
+                </p>
+                <p className="text-sm text-amber-700 mt-0.5">
+                  {duplicateWarning.reason}
+                </p>
+                {duplicateWarning.duplicate_invoice_number && (
+                  <p className="text-xs text-amber-600 mt-1">
+                    Matches invoice #{duplicateWarning.duplicate_invoice_number}
+                    {duplicateWarning.duplicate_amount != null && ` (${formatCurrency(duplicateWarning.duplicate_amount)})`}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 pt-1">
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-amber-300 text-amber-700 hover:bg-amber-100"
+                onClick={() => handleConfirm(true)}
+                disabled={confirmMutation.isPending}
+              >
+                {confirmMutation.isPending ? (
+                  <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                ) : null}
+                Create Anyway
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-amber-700"
+                onClick={() => setDuplicateWarning(null)}
+              >
+                Dismiss
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Overall Confidence */}
         {extraction.confidence != null && (
           <div className="rounded-lg bg-accent/50 p-3">
@@ -692,13 +876,18 @@ function ReviewPanel({
             onChange={(val) => updateCorrection('invoice_number', val)}
           />
 
-          {/* Vendor */}
+          {/* Vendor — searchable dropdown with AI match info */}
           <div className="rounded-md border border-border p-3">
             <div className="flex items-center gap-2 mb-2">
               <Building2 className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium text-foreground">Vendor</span>
               {fieldConfidences.vendor_name != null && (
                 <ConfidenceDot score={fieldConfidences.vendor_name} />
+              )}
+              {extraction.vendor_match?.auto_assigned && (
+                <span className="text-xs bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded">
+                  Auto-matched
+                </span>
               )}
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -707,21 +896,30 @@ function ReviewPanel({
                 <p className="text-sm text-foreground">
                   {extraction.vendor_name || <span className="text-muted-foreground italic">Not found</span>}
                 </p>
+                {extraction.vendor_match?.confidence != null && (
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Match: {Math.round(extraction.vendor_match.confidence * 100)}%
+                    {extraction.vendor_match.matched_vendor_name && ` → ${extraction.vendor_match.matched_vendor_name}`}
+                  </p>
+                )}
               </div>
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Assign Vendor</p>
+                <Input
+                  placeholder="Search vendors..."
+                  value={vendorSearch}
+                  onChange={(e) => setVendorSearch(e.target.value)}
+                  className="h-7 text-xs mb-1"
+                />
                 <select
                   value={vendorId}
                   onChange={(e) => setVendorId(e.target.value)}
                   className="w-full h-8 rounded-md border border-input/60 bg-card px-2 text-sm text-foreground"
                 >
                   <option value="">Select vendor...</option>
-                  {/* Placeholder options - will be populated from vendors API */}
-                  {extraction.vendor_id && (
-                    <option value={extraction.vendor_id}>
-                      {extraction.vendor_name} (matched)
-                    </option>
-                  )}
+                  {filteredVendors.map(v => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -744,7 +942,7 @@ function ReviewPanel({
             label="Invoice Date"
             icon={Calendar}
             extractedValue={extraction.invoice_date ? formatDate(extraction.invoice_date) : null}
-            confidence={fieldConfidences.invoice_date}
+            confidence={fieldConfidences.date ?? fieldConfidences.invoice_date}
             correctedValue={corrections.invoice_date}
             onChange={(val) => updateCorrection('invoice_date', val)}
             inputType="date"
@@ -761,14 +959,11 @@ function ReviewPanel({
             inputType="date"
           />
 
-          {/* Job */}
+          {/* Job — searchable dropdown */}
           <div className="rounded-md border border-border p-3">
             <div className="flex items-center gap-2 mb-2">
               <Briefcase className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium text-foreground">Job</span>
-              {fieldConfidences.job_name != null && (
-                <ConfidenceDot score={fieldConfidences.job_name} />
-              )}
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
@@ -779,29 +974,40 @@ function ReviewPanel({
               </div>
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Assign Job</p>
+                <Input
+                  placeholder="Search jobs..."
+                  value={jobSearch}
+                  onChange={(e) => setJobSearch(e.target.value)}
+                  className="h-7 text-xs mb-1"
+                />
                 <select
                   value={jobId}
                   onChange={(e) => setJobId(e.target.value)}
                   className="w-full h-8 rounded-md border border-input/60 bg-card px-2 text-sm text-foreground"
                 >
                   <option value="">Select job...</option>
-                  {extraction.job_id && (
-                    <option value={extraction.job_id}>
-                      {extraction.job_name} (matched)
+                  {filteredJobs.map(j => (
+                    <option key={j.id} value={j.id}>
+                      {j.job_number ? `${j.job_number} - ` : ''}{j.name}
                     </option>
-                  )}
+                  ))}
                 </select>
               </div>
             </div>
           </div>
 
-          {/* Cost Code */}
+          {/* Cost Code — searchable dropdown with AI match info */}
           <div className="rounded-md border border-border p-3">
             <div className="flex items-center gap-2 mb-2">
               <Hash className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium text-foreground">Cost Code</span>
-              {fieldConfidences.cost_code != null && (
-                <ConfidenceDot score={fieldConfidences.cost_code} />
+              {fieldConfidences.cost_codes != null && (
+                <ConfidenceDot score={fieldConfidences.cost_codes} />
+              )}
+              {extraction.cost_code_match?.invoice_level?.auto_assigned && (
+                <span className="text-xs bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded">
+                  Auto-matched
+                </span>
               )}
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -810,20 +1016,33 @@ function ReviewPanel({
                 <p className="text-sm text-foreground">
                   {extraction.cost_code_label || <span className="text-muted-foreground italic">Not found</span>}
                 </p>
+                {extraction.cost_code_match?.invoice_level?.confidence != null && (
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Match: {Math.round(extraction.cost_code_match.invoice_level.confidence * 100)}%
+                    {extraction.cost_code_match.invoice_level.matched_cost_code &&
+                      ` → ${extraction.cost_code_match.invoice_level.matched_cost_code}`}
+                  </p>
+                )}
               </div>
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Assign Cost Code</p>
+                <Input
+                  placeholder="Search cost codes..."
+                  value={costCodeSearch}
+                  onChange={(e) => setCostCodeSearch(e.target.value)}
+                  className="h-7 text-xs mb-1"
+                />
                 <select
                   value={costCodeId}
                   onChange={(e) => setCostCodeId(e.target.value)}
                   className="w-full h-8 rounded-md border border-input/60 bg-card px-2 text-sm text-foreground"
                 >
                   <option value="">Select cost code...</option>
-                  {extraction.cost_code_id && (
-                    <option value={extraction.cost_code_id}>
-                      {extraction.cost_code_label} (matched)
+                  {filteredCostCodes.map(c => (
+                    <option key={c.id} value={c.id}>
+                      {c.code} - {c.name}
                     </option>
-                  )}
+                  ))}
                 </select>
               </div>
             </div>
@@ -893,8 +1112,8 @@ function ReviewPanel({
           </div>
         )}
 
-        {/* Error State */}
-        {confirmMutation.isError && (
+        {/* Error State (non-duplicate errors) */}
+        {confirmMutation.isError && !(confirmMutation.error instanceof DuplicateError) && (
           <div className="rounded-md bg-red-50 p-3 flex items-start gap-2">
             <XCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
             <p className="text-sm text-red-700">
@@ -908,7 +1127,7 @@ function ReviewPanel({
         {/* Action Buttons */}
         <div className="flex items-center gap-3 pt-2 border-t border-border">
           <Button
-            onClick={handleConfirm}
+            onClick={() => handleConfirm()}
             disabled={confirmMutation.isPending || extraction.status === 'confirmed'}
             className="flex-1"
           >

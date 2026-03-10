@@ -13,6 +13,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
+import { checkForDuplicates } from '@/lib/invoice/duplicate-detector'
 import { generateInvoiceHash, isNearDuplicate } from '@/lib/invoice/duplicate-detection'
 import { createClient } from '@/lib/supabase/server'
 
@@ -33,7 +34,7 @@ export const POST = createApiHandler(
     // 1. Fetch the invoice to get vendor_id, invoice_number, amount
     const { data: invoice, error: invoiceError } = await supabase
       .from('invoices')
-      .select('id, company_id, vendor_id, invoice_number, amount')
+      .select('id, company_id, vendor_id, invoice_number, amount, invoice_date')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
       .single()
@@ -57,10 +58,43 @@ export const POST = createApiHandler(
       })
     }
 
-    // 2. Generate hash
+    // Use the new duplicate detector for comprehensive checks
+    const result = await checkForDuplicates(
+      supabase,
+      ctx.companyId!,
+      {
+        vendor_id: invoice.vendor_id,
+        invoice_number: invoice.invoice_number,
+        amount: invoice.amount,
+        invoice_date: invoice.invoice_date,
+      },
+      id // exclude this invoice from matches
+    )
+
+    if (result.has_duplicate && result.match) {
+      return NextResponse.json({
+        data: {
+          isDuplicate: true,
+          confidence: result.match.confidence,
+          reason: result.match.reason,
+          duplicateOfId: result.match.invoice_id,
+          matchType: result.match.match_type,
+          allMatches: result.all_matches.map((m) => ({
+            invoiceId: m.invoice_id,
+            invoiceNumber: m.invoice_number,
+            amount: m.amount,
+            confidence: m.confidence,
+            reason: m.reason,
+            matchType: m.match_type,
+          })),
+        },
+        requestId: ctx.requestId,
+      })
+    }
+
+    // ----- Legacy fallback: check invoice_hashes table for exact match -----
     const hash = generateInvoiceHash(invoice.vendor_id, invoice.invoice_number, invoice.amount)
 
-    // 3. Check invoice_hashes for exact match (table not in generated types)
     const { data: exactMatch, error: hashError } = await (supabase as any)
       .from('invoice_hashes')
       .select('invoice_id, vendor_id, invoice_number, amount')
@@ -71,26 +105,22 @@ export const POST = createApiHandler(
       .maybeSingle()
 
     if (hashError) {
-      const mapped = mapDbError(hashError)
-      return NextResponse.json(
-        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
-        { status: mapped.status }
-      )
-    }
-
-    if (exactMatch) {
+      // invoice_hashes table may not exist — treat as no match
+      // (table is optional, main detection uses invoices table directly)
+    } else if (exactMatch) {
       return NextResponse.json({
         data: {
           isDuplicate: true,
           confidence: 0.99,
-          reason: 'Exact match on vendor, invoice number, and amount',
+          reason: 'Exact match on vendor, invoice number, and amount (hash table)',
           duplicateOfId: exactMatch.invoice_id,
+          matchType: 'exact_hash',
         },
         requestId: ctx.requestId,
       })
     }
 
-    // 4. Near-duplicate check: query recent invoices from the same vendor
+    // ----- Legacy fallback: near-duplicate via old utility -----
     const { data: recentInvoices, error: recentError } = await supabase
       .from('invoices')
       .select('id, vendor_id, invoice_number, amount')
@@ -117,7 +147,7 @@ export const POST = createApiHandler(
     for (const existing of recentInvoices ?? []) {
       if (!existing.invoice_number) continue
 
-      const result = isNearDuplicate(
+      const nearResult = isNearDuplicate(
         {
           vendor_id: existing.vendor_id ?? '',
           invoice_number: existing.invoice_number,
@@ -126,13 +156,14 @@ export const POST = createApiHandler(
         candidate
       )
 
-      if (result.isDuplicate) {
+      if (nearResult.isDuplicate) {
         return NextResponse.json({
           data: {
             isDuplicate: true,
-            confidence: result.confidence,
-            reason: result.reason,
+            confidence: nearResult.confidence,
+            reason: nearResult.reason,
             duplicateOfId: existing.id,
+            matchType: 'fuzzy',
           },
           requestId: ctx.requestId,
         })

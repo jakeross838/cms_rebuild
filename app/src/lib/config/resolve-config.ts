@@ -49,6 +49,13 @@ const PLATFORM_DEFAULTS: Record<ConfigSection, Record<string, Json>> = {
     cost_code_suggestion_enabled: true,
     risk_detection_enabled: true,
     invoice_auto_route_threshold: 5000,
+    ai_automation_level: 'suggest',
+    ai_high_confidence_threshold: 95,
+    ai_medium_confidence_threshold: 80,
+    ai_auto_approve_max_amount: 10000,
+    ai_duplicate_detection_enabled: true,
+    ai_anomaly_detection_enabled: true,
+    ai_cross_tenant_learning_enabled: false,
   },
   portal: {
     client_portal_enabled: false,
@@ -322,6 +329,13 @@ export async function getCompanySettings(companyId: string): Promise<CompanySett
     costCodeSuggestionEnabled: ai.cost_code_suggestion_enabled?.value as boolean ?? true,
     riskDetectionEnabled: ai.risk_detection_enabled?.value as boolean ?? true,
     invoiceAutoRouteThreshold: ai.invoice_auto_route_threshold?.value as number ?? 5000,
+    aiAutomationLevel: ai.ai_automation_level?.value as 'suggest' | 'auto_review' | 'full_auto' ?? 'suggest',
+    aiHighConfidenceThreshold: ai.ai_high_confidence_threshold?.value as number ?? 95,
+    aiMediumConfidenceThreshold: ai.ai_medium_confidence_threshold?.value as number ?? 80,
+    aiAutoApproveMaxAmount: ai.ai_auto_approve_max_amount?.value as number ?? 10000,
+    aiDuplicateDetectionEnabled: ai.ai_duplicate_detection_enabled?.value as boolean ?? true,
+    aiAnomalyDetectionEnabled: ai.ai_anomaly_detection_enabled?.value as boolean ?? true,
+    aiCrossTenantLearningEnabled: ai.ai_cross_tenant_learning_enabled?.value as boolean ?? false,
 
     // Portal
     clientPortalEnabled: portal.client_portal_enabled?.value as boolean ?? false,

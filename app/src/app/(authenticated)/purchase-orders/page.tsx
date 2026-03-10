@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { ShoppingCart, Search, Plus } from 'lucide-react'
+import { ShoppingCart, Search, Plus, FileText, Clock, DollarSign } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,11 @@ import { ListPagination } from '@/components/ui/list-pagination'
 import { RowActions } from '@/components/ui/row-actions'
 import { getServerAuth } from '@/lib/supabase/get-auth'
 import { safeOrIlike, formatCurrency, formatDate, getStatusColor, formatStatus } from '@/lib/utils'
+
+interface PoStats {
+  status: string | null
+  total_amount: number | null
+}
 
 interface PurchaseOrderRow {
   id: string
@@ -62,10 +67,25 @@ export default async function PurchaseOrdersPage({
 
   query = query.range(offset, offset + pageSize - 1)
 
-  const { data: posData, count, error } = await query
-  if (error) throw error
-  const purchaseOrders = (posData || []) as unknown as PurchaseOrderRow[]
-  const totalPages = Math.ceil((count || 0) / pageSize)
+  const statsQuery = supabase
+    .from('purchase_orders')
+    .select('status, total_amount')
+    .eq('company_id', companyId)
+    .is('deleted_at', null)
+
+  const [mainResult, statsResult] = await Promise.all([query, statsQuery])
+
+  if (mainResult.error) throw mainResult.error
+  if (statsResult.error) throw statsResult.error
+  const purchaseOrders = (mainResult.data || []) as unknown as PurchaseOrderRow[]
+  const count = mainResult.count || 0
+  const totalPages = Math.ceil(count / pageSize)
+
+  const allPos = (statsResult.data || []) as unknown as PoStats[]
+  const openStatuses = ['draft', 'pending_approval', 'approved', 'sent']
+  const openCount = allPos.filter((p) => openStatuses.includes(p.status || '')).length
+  const committedAmount = allPos.filter((p) => p.status !== 'voided' && p.status !== 'closed').reduce((sum, p) => sum + (p.total_amount ?? 0), 0)
+  const receivedAmount = allPos.filter((p) => p.status === 'received' || p.status === 'closed').reduce((sum, p) => sum + (p.total_amount ?? 0), 0)
 
   const statusFilters = [
     { value: '', label: 'All' },
@@ -87,6 +107,31 @@ export default async function PurchaseOrdersPage({
           <p className="text-muted-foreground">{count || 0} total purchase orders</p>
         </div>
         <Link href="/purchase-orders/new"><Button><Plus className="h-4 w-4 mr-2" />New PO</Button></Link>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-card rounded-lg border border-border p-3">
+          <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+            <Clock className="h-4 w-4" />
+            <span>Open POs</span>
+          </div>
+          <p className="text-xl font-bold text-foreground">{openCount}</p>
+        </div>
+        <div className="bg-card rounded-lg border border-border p-3">
+          <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+            <DollarSign className="h-4 w-4" />
+            <span>Committed</span>
+          </div>
+          <p className="text-xl font-bold text-foreground">{formatCurrency(committedAmount)}</p>
+        </div>
+        <div className="bg-card rounded-lg border border-border p-3">
+          <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+            <FileText className="h-4 w-4" />
+            <span>Received / Closed</span>
+          </div>
+          <p className="text-xl font-bold text-foreground">{formatCurrency(receivedAmount)}</p>
+        </div>
       </div>
 
       {/* Filters */}

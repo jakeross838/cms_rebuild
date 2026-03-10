@@ -1,5 +1,113 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 59 — Draw Request & Purchase Order Enhancements (2026-03-10)
+
+### Invoice List — Click-to-Modal
+- [ ] Clicking an invoice card opens a modal (not a navigation)
+- [ ] Modal shows split screen: PDF on left, details on right
+- [ ] PDF iframe renders stamped PDF if available, otherwise original
+- [ ] "Stamped" / "Original" / "Stamp" buttons work in PDF toolbar
+- [ ] Right panel shows invoice amount, due date, approval pipeline
+- [ ] Status action buttons (Approve, Deny, etc.) work and update status
+- [ ] Details grid shows vendor, job, invoice date, contract type, cost code, PO, payment terms, lien waiver
+- [ ] Payment info section shown only when status is paid
+- [ ] AI processing section shown when ai_confidence or ai_notes present
+- [ ] Notes section shows description and internal notes
+- [ ] Activity timeline shown at bottom of right panel
+- [ ] "Open Full Details" link navigates to `/invoices/[id]` and closes modal
+- [ ] Close button (X) closes the modal
+- [ ] Clicking outside the modal closes it
+- [ ] RowActions (three-dot menu) does NOT trigger modal when clicked
+- [ ] Empty state shows "No invoices found" with create button
+
+### Draw Requests List Page
+- [ ] `/draw-requests` shows 3 stats cards: Drafts (count+amount), Pending Review (count+amount), Total Funded (amount)
+- [ ] Status filter tabs (All, Draft, Pending, Approved, Funded) filter the list
+- [ ] Clicking a status filter resets page to 1
+- [ ] Job column shows job name for each draw request
+- [ ] Status badges use draw-specific colors (draft=stone, pending=amber, approved=emerald, submitted=blue, funded=emerald, rejected=red)
+- [ ] Sort buttons preserve status and search params
+- [ ] Empty state message reflects active filters (search or status)
+
+### Purchase Orders List Page
+- [ ] `/purchase-orders` shows 3 stats cards: Open POs (count), Committed (amount), Received/Closed (amount)
+- [ ] Open POs counts draft + pending_approval + approved + sent statuses
+- [ ] Committed amount excludes voided and closed POs
+- [ ] Received/Closed amount includes received + closed POs
+
+### Purchase Orders Detail Page — Line Items
+- [ ] Line items table displays description, qty, unit, unit price, amount, received qty
+- [ ] Footer row shows total of all line amounts
+- [ ] "Add Line" button visible only for draft/pending_approval POs
+- [ ] Add Line form validates description is required
+- [ ] Add Line form computes amount = qty × unit_price and shows preview
+- [ ] Added line appears in table after creation
+- [ ] Delete line button (trash) visible only for draft/pending_approval POs
+- [ ] Deleting a line removes it from the table
+- [ ] "No line items yet" shown when no lines exist
+
+### Session 59b — Bug Fixes
+- [ ] Draw requests search: typing a search term returns matching results (previously returned nothing)
+- [ ] PO detail: clearing job dropdown and saving sends `null` to API (job_id is unset)
+- [ ] PO detail: clearing vendor dropdown and saving sends `null` to API (vendor_id is unset)
+- [ ] PO list: if stats query fails, page throws error instead of silently showing $0
+
+## Session 58 — Invoice Job Sidebar + Approval Workflow (2026-03-10)
+
+### Invoices Job Sidebar
+- [ ] `/invoices` shows left sidebar with list of jobs on desktop
+- [ ] Clicking a job sets `?job=` and filters invoice list to that job
+- [ ] "All Jobs" link clears job filter
+- [ ] Stats cards update to reflect filtered job's invoices
+- [ ] Header shows "Invoices — {Job Name}" when filtered
+- [ ] Sidebar search filters job list
+- [ ] Sidebar hidden on mobile (md breakpoint)
+- [ ] Sub-pages (/invoices/upload, /invoices/extractions, /invoices/[id]) render without sidebar
+- [ ] Changing status/sort/page preserves `?job=` param
+
+### Approval Action API
+- [ ] PATCH returns 409 if step already approved/rejected/skipped
+- [ ] PATCH returns 403 if user role is below required_role and user is not assigned
+- [ ] Owner can approve any step regardless of required_role
+- [ ] Assigned user can approve even if role doesn't match
+- [ ] Delegate action updates assigned_to to delegated user
+- [ ] Escalate action records escalation_reason and timestamp
+- [ ] Final approval step triggers invoice status → 'approved'
+- [ ] Rejection triggers invoice status → 'denied'
+
+### Approval Creation
+- [ ] POST creates approval steps with auto-assigned users based on role
+- [ ] Steps without a matching user get assigned_to = null
+- [ ] GET returns user names (assigned_user.name, action_user.name)
+
+### Approval UI
+- [ ] Progress bar shows X/N steps approved with correct color
+- [ ] Timeline nodes show step numbers with connecting vertical line
+- [ ] Pending steps have amber highlight
+- [ ] Approved steps have emerald border
+- [ ] Rejected steps have red border
+- [ ] Delegate button opens inline form with user input
+- [ ] Escalate button opens inline form with reason textarea
+- [ ] Delegated/escalated steps still show approve/reject buttons
+- [ ] Notes, threshold info, escalation reason shown in expanded view
+
+### Invoice Detail — Enhanced Overview
+- [ ] Two-column layout on desktop (details left, PDF/AI/activity right)
+- [ ] PDF preview shows in iframe with Original/Stamped/Re-stamp buttons
+- [ ] PaymentStatusBadge shows in invoice details card header
+- [ ] Review flags alert shows at top when flags present, sorted by severity
+- [ ] AI confidence bars render per-field when ai_confidence is an object
+- [ ] AIConfidenceBadge renders when ai_confidence is a number
+- [ ] Activity timeline lists actions with icons, time-ago, performer names
+- [ ] Stamp button triggers POST to stamp API
+
+### Reusable Components
+- [ ] AIConfidenceBadge: high(>=85%)=green, medium(>=70%)=amber, low(>=50%)=orange, very-low=red
+- [ ] ReviewFlagBadge: error=red, warning=amber, info=blue with correct icons
+- [ ] ReviewFlagsList: sorts by severity (error first)
+- [ ] PaymentStatusBadge: paid=green, partial=amber with %, unpaid=outline
+- [ ] ActivityTimeline: renders empty state when no activities
+
 ## Session 57 — Security Headers, Notification Casts, Error/Loading Boundaries (2026-03-03)
 
 ### Security Headers
@@ -6763,3 +6871,358 @@ use-clients, use-vendors, use-jobs, use-invoices, use-budgets, use-contacts, use
 
 TypeScript: 0 errors (`tsc --noEmit` clean)
 Build: Success (`next build` clean)
+
+---
+
+## Module 13 — AI Invoice Processing Test Cases
+
+### Invoice Upload (`POST /api/v2/invoices/extract`)
+| Test | Expected |
+|------|----------|
+| Upload valid PDF | 202 with extraction_id, status: processing |
+| Upload valid image (PNG/JPEG/TIFF) | 202 with extraction_id |
+| Upload unsupported file type (e.g., .docx) | 400 Bad Request |
+| Upload with no file | 400 "No file uploaded" |
+| Upload without ANTHROPIC_API_KEY set | 503 Configuration Error |
+| Upload without auth | 401 Unauthorized |
+| Upload with wrong role (field/read_only) | 403 Forbidden |
+| Storage upload failure | 500 Upload Error |
+| DB insert failure | 500 Database Error |
+
+### Batch Upload (`POST /api/v2/invoices/extract/batch`)
+| Test | Expected |
+|------|----------|
+| Upload 3 valid files | 202 with 3 extraction results |
+| Upload 11 files (over limit) | 400 "Maximum 10 files per batch" |
+| Upload 0 files | 400 "No files uploaded" |
+| Mix valid + invalid files | 202 with per-file success/error |
+
+### List Extractions (`GET /api/v2/invoices/extractions`)
+| Test | Expected |
+|------|----------|
+| List all extractions | Paginated list, transformed shape |
+| Filter by status=extracted | Only completed records returned |
+| Filter by status=processing | Only processing records, includes polling hint |
+| Empty results | Empty data array, count: 0 |
+
+### Get Extraction (`GET /api/v2/invoices/extractions/:id`)
+| Test | Expected |
+|------|----------|
+| Get completed extraction | Full transformed record |
+| Get processing extraction | Record + polling hint |
+| Get non-existent ID | 404 Not Found |
+| Get extraction from different company | 404 Not Found (company_id filter) |
+
+### Confirm Extraction (`POST /api/v2/invoices/extractions/:id/confirm`)
+| Test | Expected |
+|------|----------|
+| Confirm with no duplicates | Invoice created, extraction status: completed |
+| Confirm with corrections | Corrections merged over extracted data |
+| Confirm with duplicate detected | 409 Conflict with duplicate details |
+| Confirm with duplicate + force: true | Invoice created + duplicate_override: true |
+| Confirm non-existent extraction | 404 Not Found |
+| Confirm with vendor_id, job_id, cost_code_id | IDs set on created invoice |
+| Line items present in extraction | invoice_line_items created |
+
+### AI Extractor (`extractInvoiceData()`)
+| Test | Expected |
+|------|----------|
+| PDF file bytes | Sends document content block to Claude |
+| Image file bytes | Sends image content block to Claude |
+| Text-only fallback | Sends text prompt without file block |
+| No API key | Throws "ANTHROPIC_API_KEY not configured" |
+| API returns non-JSON | Throws parse error |
+| Company context provided | Known vendors/cost codes included in prompt |
+
+### Vendor Matcher (`matchVendor()`)
+| Test | Expected |
+|------|----------|
+| Exact vendor name match | confidence ≥ 0.95, auto_assigned: true |
+| Close fuzzy match (e.g., "ABC Plumbing" vs "ABC Plumbing LLC") | confidence ≥ 0.85, auto_assigned: true |
+| Weak match | confidence < 0.85, auto_assigned: false, in suggestions |
+| No match at all | confidence: 0, no suggestions |
+| Null vendor name input | Returns null/empty result |
+
+### Cost Code Matcher (`matchCostCodes()`)
+| Test | Expected |
+|------|----------|
+| Exact cost code reference | confidence ≥ 0.85, auto_assigned: true |
+| Description matches cost code name | Fuzzy match with suggestions |
+| Multiple line items | Per-line-item matches + weighted invoice-level suggestion |
+| No cost codes in company | Returns empty matches |
+
+### Duplicate Detector (`checkForDuplicates()`)
+| Test | Expected |
+|------|----------|
+| Same invoice_number + same amount | Exact match, confidence: 0.99 |
+| Same vendor + amount ±1% + date ±30 days | Fuzzy match, confidence: 0.75 |
+| No matching invoices | has_duplicate: false |
+| Null invoice_number | Skips exact check, may fuzzy match |
+
+### Background Processor (`processExtraction()`)
+| Test | Expected |
+|------|----------|
+| Successful extraction | DB updated: status completed, confidence_score set, _meta populated |
+| AI extraction fails | DB updated: status failed, error_message set |
+| No vendors/cost codes in company | Proceeds without matching (empty results) |
+| Never throws | All errors caught internally, status set to failed |
+
+---
+
+## Module 13 continuation — Extraction Review Queue UI (2026-03-10)
+
+### Extraction Review Queue List Page (`/invoices/extractions`)
+| Test | Expected |
+|------|----------|
+| Page renders as server component | Uses `getServerAuth()` + `createServiceClient()`, no `'use client'` |
+| Stats cards show correct counts | Processing, Ready for Review, Confirmed, Failed counts match data |
+| Default view shows all extractions | No status filter applied, all records displayed |
+| Filter tab "Processing" | Only `processing` status rows shown, URL has `?status=processing` |
+| Filter tab "Ready" | Only `completed`/`extracted` status rows shown, URL has `?status=ready` |
+| Filter tab "Failed" | Only `failed` status rows shown, URL has `?status=failed` |
+| Filter tab "Confirmed" | Only `confirmed` status rows shown, URL has `?status=confirmed` |
+| Table shows Document column | Filename + invoice number displayed |
+| Table shows Vendor column | Vendor name from extracted data |
+| Table shows Amount column | Formatted currency value |
+| Table shows Date column | Invoice date from extracted data |
+| Table shows Status badge | Color-coded badge matching extraction status |
+| Table shows Confidence bar | Visual bar representing confidence_score |
+| Duplicate badge on flagged rows | Badge shown when `_meta.duplicate_check.has_duplicate` is true |
+| Row click navigates to detail | Links to `/invoices/extractions/[id]` |
+| Pagination with >20 results | Previous/Next buttons appear |
+| Pagination with <=20 results | No pagination buttons |
+| Back arrow navigates to invoices | Links to `/invoices` |
+| Upload Invoices button | Links to `/invoices/upload` |
+| Empty state (no extractions) | Appropriate empty message shown |
+| Company isolation | Only extractions for current company_id returned |
+
+### Extraction Detail Page (`/invoices/extractions/[id]`)
+| Test | Expected |
+|------|----------|
+| Page renders as client component | Has `'use client'` directive |
+| Split-view layout | Left panel (document viewer) + right panel (form) |
+| PDF file shows in iframe | iframe with PDF URL renders |
+| Image file shows in img tag | img element with image URL renders |
+| No file URL shows placeholder | Placeholder message displayed |
+| Invoice number field editable | Text input with extracted value |
+| Vendor dropdown searchable | Searchable dropdown component |
+| Vendor pre-populated from AI match | `_meta.vendor_match.matched_vendor_id` sets initial value |
+| Amount field editable | Number input with extracted value |
+| Invoice date field editable | Date input with extracted value |
+| Due date field editable | Date input with extracted value |
+| Description field editable | Textarea with extracted value |
+| Job dropdown searchable | Searchable dropdown component |
+| Cost code dropdown searchable | Searchable dropdown component |
+| Cost code pre-populated from AI match | `_meta.cost_code_match` sets initial value |
+| Line items displayed as read-only table | Table showing line item rows, not editable |
+| Overall confidence bar | Visual bar showing overall extraction confidence |
+| Per-field confidence dots | Dot indicators next to each field |
+| Duplicate warning banner shown | Banner appears when `_meta.duplicate_check.has_duplicate` is true |
+| "Create Anyway" button on duplicate | Calls confirm with `force: true` |
+| "Dismiss" button on duplicate | Hides the duplicate warning banner |
+| Processing state shows spinner | Spinner + "AI is processing" message, form disabled |
+| Failed state shows error | Error message from extraction record displayed |
+| Confirmed state shows success | Success banner with link back to list |
+| "Confirm & Create Invoice" button | Calls `useConfirmExtraction` mutation |
+| After confirm redirects to list | Navigates to `/invoices/extractions` |
+| Non-existent extraction ID | 404 or error state shown |
+
+### Navigation — Invoices Page Header
+| Test | Expected |
+|------|----------|
+| "AI Extractions" button visible | Button with Sparkles icon in invoices page header |
+| Button positioned correctly | Next to "Upload PDF" and "New Invoice" buttons |
+
+---
+
+## Module 13 — Correction Tracking, Reject Flow & Status Fix (continuation)
+
+### Correction Tracking (Confirm Endpoint)
+| Test | Expected |
+|------|----------|
+| Confirm with no corrections | `corrections_tracked: 0`, no `_meta.corrections` array stored |
+| Confirm with corrected invoice_number | `_meta.corrections` contains `{ field: 'invoice_number', original: '<old>', corrected: '<new>' }` |
+| Confirm with corrected amount | `_meta.corrections` contains entry for amount field |
+| Confirm with corrected vendor_id (override AI match) | Correction entry with `field: 'vendor_id'`, original from `_meta.vendor_match.matched_vendor_id` |
+| Confirm with corrected cost_code_id (override AI match) | Correction entry with `field: 'cost_code_id'`, original from `_meta.cost_code_match` |
+| Multiple field corrections | `corrections_tracked` count matches number of changed fields |
+| `corrected_at` timestamp set | ISO timestamp present in `_meta.corrections` |
+| `corrected_by` user ID set | Current authenticated user's ID stored |
+| Response includes corrections_tracked | JSON response has `corrections_tracked: <number>` field |
+| Original extractedFields unchanged | Only `_meta.corrections` is added; original field values in extracted_data preserved |
+
+### Reject Extraction Endpoint (`POST /api/v2/invoices/extractions/:id/reject`)
+| Test | Expected |
+|------|----------|
+| Reject with reason | Status set to `failed`, `error_message` contains the reason string |
+| Reject without reason | Status set to `failed`, `error_message` is null or empty |
+| Reject non-existent extraction | 404 response |
+| Reject extraction from different company | 404 response (company isolation) |
+| Reject already-confirmed extraction | 409 Conflict response |
+| Reject already-failed extraction | Succeeds (idempotent — updates reason) |
+| Reject processing extraction | Succeeds, status becomes `failed` |
+| Unauthenticated request | 401 response |
+| Response format | Returns updated extraction data |
+
+### Reject Hook (`useRejectExtraction`)
+| Test | Expected |
+|------|----------|
+| Hook calls correct endpoint | `POST /api/v2/invoices/extractions/:id/reject` |
+| Hook sends reason in body | `{ reason: '<text>' }` in request body |
+| Success invalidates queries | `['extractions']` query cache invalidated |
+| Error state exposed | `mutation.error` populated on failure |
+| Loading state exposed | `mutation.isPending` is true during request |
+
+### Reject UI (Detail Page)
+| Test | Expected |
+|------|----------|
+| "Reject" button visible | Red outline button with XCircle icon next to "Confirm & Create Invoice" |
+| Click "Reject" shows inline dialog | Reason input + "Confirm Reject" + "Cancel" buttons appear |
+| "Cancel" hides dialog | Inline dialog disappears, returns to normal view |
+| "Confirm Reject" without reason | Calls reject endpoint with no reason, redirects to list |
+| "Confirm Reject" with reason | Calls reject endpoint with reason text, redirects to list |
+| After rejection redirects | Navigates to `/invoices/extractions` |
+| Reject error shows message | Error text displayed on failed reject API call |
+| Reject button hidden when confirmed | Not shown on already-confirmed extractions |
+| Reject button hidden when failed | Not shown on already-failed extractions |
+
+### Status Mapping Fix
+| Test | Expected |
+|------|----------|
+| DB `completed` + `reviewed_by` set → "confirmed" | List page shows "Confirmed" badge, detail API returns `status: 'confirmed'` |
+| DB `completed` + no `reviewed_by` → "extracted" | List page shows "Ready" badge, detail API returns `status: 'extracted'` |
+| DB `processing` → "processing" | Unchanged behavior |
+| DB `needs_review` → "review" | Unchanged behavior |
+| DB `failed` → "failed" | Unchanged behavior |
+| Stats card "Confirmed" count | Only counts `completed` records where `reviewed_by` is not null |
+| Stats card "Ready for Review" count | Only counts `completed` records where `reviewed_by` is null |
+| Filter tab "Confirmed" query | Uses `.not('reviewed_by', 'is', null)` on `completed` status |
+| Filter tab "Ready"/"Extracted" query | Uses `.is('reviewed_by', null)` on `completed` status |
+| Detail API `transformExtraction` | Returns correct status based on `reviewed_by` presence |
+| Button navigates to extractions list | Links to `/invoices/extractions` |
+
+---
+
+## Module 13 — AI Settings, Settings-Driven Extraction & Metrics Dashboard (continuation)
+
+### AI Settings — Zod Schema & API (`/api/v1/settings/company`)
+| Test | Expected |
+|------|----------|
+| POST with valid `aiAutomationLevel: 'suggest'` | Saves successfully, returns updated settings |
+| POST with valid `aiAutomationLevel: 'auto_review'` | Saves successfully |
+| POST with valid `aiAutomationLevel: 'full_auto'` | Saves successfully |
+| POST with invalid `aiAutomationLevel: 'invalid'` | Zod validation error |
+| POST with `aiHighConfidenceThreshold: 95` | Saves as number |
+| POST with `aiMediumConfidenceThreshold: 80` | Saves as number |
+| POST with `aiAutoApproveMaxAmount: 10000` | Saves as number |
+| POST with `aiDuplicateDetectionEnabled: true` | Saves as boolean |
+| POST with `aiDuplicateDetectionEnabled: false` | Saves as boolean |
+| POST with `aiAnomalyDetectionEnabled: true` | Saves as boolean |
+| POST with `aiCrossTenantLearningEnabled: false` | Saves as boolean |
+| GET returns all 7 AI settings | All fields present in response with correct types |
+| Settings stored in `tenant_configs` with section='ai' | No new tables required |
+| Unauthenticated request | 401 response |
+| Company isolation | Only returns/saves settings for authenticated user's company |
+
+### AI Settings — CompanySettings Type & Defaults
+| Test | Expected |
+|------|----------|
+| `CompanySettings` interface includes all 7 new fields | Type check passes |
+| `resolve-config` defaults: `aiAutomationLevel` | `'suggest'` |
+| `resolve-config` defaults: `aiHighConfidenceThreshold` | `95` |
+| `resolve-config` defaults: `aiMediumConfidenceThreshold` | `80` |
+| `resolve-config` defaults: `aiAutoApproveMaxAmount` | `10000` |
+| `resolve-config` defaults: `aiDuplicateDetectionEnabled` | `true` |
+| `resolve-config` defaults: `aiAnomalyDetectionEnabled` | `true` |
+| `resolve-config` defaults: `aiCrossTenantLearningEnabled` | `false` |
+
+### AI Settings — UI (Settings > AI & Automation Tab)
+| Test | Expected |
+|------|----------|
+| AI tab renders two cards | "Invoice Processing" card + "AI Features" card |
+| Invoice Processing card: automation level control | Select/radio with suggest, auto_review, full_auto options |
+| Invoice Processing card: high confidence threshold | Number input, shows current value |
+| Invoice Processing card: medium confidence threshold | Number input, shows current value |
+| Invoice Processing card: auto-approve max amount | Number input, shows current value |
+| AI Features card: Duplicate Detection toggle | Toggle switch with description text |
+| AI Features card: Anomaly Detection toggle | Toggle switch with description text |
+| AI Features card: Cross-Tenant Learning toggle | Toggle switch with description text |
+| Changing automation level saves via API | PUT/POST to `/api/v1/settings/company` |
+| Changing threshold saves via API | Setting persists after page refresh |
+| Toggling feature switch saves via API | Boolean value persists correctly |
+| Page loads with current settings values | All controls reflect saved settings |
+
+### Settings-Driven Extraction Processor
+| Test | Expected |
+|------|----------|
+| Processor calls `getCompanySettings()` | Settings fetched at start of each extraction |
+| Confidence above `aiMediumConfidenceThreshold` | Extraction status set to `completed` |
+| Confidence below `aiMediumConfidenceThreshold` | Extraction status set to `needs_review` |
+| `aiDuplicateDetectionEnabled: true` | Duplicate detection runs normally |
+| `aiDuplicateDetectionEnabled: false` | Duplicate detection skipped entirely |
+| Settings snapshot stored in `_meta.ai_settings` | `extracted_data._meta.ai_settings` contains settings values |
+| Default settings applied for new company | Uses resolve-config defaults when no overrides set |
+| Changed threshold affects subsequent extractions | New threshold value used for next extraction |
+
+### AI Extraction Metrics Endpoint (`GET /api/v2/invoices/extractions/metrics`)
+| Test | Expected |
+|------|----------|
+| Unauthenticated request | 401 response |
+| Authenticated request returns metrics object | JSON with summary, corrections, confidence, trend |
+| `totalExtractions` count | Matches total extraction records for company |
+| `completed` count | Matches count of `completed` status records |
+| `failed` count | Matches count of `failed` status records |
+| `processing` count | Matches count of `processing` status records |
+| `reviewed` count | Matches count of records with `reviewed_by` set |
+| `accuracyRate` calculation | `(reviewed without corrections / total reviewed) * 100` |
+| `avgConfidence` calculation | Average of all confidence scores |
+| `avgProcessingTimeMs` calculation | Average processing duration |
+| `totalCorrections` count | Sum of all `_meta.corrections` array lengths |
+| `extractionsWithCorrections` count | Count of extractions with non-empty corrections |
+| `correctionRate` calculation | `(extractions with corrections / reviewed) * 100` |
+| `topCorrectedFields` ordering | Sorted by frequency, most corrected first |
+| Confidence distribution: high count | Extractions with confidence >= high threshold |
+| Confidence distribution: medium count | Extractions between medium and high thresholds |
+| Confidence distribution: low count | Extractions below medium threshold |
+| Monthly trend: last 6 months | Array with 6 entries, most recent first |
+| Monthly trend: per-month data | Each entry has month, total, reviewed, corrected, avgConfidence |
+| Company isolation | Only metrics for authenticated user's company |
+| No extractions returns zero values | All counts 0, rates 0, empty arrays |
+
+### AI Metrics Dashboard Page (`/invoices/extractions/metrics`)
+| Test | Expected |
+|------|----------|
+| Page renders as client component | Has `'use client'` directive |
+| Summary stat cards displayed | Total Extractions, Accuracy Rate, Avg Confidence, Avg Processing Time |
+| Accuracy Rate shows percentage | Formatted as percentage (e.g., "92.5%") |
+| Avg Confidence shows percentage | Formatted as percentage |
+| Avg Processing Time shows milliseconds | Formatted with ms unit |
+| Confidence distribution bars | Visual bars for high, medium, low with percentages |
+| Corrections panel: total corrections | Shows total correction count |
+| Corrections panel: correction rate | Shows percentage |
+| Corrections panel: top corrected fields | Ordered list of field names with counts |
+| Monthly trend table renders | Columns: Month, Extractions, Reviewed, Corrected, Avg Confidence |
+| Monthly trend shows 6 months | Up to 6 rows of monthly data |
+| Status breakdown section | Shows completed, reviewed, processing, failed, total counts |
+| Back link to extraction queue | Links to `/invoices/extractions` |
+| AI Settings button | Links to Settings > AI & Automation tab |
+| Loading state | Shows loading indicator while fetching metrics |
+| Error state | Shows error message if metrics fetch fails |
+| Empty state (no data) | Handles zero extractions gracefully |
+
+### `useExtractionMetrics()` Hook
+| Test | Expected |
+|------|----------|
+| Hook fetches from correct endpoint | `GET /api/v2/invoices/extractions/metrics` |
+| Stale time is 1 minute | `staleTime: 60_000` configured |
+| Returns loading state | `isLoading` is true during initial fetch |
+| Returns error state | `error` populated on fetch failure |
+| Returns data on success | Metrics object with all fields |
+| Cache invalidation refetches | After cache expires, new request made |
+
+### Navigation — Extraction Queue Page Header
+| Test | Expected |
+|------|----------|
+| "Metrics" button visible | Button with BarChart3 icon in extraction queue header |
+| Button links to metrics page | Navigates to `/invoices/extractions/metrics` |
+| BarChart3 icon imported | Import from `lucide-react` present |

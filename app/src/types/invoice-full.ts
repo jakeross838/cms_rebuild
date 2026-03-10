@@ -53,6 +53,10 @@ export interface Invoice {
   pdf_url: string | null
   stamped_pdf_url: string | null
   stamped_at: string | null
+  payment_status: string | null
+  review_flags: string[] | null
+  billable_amount: number | null
+  non_billable_reason: string | null
   billing_period_start: string | null
   billing_period_end: string | null
   percent_complete: number | null

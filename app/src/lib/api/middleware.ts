@@ -295,7 +295,14 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
 
       // 9. Audit logging (if configured)
       if (auditAction && ctx.user) {
-        const body = req.method !== 'GET' ? (ctx.validatedBody ?? await req.clone().json().catch(() => null)) : null
+        let body: Record<string, unknown> | null = null
+        if (req.method !== 'GET') {
+          try {
+            body = (ctx.validatedBody ?? await req.clone().json()) as Record<string, unknown>
+          } catch {
+            // Body may have been consumed (e.g., formData uploads) — skip audit body
+          }
+        }
 
         recordAudit({
           companyId: ctx.companyId!,
@@ -303,7 +310,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
           action: auditAction,
           ipAddress: req.headers.get('x-forwarded-for') || undefined,
           userAgent: req.headers.get('user-agent') || undefined,
-          newData: body,
+          newData: body ?? undefined,
         })
       }
 

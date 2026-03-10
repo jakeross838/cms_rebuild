@@ -43,6 +43,13 @@ interface CompanySettings {
   costCodeSuggestionEnabled: boolean
   riskDetectionEnabled: boolean
   invoiceAutoRouteThreshold: number
+  aiAutomationLevel: 'suggest' | 'auto_review' | 'full_auto'
+  aiHighConfidenceThreshold: number
+  aiMediumConfidenceThreshold: number
+  aiAutoApproveMaxAmount: number
+  aiDuplicateDetectionEnabled: boolean
+  aiAnomalyDetectionEnabled: boolean
+  aiCrossTenantLearningEnabled: boolean
   clientPortalEnabled: boolean
   vendorPortalEnabled: boolean
   allowClientPhotoUpload: boolean
@@ -82,6 +89,13 @@ export default function GeneralSettingsPage() {
   const [ai, setAi] = useState({
     autoMatchConfidence: 85, costCodeSuggestionEnabled: true,
     riskDetectionEnabled: true, invoiceAutoRouteThreshold: 5000,
+    aiAutomationLevel: 'suggest' as 'suggest' | 'auto_review' | 'full_auto',
+    aiHighConfidenceThreshold: 95,
+    aiMediumConfidenceThreshold: 80,
+    aiAutoApproveMaxAmount: 10000,
+    aiDuplicateDetectionEnabled: true,
+    aiAnomalyDetectionEnabled: true,
+    aiCrossTenantLearningEnabled: false,
   })
   const [portal, setPortal] = useState({
     clientPortalEnabled: false, vendorPortalEnabled: false,
@@ -135,6 +149,13 @@ export default function GeneralSettingsPage() {
           costCodeSuggestionEnabled: s.costCodeSuggestionEnabled,
           riskDetectionEnabled: s.riskDetectionEnabled,
           invoiceAutoRouteThreshold: s.invoiceAutoRouteThreshold,
+          aiAutomationLevel: s.aiAutomationLevel ?? 'suggest',
+          aiHighConfidenceThreshold: s.aiHighConfidenceThreshold ?? 95,
+          aiMediumConfidenceThreshold: s.aiMediumConfidenceThreshold ?? 80,
+          aiAutoApproveMaxAmount: s.aiAutoApproveMaxAmount ?? 10000,
+          aiDuplicateDetectionEnabled: s.aiDuplicateDetectionEnabled ?? true,
+          aiAnomalyDetectionEnabled: s.aiAnomalyDetectionEnabled ?? true,
+          aiCrossTenantLearningEnabled: s.aiCrossTenantLearningEnabled ?? false,
         })
         setPortal({
           clientPortalEnabled: s.clientPortalEnabled,
@@ -396,34 +417,88 @@ export default function GeneralSettingsPage() {
 
         {/* AI & Automation Tab */}
         <TabsContent value="ai">
-          <Card>
-            <CardHeader>
-              <CardTitle>AI & Automation</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FieldGroup label="Auto-Match Confidence Threshold (0-100)">
-                  <Input type="number" min={0} max={100} value={ai.autoMatchConfidence} onChange={(e) => setAi({ ...ai, autoMatchConfidence: Number(e.target.value) })} />
+          <div className="space-y-6">
+            {/* Invoice Processing Settings */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Invoice Processing</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Automation Level */}
+                <FieldGroup label="Automation Level">
+                  <select
+                    aria-label="Automation Level"
+                    value={ai.aiAutomationLevel}
+                    onChange={(e) => setAi({ ...ai, aiAutomationLevel: e.target.value as 'suggest' | 'auto_review' | 'full_auto' })}
+                    className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="suggest">Suggest Only — All invoices require human review</option>
+                    <option value="auto_review">Auto with Review — High-confidence invoices auto-submitted, others queued</option>
+                    <option value="full_auto">Full Auto — High-confidence invoices auto-submitted and auto-approved</option>
+                  </select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Controls how AI-extracted invoices are handled after processing
+                  </p>
                 </FieldGroup>
-                <FieldGroup label="Invoice Auto-Route Threshold ($)">
-                  <Input type="number" min={0} value={ai.invoiceAutoRouteThreshold} onChange={(e) => setAi({ ...ai, invoiceAutoRouteThreshold: Number(e.target.value) })} />
-                </FieldGroup>
-                <FieldGroup label="Cost Code Suggestions">
-                  <ToggleSwitch checked={ai.costCodeSuggestionEnabled} onChange={(v) => setAi({ ...ai, costCodeSuggestionEnabled: v })} label="Suggest cost codes for line items" />
-                </FieldGroup>
-                <FieldGroup label="Risk Detection">
-                  <ToggleSwitch checked={ai.riskDetectionEnabled} onChange={(v) => setAi({ ...ai, riskDetectionEnabled: v })} label="Detect potential risks in projects" />
-                </FieldGroup>
-              </div>
-            </CardContent>
-            <CardFooter className="border-t justify-end gap-2">
+
+                {/* Confidence Thresholds */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <FieldGroup label="High Confidence Threshold (%)">
+                    <Input type="number" min={0} max={100} value={ai.aiHighConfidenceThreshold} onChange={(e) => setAi({ ...ai, aiHighConfidenceThreshold: Number(e.target.value) })} />
+                    <p className="text-xs text-muted-foreground mt-1">Auto-accepted, minimal review</p>
+                  </FieldGroup>
+                  <FieldGroup label="Medium Confidence Threshold (%)">
+                    <Input type="number" min={0} max={100} value={ai.aiMediumConfidenceThreshold} onChange={(e) => setAi({ ...ai, aiMediumConfidenceThreshold: Number(e.target.value) })} />
+                    <p className="text-xs text-muted-foreground mt-1">Pre-filled but flagged for review</p>
+                  </FieldGroup>
+                  <FieldGroup label="Auto-Match Threshold (%)">
+                    <Input type="number" min={0} max={100} value={ai.autoMatchConfidence} onChange={(e) => setAi({ ...ai, autoMatchConfidence: Number(e.target.value) })} />
+                    <p className="text-xs text-muted-foreground mt-1">Min confidence for vendor/cost code auto-match</p>
+                  </FieldGroup>
+                </div>
+
+                {/* Amount Limits */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldGroup label="Auto-Approve Max Amount ($)">
+                    <Input type="number" min={0} value={ai.aiAutoApproveMaxAmount} onChange={(e) => setAi({ ...ai, aiAutoApproveMaxAmount: Number(e.target.value) })} />
+                    <p className="text-xs text-muted-foreground mt-1">Maximum invoice amount for automatic approval (full-auto mode)</p>
+                  </FieldGroup>
+                  <FieldGroup label="Invoice Auto-Route Threshold ($)">
+                    <Input type="number" min={0} value={ai.invoiceAutoRouteThreshold} onChange={(e) => setAi({ ...ai, invoiceAutoRouteThreshold: Number(e.target.value) })} />
+                    <p className="text-xs text-muted-foreground mt-1">Above this amount, invoices require additional approval</p>
+                  </FieldGroup>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Feature Toggles */}
+            <Card>
+              <CardHeader>
+                <CardTitle>AI Features</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <ToggleSwitch checked={ai.costCodeSuggestionEnabled} onChange={(v) => setAi({ ...ai, costCodeSuggestionEnabled: v })} label="Cost Code Suggestions — AI suggests cost codes for invoice line items" />
+                  <ToggleSwitch checked={ai.aiDuplicateDetectionEnabled} onChange={(v) => setAi({ ...ai, aiDuplicateDetectionEnabled: v })} label="Duplicate Detection — Flag potential duplicate invoices before creation" />
+                  <ToggleSwitch checked={ai.aiAnomalyDetectionEnabled} onChange={(v) => setAi({ ...ai, aiAnomalyDetectionEnabled: v })} label="Anomaly Detection — Flag invoices with unusual amounts or patterns" />
+                  <ToggleSwitch checked={ai.riskDetectionEnabled} onChange={(v) => setAi({ ...ai, riskDetectionEnabled: v })} label="Risk Detection — Detect potential risks in projects" />
+                  <div className="border-t pt-4 mt-4">
+                    <ToggleSwitch checked={ai.aiCrossTenantLearningEnabled} onChange={(v) => setAi({ ...ai, aiCrossTenantLearningEnabled: v })} label="Cross-Company Learning — Allow anonymized data to improve AI accuracy across the platform (opt-in)" />
+                    <p className="text-xs text-muted-foreground ml-11 mt-1">Your data is anonymized and never shared. This helps improve vendor recognition and cost code suggestions for all users.</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Save Button */}
+            <div className="flex justify-end gap-2">
               {success === 'ai' ? <span className="text-sm text-green-600 flex items-center gap-1"><CheckCircle className="h-4 w-4" /> Saved</span> : null}
               <Button onClick={() => saveSection('ai', { settings: ai })} disabled={saving === 'ai'}>
                 {saving === 'ai' ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                 Save AI Settings
               </Button>
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Portals Tab */}

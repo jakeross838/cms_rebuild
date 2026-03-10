@@ -112,6 +112,14 @@ const updateCompanySchema = z.object({
     costCodeSuggestionEnabled: z.boolean().optional(),
     riskDetectionEnabled: z.boolean().optional(),
     invoiceAutoRouteThreshold: z.number().min(0).optional(),
+    // AI Invoice Processing (Module 13)
+    aiAutomationLevel: z.enum(['suggest', 'auto_review', 'full_auto']).optional(),
+    aiHighConfidenceThreshold: z.number().min(0).max(100).optional(),
+    aiMediumConfidenceThreshold: z.number().min(0).max(100).optional(),
+    aiAutoApproveMaxAmount: z.number().min(0).optional(),
+    aiDuplicateDetectionEnabled: z.boolean().optional(),
+    aiAnomalyDetectionEnabled: z.boolean().optional(),
+    aiCrossTenantLearningEnabled: z.boolean().optional(),
 
     // Portal
     clientPortalEnabled: z.boolean().optional(),
@@ -184,6 +192,13 @@ async function handlePatch(req: NextRequest, ctx: ApiContext) {
       costCodeSuggestionEnabled: { section: 'ai', key: 'cost_code_suggestion_enabled' },
       riskDetectionEnabled: { section: 'ai', key: 'risk_detection_enabled' },
       invoiceAutoRouteThreshold: { section: 'ai', key: 'invoice_auto_route_threshold' },
+      aiAutomationLevel: { section: 'ai', key: 'ai_automation_level' },
+      aiHighConfidenceThreshold: { section: 'ai', key: 'ai_high_confidence_threshold' },
+      aiMediumConfidenceThreshold: { section: 'ai', key: 'ai_medium_confidence_threshold' },
+      aiAutoApproveMaxAmount: { section: 'ai', key: 'ai_auto_approve_max_amount' },
+      aiDuplicateDetectionEnabled: { section: 'ai', key: 'ai_duplicate_detection_enabled' },
+      aiAnomalyDetectionEnabled: { section: 'ai', key: 'ai_anomaly_detection_enabled' },
+      aiCrossTenantLearningEnabled: { section: 'ai', key: 'ai_cross_tenant_learning_enabled' },
       clientPortalEnabled: { section: 'portal', key: 'client_portal_enabled' },
       vendorPortalEnabled: { section: 'portal', key: 'vendor_portal_enabled' },
       allowClientPhotoUpload: { section: 'portal', key: 'allow_client_photo_upload' },

@@ -33,9 +33,9 @@ type PoListParams = {
 }
 
 type PoCreateInput = {
-  job_id: string
-  vendor_id: string
-  po_number?: string
+  job_id: string | null
+  vendor_id: string | null
+  po_number?: string | null
   title: string
   status?: string
   budget_id?: string | null

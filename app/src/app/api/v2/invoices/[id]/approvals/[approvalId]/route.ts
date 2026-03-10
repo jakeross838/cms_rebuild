@@ -62,6 +62,43 @@ export const PATCH = createApiHandler(
       )
     }
 
+    // Fetch the approval step to verify it exists and check role
+    const { data: approvalStep } = await (supabase as any).from('invoice_approvals')
+      .select('id, status, required_role, assigned_to')
+      .eq('id', approvalId)
+      .eq('invoice_id', invoiceId)
+      .single()
+
+    if (!approvalStep) {
+      return NextResponse.json(
+        { error: 'Not Found', message: 'Approval step not found', requestId: ctx.requestId },
+        { status: 404 }
+      )
+    }
+
+    // Check that the step is actionable
+    if (!['pending', 'delegated', 'escalated'].includes(approvalStep.status)) {
+      return NextResponse.json(
+        { error: 'Conflict', message: `This step is already ${approvalStep.status}`, requestId: ctx.requestId },
+        { status: 409 }
+      )
+    }
+
+    // Role-based enforcement: check if user's role meets the required_role
+    const ROLE_HIERARCHY: Record<string, number> = {
+      owner: 7, admin: 6, pm: 5, superintendent: 4, office: 3, field: 2, read_only: 1,
+    }
+    const userRoleLevel = ROLE_HIERARCHY[ctx.user!.role] ?? 0
+    const requiredRoleLevel = ROLE_HIERARCHY[approvalStep.required_role] ?? 0
+
+    // User must have the required role level OR be assigned to this step
+    if (userRoleLevel < requiredRoleLevel && approvalStep.assigned_to !== ctx.user!.id) {
+      return NextResponse.json(
+        { error: 'Forbidden', message: `This step requires ${approvalStep.required_role} role or higher`, requestId: ctx.requestId },
+        { status: 403 }
+      )
+    }
+
     // Build the update payload
     const now = new Date().toISOString()
     const updates: Record<string, unknown> = {
@@ -73,6 +110,7 @@ export const PATCH = createApiHandler(
 
     if (input.action === 'delegated') {
       updates.delegated_to = input.delegated_to
+      updates.assigned_to = input.delegated_to
       updates.status = 'delegated'
     }
 

@@ -8,6 +8,7 @@ import { useParams, useRouter } from 'next/navigation'
 import {
   AlertTriangle,
   ArrowLeft,
+  ArrowUpCircle,
   Calendar,
   Check,
   CheckCircle2,
@@ -24,6 +25,7 @@ import {
   Save,
   Sparkles,
   Trash2,
+  UserPlus,
   XCircle,
 } from 'lucide-react'
 
@@ -52,7 +54,13 @@ import {
   usePaymentPrereqs,
   useCreatePaymentPrereq,
   useTogglePrereq,
+  useInvoiceActivity,
+  useStampInvoice,
 } from '@/hooks/use-invoices'
+import { AIConfidenceBadge, AIConfidenceBar } from '@/components/invoices/ai-confidence-badge'
+import { ReviewFlagsList, ReviewStatusSummary } from '@/components/invoices/review-flags'
+import { PaymentStatusBadge } from '@/components/invoices/payment-status-badge'
+import { ActivityTimeline, type InvoiceActivity as ActivityEntry } from '@/components/invoices/activity-timeline'
 import { useJobs } from '@/hooks/use-jobs'
 import { useVendors } from '@/hooks/use-vendors'
 import { usePurchaseOrders } from '@/hooks/use-purchase-orders'
@@ -659,6 +667,7 @@ export default function InvoiceDetailPage() {
           {activeTab === 'overview' && (
             <OverviewTab
               invoice={invoice}
+              invoiceId={invoiceId}
               jobName={jobName}
               vendorName={vendorName}
               poNumber={poNumber}
@@ -911,6 +920,7 @@ function EditForm({
 
 function OverviewTab({
   invoice,
+  invoiceId,
   jobName,
   vendorName,
   poNumber,
@@ -918,6 +928,7 @@ function OverviewTab({
   contractConfig,
 }: {
   invoice: InvoiceFullType
+  invoiceId: string
   jobName: string | null
   vendorName: string | null
   poNumber: string | null
@@ -927,160 +938,270 @@ function OverviewTab({
   const typeConfig = INVOICE_TYPE_CONFIG[invoice.invoice_type]
   const isProgressType = invoice.invoice_type === 'progress' || invoice.invoice_type === 'final'
   const isPaid = invoice.status === 'paid'
+  const stampMutation = useStampInvoice(invoiceId)
+
+  // Fetch activity
+  const { data: activityResponse } = useInvoiceActivity(invoiceId)
+  const activities = ((activityResponse as { data: ActivityEntry[] } | undefined)?.data ?? []) as ActivityEntry[]
+
+  // AI confidence data (per-field)
+  const aiConfidence = invoice.ai_confidence as Record<string, number> | null
+  const reviewFlags = (invoice.review_flags ?? []) as string[]
 
   return (
-    <div className="space-y-6">
-      {/* Invoice Details Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Invoice Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
-            <DetailField label="Invoice Number" value={invoice.invoice_number} mono />
-            <DetailField label="Status">
-              <Badge className={getStatusColor(invoice.status)}>
-                {INVOICE_STATUS_CONFIG[invoice.status]?.label ?? formatStatus(invoice.status)}
-              </Badge>
-            </DetailField>
-            <DetailField label="Invoice Type">
-              <Badge className={typeConfig?.color ?? ''}>
-                {typeConfig?.label ?? formatStatus(invoice.invoice_type)}
-              </Badge>
-            </DetailField>
-            <DetailField label="Contract Type" value={contractConfig?.label ?? formatStatus(invoice.contract_type)} />
-            <DetailField label="Invoice Date" value={formatDate(invoice.invoice_date)} icon={<Calendar className="h-3.5 w-3.5" />} />
-            <DetailField label="Due Date" value={formatDate(invoice.due_date)} icon={<Clock className="h-3.5 w-3.5" />} />
-            <DetailField label="Vendor">
-              {invoice.vendor_id ? (
-                <Link href={`/vendors/${invoice.vendor_id}`} className="text-foreground hover:underline font-medium">
-                  {vendorName || invoice.vendor_id}
-                </Link>
-              ) : (
-                <span className="text-muted-foreground">--</span>
-              )}
-            </DetailField>
-            <DetailField label="Job">
-              {invoice.job_id ? (
-                <Link href={`/jobs/${invoice.job_id}`} className="text-foreground hover:underline font-medium">
-                  {jobName || invoice.job_id}
-                </Link>
-              ) : (
-                <span className="text-muted-foreground">--</span>
-              )}
-            </DetailField>
-            <DetailField label="Purchase Order">
-              {invoice.po_id ? (
-                <Link href={`/purchase-orders/${invoice.po_id}`} className="text-foreground hover:underline font-medium">
-                  {poNumber || invoice.po_id}
-                </Link>
-              ) : (
-                <span className="text-muted-foreground">--</span>
-              )}
-            </DetailField>
-            <DetailField label="Cost Code" value={costCodeLabel} />
-            <DetailField label="Payment Terms" value={invoice.payment_terms} />
-            <DetailField label="Lien Waiver">
-              <Badge className={getStatusColor(invoice.lien_waiver_status)}>
-                {formatStatus(invoice.lien_waiver_status)}
-              </Badge>
-            </DetailField>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="grid lg:grid-cols-[1fr_380px] gap-6">
+      {/* Left column — invoice details */}
+      <div className="space-y-6">
+        {/* Review Flags Alert */}
+        {reviewFlags.length > 0 && (
+          <Card className="border-amber-200 bg-amber-50/30">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-amber-600" />
+                  <span className="text-sm font-medium">Review Required</span>
+                </div>
+                <ReviewStatusSummary needsReview={true} flags={reviewFlags} />
+              </div>
+              <ReviewFlagsList flags={reviewFlags} />
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Payment Info Card */}
-      {isPaid && (
+        {/* Invoice Details Card */}
         <Card>
-          <CardHeader>
-            <CardTitle>Payment Information</CardTitle>
+          <CardHeader className="flex-row items-center justify-between space-y-0">
+            <CardTitle>Invoice Details</CardTitle>
+            <div className="flex items-center gap-2">
+              <PaymentStatusBadge
+                paymentStatus={invoice.payment_status as 'unpaid' | 'partial' | 'paid' | undefined}
+                paidAmount={invoice.paid_amount}
+                totalAmount={invoice.amount}
+              />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
-              <DetailField label="Payment Method" value={invoice.payment_method ? formatStatus(invoice.payment_method) : null} />
-              <DetailField label="Paid Date" value={formatDate(invoice.paid_date)} />
-              <DetailField label="Paid Amount" value={formatCurrency(invoice.paid_amount)} />
-              <DetailField label="Reference" value={invoice.payment_reference} mono />
+              <DetailField label="Invoice Number" value={invoice.invoice_number} mono />
+              <DetailField label="Status">
+                <Badge className={getStatusColor(invoice.status)}>
+                  {INVOICE_STATUS_CONFIG[invoice.status]?.label ?? formatStatus(invoice.status)}
+                </Badge>
+              </DetailField>
+              <DetailField label="Invoice Type">
+                <Badge className={typeConfig?.color ?? ''}>
+                  {typeConfig?.label ?? formatStatus(invoice.invoice_type)}
+                </Badge>
+              </DetailField>
+              <DetailField label="Contract Type" value={contractConfig?.label ?? formatStatus(invoice.contract_type)} />
+              <DetailField label="Invoice Date" value={formatDate(invoice.invoice_date)} icon={<Calendar className="h-3.5 w-3.5" />} />
+              <DetailField label="Due Date" value={formatDate(invoice.due_date)} icon={<Clock className="h-3.5 w-3.5" />} />
+              <DetailField label="Vendor">
+                {invoice.vendor_id ? (
+                  <Link href={`/vendors/${invoice.vendor_id}`} className="text-foreground hover:underline font-medium">
+                    {vendorName || invoice.vendor_id}
+                  </Link>
+                ) : (
+                  <span className="text-muted-foreground">--</span>
+                )}
+              </DetailField>
+              <DetailField label="Job">
+                {invoice.job_id ? (
+                  <Link href={`/jobs/${invoice.job_id}`} className="text-foreground hover:underline font-medium">
+                    {jobName || invoice.job_id}
+                  </Link>
+                ) : (
+                  <span className="text-muted-foreground">--</span>
+                )}
+              </DetailField>
+              <DetailField label="Purchase Order">
+                {invoice.po_id ? (
+                  <Link href={`/purchase-orders/${invoice.po_id}`} className="text-foreground hover:underline font-medium">
+                    {poNumber || invoice.po_id}
+                  </Link>
+                ) : (
+                  <span className="text-muted-foreground">--</span>
+                )}
+              </DetailField>
+              <DetailField label="Cost Code" value={costCodeLabel} />
+              <DetailField label="Payment Terms" value={invoice.payment_terms} />
+              <DetailField label="Lien Waiver">
+                <Badge className={getStatusColor(invoice.lien_waiver_status)}>
+                  {formatStatus(invoice.lien_waiver_status)}
+                </Badge>
+              </DetailField>
             </div>
           </CardContent>
         </Card>
-      )}
 
-      {/* Progress Billing Card */}
-      {isProgressType && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Progress Billing</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
-              <DetailField label="Billing Period">
-                {invoice.billing_period_start && invoice.billing_period_end
-                  ? `${formatDate(invoice.billing_period_start)} — ${formatDate(invoice.billing_period_end)}`
-                  : '--'}
-              </DetailField>
-              <DetailField label="Percent Complete">
-                {invoice.percent_complete != null ? (
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 h-2 bg-muted rounded-full max-w-[120px]">
-                      <div
-                        className="h-2 bg-emerald-500 rounded-full"
-                        style={{ width: `${Math.min(invoice.percent_complete, 100)}%` }}
-                      />
+        {/* Payment Info Card */}
+        {isPaid && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                <DetailField label="Payment Method" value={invoice.payment_method ? formatStatus(invoice.payment_method) : null} />
+                <DetailField label="Paid Date" value={formatDate(invoice.paid_date)} />
+                <DetailField label="Paid Amount" value={formatCurrency(invoice.paid_amount)} />
+                <DetailField label="Reference" value={invoice.payment_reference} mono />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Progress Billing Card */}
+        {isProgressType && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Progress Billing</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                <DetailField label="Billing Period">
+                  {invoice.billing_period_start && invoice.billing_period_end
+                    ? `${formatDate(invoice.billing_period_start)} — ${formatDate(invoice.billing_period_end)}`
+                    : '--'}
+                </DetailField>
+                <DetailField label="Percent Complete">
+                  {invoice.percent_complete != null ? (
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-2 bg-muted rounded-full max-w-[120px]">
+                        <div
+                          className="h-2 bg-emerald-500 rounded-full"
+                          style={{ width: `${Math.min(invoice.percent_complete, 100)}%` }}
+                        />
+                      </div>
+                      <span className="font-medium">{invoice.percent_complete}%</span>
                     </div>
-                    <span className="font-medium">{invoice.percent_complete}%</span>
-                  </div>
-                ) : '--'}
-              </DetailField>
-              <DetailField label="Cumulative Billed" value={formatCurrency(invoice.cumulative_billed)} />
-              <DetailField label="Contract Value" value={formatCurrency(invoice.contract_value)} />
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                  ) : '--'}
+                </DetailField>
+                <DetailField label="Cumulative Billed" value={formatCurrency(invoice.cumulative_billed)} />
+                <DetailField label="Contract Value" value={formatCurrency(invoice.contract_value)} />
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Notes Card */}
-      {(invoice.description || invoice.notes) && (
+        {/* Notes Card */}
+        {(invoice.description || invoice.notes) && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Notes</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {invoice.description && (
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Description</p>
+                  <p className="text-sm whitespace-pre-wrap">{invoice.description}</p>
+                </div>
+              )}
+              {invoice.notes && (
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Internal Notes</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{invoice.notes}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Right column — PDF preview, AI info, activity */}
+      <div className="space-y-6">
+        {/* PDF Preview */}
         <Card>
-          <CardHeader>
-            <CardTitle>Notes</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {invoice.description && (
-              <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">Description</p>
-                <p className="text-sm whitespace-pre-wrap">{invoice.description}</p>
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm">PDF Preview</CardTitle>
+              <div className="flex items-center gap-1">
+                {invoice.stamped_pdf_url && (
+                  <Button variant="ghost" size="sm" onClick={() => window.open(invoice.stamped_pdf_url!, '_blank')}>
+                    <FileText className="h-3.5 w-3.5 mr-1" />
+                    Stamped
+                  </Button>
+                )}
+                {invoice.pdf_url && (
+                  <Button variant="ghost" size="sm" onClick={() => window.open(invoice.pdf_url!, '_blank')}>
+                    <FileText className="h-3.5 w-3.5 mr-1" />
+                    Original
+                  </Button>
+                )}
+                {invoice.pdf_url && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => stampMutation.mutate()}
+                    disabled={stampMutation.isPending}
+                  >
+                    {stampMutation.isPending ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <>
+                        <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+                        Stamp
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
-            )}
-            {invoice.notes && (
-              <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">Internal Notes</p>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{invoice.notes}</p>
+            </div>
+          </CardHeader>
+          <CardContent className="p-2">
+            {(invoice.stamped_pdf_url || invoice.pdf_url) ? (
+              <iframe
+                src={invoice.stamped_pdf_url || invoice.pdf_url!}
+                className="w-full h-[50vh] rounded border"
+                title="Invoice PDF"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-48 text-muted-foreground bg-accent/30 rounded">
+                <FileText className="h-10 w-10 mb-2 opacity-40" />
+                <p className="text-sm">No PDF uploaded</p>
               </div>
             )}
           </CardContent>
         </Card>
-      )}
 
-      {/* AI Insights Card */}
-      {invoice.ai_notes && (
-        <Card className="border-amber-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-amber-500" />
-              AI Insights
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm whitespace-pre-wrap">{invoice.ai_notes}</p>
-            {invoice.ai_confidence != null && (
-              <p className="text-xs text-muted-foreground mt-2">
-                Confidence: {Math.round(invoice.ai_confidence * 100)}%
-              </p>
-            )}
+        {/* AI Processing Info */}
+        {(invoice.ai_notes || aiConfidence) && (
+          <Card className="border-amber-200/60">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-amber-500" />
+                AI Processing
+                {invoice.ai_confidence != null && typeof invoice.ai_confidence === 'number' && (
+                  <AIConfidenceBadge confidence={invoice.ai_confidence} />
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {invoice.ai_notes && (
+                <p className="text-sm text-muted-foreground">{invoice.ai_notes}</p>
+              )}
+              {aiConfidence && typeof aiConfidence === 'object' && (
+                <div className="space-y-2">
+                  {Object.entries(aiConfidence).map(([key, value]) => (
+                    <AIConfidenceBar
+                      key={key}
+                      confidence={typeof value === 'number' ? value : 0}
+                      label={key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Activity Timeline */}
+        <Card>
+          <CardContent className="p-4">
+            <ActivityTimeline activities={activities} maxHeight="20rem" />
           </CardContent>
         </Card>
-      )}
+      </div>
     </div>
   )
 }
@@ -1555,11 +1676,36 @@ function ApprovalsTab({ invoiceId }: { invoiceId: string }) {
   }
 
   const sortedApprovals = [...approvals].sort((a, b) => a.step_order - b.step_order)
+  const approvedCount = sortedApprovals.filter(a => a.status === 'approved').length
+  const totalSteps = sortedApprovals.length
+  const hasRejection = sortedApprovals.some(a => a.status === 'rejected')
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-medium text-muted-foreground">{approvals.length} approval step{approvals.length !== 1 ? 's' : ''}</h3>
+    <div className="space-y-5">
+      {/* Progress summary */}
+      {totalSteps > 0 && (
+        <div className="bg-card rounded-lg border border-border p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-foreground">
+              {hasRejection ? 'Approval Denied' : approvedCount === totalSteps ? 'Fully Approved' : 'Approval Progress'}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {approvedCount} of {totalSteps} step{totalSteps !== 1 ? 's' : ''} approved
+            </span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-stone-200">
+            <div
+              className={cn(
+                'h-full rounded-full transition-all',
+                hasRejection ? 'bg-red-500' : approvedCount === totalSteps ? 'bg-emerald-500' : 'bg-amber-500'
+              )}
+              style={{ width: `${totalSteps > 0 ? (approvedCount / totalSteps) * 100 : 0}%` }}
+            />
+          </div>
+        </div>
+      )}
 
+      {/* Visual timeline */}
       {sortedApprovals.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
@@ -1567,18 +1713,26 @@ function ApprovalsTab({ invoiceId }: { invoiceId: string }) {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-3">
-          {sortedApprovals.map((approval) => (
-            <ApprovalStepCard
-              key={approval.id}
-              approval={approval}
-              invoiceId={invoiceId}
-              isExpanded={activeApprovalId === approval.id}
-              onToggle={() => setActiveApprovalId(activeApprovalId === approval.id ? null : approval.id)}
-              actionNotes={activeApprovalId === approval.id ? actionNotes : ''}
-              setActionNotes={setActionNotes}
-            />
-          ))}
+        <div className="relative">
+          {/* Connecting line */}
+          {sortedApprovals.length > 1 && (
+            <div className="absolute left-[19px] top-8 bottom-8 w-0.5 bg-border" />
+          )}
+          <div className="space-y-0">
+            {sortedApprovals.map((approval, idx) => (
+              <ApprovalStepCard
+                key={approval.id}
+                approval={approval}
+                invoiceId={invoiceId}
+                stepNumber={idx + 1}
+                isLast={idx === sortedApprovals.length - 1}
+                isExpanded={activeApprovalId === approval.id}
+                onToggle={() => setActiveApprovalId(activeApprovalId === approval.id ? null : approval.id)}
+                actionNotes={activeApprovalId === approval.id ? actionNotes : ''}
+                setActionNotes={setActionNotes}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -1588,6 +1742,8 @@ function ApprovalsTab({ invoiceId }: { invoiceId: string }) {
 function ApprovalStepCard({
   approval,
   invoiceId,
+  stepNumber,
+  isLast,
   isExpanded,
   onToggle,
   actionNotes,
@@ -1595,6 +1751,8 @@ function ApprovalStepCard({
 }: {
   approval: InvoiceApproval
   invoiceId: string
+  stepNumber: number
+  isLast: boolean
   isExpanded: boolean
   onToggle: () => void
   actionNotes: string
@@ -1602,89 +1760,225 @@ function ApprovalStepCard({
 }) {
   const actionMutation = useApprovalAction(invoiceId, approval.id)
   const isPending = approval.status === 'pending'
+  const isActionable = isPending || approval.status === 'delegated' || approval.status === 'escalated'
+  const [showDelegate, setShowDelegate] = useState(false)
+  const [showEscalate, setShowEscalate] = useState(false)
+  const [delegateEmail, setDelegateEmail] = useState('')
+  const [escalateReason, setEscalateReason] = useState('')
 
   const statusIcon = (() => {
     switch (approval.status) {
       case 'approved': return <CheckCircle2 className="h-5 w-5 text-emerald-600" />
       case 'rejected': return <XCircle className="h-5 w-5 text-destructive" />
       case 'pending': return <Clock className="h-5 w-5 text-amber-500" />
-      case 'delegated': return <ChevronRight className="h-5 w-5 text-blue-500" />
+      case 'delegated': return <UserPlus className="h-5 w-5 text-blue-500" />
       case 'skipped': return <Minus className="h-5 w-5 text-muted-foreground" />
-      case 'escalated': return <AlertTriangle className="h-5 w-5 text-destructive" />
+      case 'escalated': return <ArrowUpCircle className="h-5 w-5 text-orange-500" />
       default: return <Clock className="h-5 w-5 text-muted-foreground" />
     }
   })()
 
-  const handleAction = async (action: 'approved' | 'rejected') => {
+  const statusBadgeColor = (() => {
+    switch (approval.status) {
+      case 'approved': return 'bg-emerald-100 text-emerald-700'
+      case 'rejected': return 'bg-red-100 text-red-700'
+      case 'pending': return 'bg-amber-100 text-amber-700'
+      case 'delegated': return 'bg-blue-100 text-blue-700'
+      case 'escalated': return 'bg-orange-100 text-orange-700'
+      case 'skipped': return 'bg-stone-100 text-stone-600'
+      default: return 'bg-stone-100 text-stone-600'
+    }
+  })()
+
+  const handleAction = async (action: 'approved' | 'rejected' | 'delegated' | 'escalated') => {
     try {
-      await actionMutation.mutateAsync({ action, notes: actionNotes || null })
-      toast.success(`Step ${action === 'approved' ? 'approved' : 'rejected'}`)
+      const payload: Record<string, unknown> = { action, notes: actionNotes || null }
+      if (action === 'delegated') payload.delegated_to = delegateEmail
+      if (action === 'escalated') payload.escalation_reason = escalateReason
+      await actionMutation.mutateAsync(payload as any)
+      const labels: Record<string, string> = { approved: 'approved', rejected: 'rejected', delegated: 'delegated', escalated: 'escalated' }
+      toast.success(`Step ${labels[action]}`)
       setActionNotes('')
+      setShowDelegate(false)
+      setShowEscalate(false)
+      setDelegateEmail('')
+      setEscalateReason('')
     } catch {
-      toast.error(`Failed to ${action === 'approved' ? 'approve' : 'reject'}`)
+      toast.error(`Failed to perform action`)
     }
   }
 
   return (
-    <Card className={cn(isPending && 'border-amber-200')}>
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={onToggle}>
-          {statusIcon}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium">{approval.step_name}</p>
-              <Badge className={getStatusColor(approval.status)}>
-                {formatStatus(approval.status)}
-              </Badge>
+    <div className={cn('relative pl-10 pb-4', isLast && 'pb-0')}>
+      {/* Timeline node */}
+      <div className={cn(
+        'absolute left-2 top-4 w-[22px] h-[22px] rounded-full border-2 flex items-center justify-center z-10',
+        approval.status === 'approved' ? 'border-emerald-500 bg-emerald-50' :
+        approval.status === 'rejected' ? 'border-red-500 bg-red-50' :
+        approval.status === 'pending' ? 'border-amber-400 bg-amber-50' :
+        approval.status === 'delegated' ? 'border-blue-500 bg-blue-50' :
+        approval.status === 'escalated' ? 'border-orange-500 bg-orange-50' :
+        'border-stone-300 bg-stone-50'
+      )}>
+        <span className="text-[9px] font-bold text-muted-foreground">{stepNumber}</span>
+      </div>
+
+      <Card className={cn(
+        'transition-colors',
+        isActionable && 'border-amber-200 bg-amber-50/30',
+        approval.status === 'approved' && 'border-emerald-200/60',
+        approval.status === 'rejected' && 'border-red-200/60',
+      )}>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={onToggle}>
+            {statusIcon}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-sm font-medium">{approval.step_name}</p>
+                <span className={cn('text-xs px-2 py-0.5 rounded font-medium', statusBadgeColor)}>
+                  {formatStatus(approval.status)}
+                </span>
+                {approval.required_role && (
+                  <span className="text-xs bg-stone-100 text-stone-600 px-1.5 py-0.5 rounded">
+                    {formatStatus(approval.required_role)}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground flex-wrap">
+                {approval.assigned_user?.name && (
+                  <span>Assigned: {approval.assigned_user.name}</span>
+                )}
+                {approval.action_user?.name && approval.action_at && (
+                  <span>
+                    {approval.status === 'approved' ? 'Approved' : approval.status === 'rejected' ? 'Rejected' : 'Action'} by {approval.action_user.name} on {formatDate(approval.action_at)}
+                  </span>
+                )}
+                {approval.delegated_to && approval.status === 'delegated' && (
+                  <span className="text-blue-600">Delegated to another user</span>
+                )}
+                {approval.escalated_at && (
+                  <span className="text-orange-600">Escalated {formatDate(approval.escalated_at)}</span>
+                )}
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {approval.required_role && `Role: ${formatStatus(approval.required_role)}`}
-              {approval.assigned_user?.name && ` · Assigned to: ${approval.assigned_user.name}`}
-              {approval.action_at && ` · ${formatDate(approval.action_at)}`}
-            </p>
+            <ChevronDown className={cn('h-4 w-4 text-muted-foreground transition-transform flex-shrink-0', isExpanded && 'rotate-180')} />
           </div>
-          <ChevronDown className={cn('h-4 w-4 text-muted-foreground transition-transform', isExpanded && 'rotate-180')} />
-        </div>
 
-        {isExpanded && (
-          <div className="mt-3 pt-3 border-t space-y-3">
-            {approval.action_notes && (
-              <div className="text-sm">
-                <p className="text-xs font-medium text-muted-foreground mb-1">Notes</p>
-                <p className="text-muted-foreground">{approval.action_notes}</p>
-              </div>
-            )}
-            {approval.action_user?.name && (
-              <p className="text-xs text-muted-foreground">
-                Action by: {approval.action_user.name}{approval.action_at ? ` on ${formatDate(approval.action_at)}` : ''}
-              </p>
-            )}
-
-            {isPending && (
-              <div className="space-y-2">
-                <textarea
-                  value={actionNotes}
-                  onChange={(e) => setActionNotes(e.target.value)}
-                  placeholder="Add notes (optional)..."
-                  rows={2}
-                  className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                />
-                <div className="flex items-center gap-2">
-                  <Button size="sm" onClick={() => handleAction('approved')} disabled={actionMutation.isPending}>
-                    {actionMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-1" />}
-                    Approve
-                  </Button>
-                  <Button size="sm" variant="destructive" onClick={() => handleAction('rejected')} disabled={actionMutation.isPending}>
-                    <XCircle className="h-4 w-4 mr-1" />
-                    Reject
-                  </Button>
+          {isExpanded && (
+            <div className="mt-3 pt-3 border-t space-y-3">
+              {/* Action history */}
+              {approval.action_notes && (
+                <div className="text-sm bg-accent/50 rounded-md p-2.5">
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Notes</p>
+                  <p className="text-foreground">{approval.action_notes}</p>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              )}
+              {approval.escalation_reason && (
+                <div className="text-sm bg-orange-50 rounded-md p-2.5">
+                  <p className="text-xs font-medium text-orange-600 mb-1">Escalation Reason</p>
+                  <p className="text-orange-700">{approval.escalation_reason}</p>
+                </div>
+              )}
+
+              {/* Threshold info */}
+              {(approval.threshold_min != null || approval.threshold_max != null) && (
+                <p className="text-xs text-muted-foreground">
+                  Applies to invoices
+                  {approval.threshold_min != null && ` over ${formatCurrency(approval.threshold_min)}`}
+                  {approval.threshold_max != null && ` up to ${formatCurrency(approval.threshold_max)}`}
+                </p>
+              )}
+
+              {/* Actions for pending/actionable steps */}
+              {isActionable && (
+                <div className="space-y-3">
+                  <textarea
+                    value={actionNotes}
+                    onChange={(e) => setActionNotes(e.target.value)}
+                    placeholder="Add notes (optional)..."
+                    rows={2}
+                    className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  />
+
+                  {/* Primary actions */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Button size="sm" onClick={() => handleAction('approved')} disabled={actionMutation.isPending}>
+                      {actionMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-1" />}
+                      Approve
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleAction('rejected')} disabled={actionMutation.isPending}>
+                      <XCircle className="h-4 w-4 mr-1" />
+                      Reject
+                    </Button>
+                    <div className="flex-1" />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => { setShowDelegate(!showDelegate); setShowEscalate(false) }}
+                      disabled={actionMutation.isPending}
+                    >
+                      <UserPlus className="h-4 w-4 mr-1" />
+                      Delegate
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => { setShowEscalate(!showEscalate); setShowDelegate(false) }}
+                      disabled={actionMutation.isPending}
+                    >
+                      <ArrowUpCircle className="h-4 w-4 mr-1" />
+                      Escalate
+                    </Button>
+                  </div>
+
+                  {/* Delegate form */}
+                  {showDelegate && (
+                    <div className="bg-blue-50 rounded-md p-3 space-y-2">
+                      <p className="text-xs font-medium text-blue-700">Delegate to another user</p>
+                      <Input
+                        type="text"
+                        value={delegateEmail}
+                        onChange={(e) => setDelegateEmail(e.target.value)}
+                        placeholder="User ID or email..."
+                        className="bg-background"
+                      />
+                      <div className="flex gap-2">
+                        <Button size="sm" disabled={!delegateEmail || actionMutation.isPending} onClick={() => handleAction('delegated')}>
+                          {actionMutation.isPending && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+                          Confirm Delegate
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setShowDelegate(false)}>Cancel</Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Escalate form */}
+                  {showEscalate && (
+                    <div className="bg-orange-50 rounded-md p-3 space-y-2">
+                      <p className="text-xs font-medium text-orange-700">Escalate this approval step</p>
+                      <textarea
+                        value={escalateReason}
+                        onChange={(e) => setEscalateReason(e.target.value)}
+                        placeholder="Reason for escalation..."
+                        rows={2}
+                        className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      />
+                      <div className="flex gap-2">
+                        <Button size="sm" disabled={!escalateReason || actionMutation.isPending} onClick={() => handleAction('escalated')}>
+                          {actionMutation.isPending && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+                          Confirm Escalate
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setShowEscalate(false)}>Cancel</Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 

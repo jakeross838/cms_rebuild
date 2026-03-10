@@ -1,14 +1,23 @@
 /**
- * Invoice AI Extraction — Upload & Extract
+ * Invoice AI Extraction — Upload & Extract (Async)
  *
- * POST /api/v2/invoices/extract — Upload a file and extract invoice data using AI
+ * POST /api/v2/invoices/extract — Upload a file and start async AI extraction
+ *
+ * The route uploads the file, creates an extraction record with status 'processing',
+ * fires off the AI processing in the background, and returns immediately.
+ * The frontend polls the extractions list/detail endpoint to see when it's done.
+ *
+ * Uses service role client to bypass RLS on invoice_extractions table.
+ * Metadata stored inside extracted_data._meta JSONB field.
  */
+
+import { randomUUID } from 'crypto'
 
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, type ApiContext } from '@/lib/api/middleware'
-import { extractInvoiceData, extractTextFromPdf } from '@/lib/invoice/ai-extractor'
-import { createClient } from '@/lib/supabase/server'
+import { processExtraction } from '@/lib/invoice/extraction-processor'
+import { createServiceClient } from '@/lib/supabase/service'
 
 export const POST = createApiHandler(
   async (req: NextRequest, ctx: ApiContext) => {
@@ -30,19 +39,30 @@ export const POST = createApiHandler(
       )
     }
 
-    const fileBytes = new Uint8Array(await file.arrayBuffer())
+    // Check for ANTHROPIC_API_KEY early
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return NextResponse.json(
+        { error: 'Configuration Error', message: 'ANTHROPIC_API_KEY is not configured. Add it to .env.local to enable AI invoice extraction.', requestId: ctx.requestId },
+        { status: 503 }
+      )
+    }
+
+    const fileBuffer = Buffer.from(await file.arrayBuffer())
     const filename = file.name
     const timestamp = Date.now()
     const companyId = ctx.companyId!
     const userId = ctx.user!.id
-    const storagePath = `extractions/${companyId}/${timestamp}-${filename}`
+    // Sanitize filename for storage path (replace spaces/special chars)
+    const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, '_')
+    const storagePath = `extractions/${companyId}/${timestamp}-${safeFilename}`
 
-    const supabase = await createClient()
+    // Service role client bypasses RLS
+    const supabase = createServiceClient()
 
     // Upload to Supabase Storage
     const { error: uploadError } = await supabase.storage
       .from('invoices')
-      .upload(storagePath, fileBytes, { contentType: file.type })
+      .upload(storagePath, fileBuffer, { contentType: file.type })
 
     if (uploadError) {
       return NextResponse.json(
@@ -54,19 +74,26 @@ export const POST = createApiHandler(
     const { data: urlData } = supabase.storage.from('invoices').getPublicUrl(storagePath)
     const fileUrl = urlData.publicUrl
 
-    // Create extraction record
-    const { data: extraction, error: insertError } = await (supabase as any)
-      .from('invoice_extractions')
+    // Create extraction record with status 'processing'
+    const placeholderDocId = randomUUID()
+    const { data: extraction, error: insertError } = await supabase
+      .from('invoice_extractions' as any)
       .insert({
         company_id: companyId,
+        document_id: placeholderDocId,
         status: 'processing',
-        source_type: 'upload',
-        original_filename: filename,
-        file_url: fileUrl,
-        file_type: file.type,
-        processing_started_at: new Date().toISOString(),
-        created_by: userId,
-      })
+        extraction_model: 'claude-sonnet-4-20250514',
+        extracted_data: {
+          _meta: {
+            source_type: 'upload',
+            original_filename: filename,
+            file_url: fileUrl,
+            file_type: file.type,
+            created_by: userId,
+            processing_started_at: new Date().toISOString(),
+          },
+        },
+      } as any)
       .select()
       .single()
 
@@ -77,88 +104,29 @@ export const POST = createApiHandler(
       )
     }
 
-    // Extract text from PDF
-    let rawText = ''
-    try {
-      if (file.type === 'application/pdf') {
-        rawText = await extractTextFromPdf(fileBytes)
-      } else {
-        rawText = `[Image file: ${filename} - OCR service needed for text extraction]`
-      }
-    } catch {
-      rawText = `[Text extraction failed for ${filename}]`
-    }
+    const extractionId = (extraction as any).id as string
 
-    // Fetch company context for better extraction
-    let companyContext: { vendorNames?: string[]; costCodes?: string[]; jobNames?: string[] } = {}
-    try {
-      const [vendors, costCodes, jobs] = await Promise.all([
-        supabase.from('vendors').select('name').eq('company_id', companyId).limit(100),
-        supabase.from('cost_codes').select('code, name').eq('company_id', companyId).limit(200),
-        supabase.from('jobs').select('name, job_number').eq('company_id', companyId).is('deleted_at', null).limit(100),
-      ])
-      companyContext = {
-        vendorNames: vendors.data?.map((v: { name: string }) => v.name) || [],
-        costCodes: costCodes.data?.map((c: { code: string; name: string }) => `${c.code} - ${c.name}`) || [],
-        jobNames: jobs.data?.map((j: { name: string; job_number: string | null }) => `${j.job_number ?? ''} - ${j.name}`) || [],
-      }
-    } catch {
-      // Continue without context
-    }
+    // Fire off background processing — don't await it
+    void processExtraction({
+      extractionId,
+      fileBuffer,
+      fileType: file.type,
+      filename,
+      companyId,
+      userId,
+      fileUrl,
+      startTimestamp: timestamp,
+    })
 
-    // Run AI extraction
-    try {
-      const result = await extractInvoiceData({ text: rawText, filename, companyContext })
-      const processingEnd = new Date().toISOString()
-      const durationMs = Date.now() - timestamp
-
-      await (supabase as any)
-        .from('invoice_extractions')
-        .update({
-          status: 'extracted',
-          extracted_data: result.data,
-          confidence_scores: result.confidence,
-          raw_text: rawText.slice(0, 50000),
-          processing_completed_at: processingEnd,
-          processing_duration_ms: durationMs,
-          updated_at: processingEnd,
-        })
-        .eq('id', extraction.id)
-
-      return NextResponse.json({
-        data: {
-          extraction_id: extraction.id,
-          status: 'extracted',
-          extracted_data: result.data,
-          confidence: result.confidence,
-          file_url: fileUrl,
-        },
-        requestId: ctx.requestId,
-      })
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown extraction error'
-
-      await (supabase as any)
-        .from('invoice_extractions')
-        .update({
-          status: 'failed',
-          error_message: errorMessage,
-          raw_text: rawText.slice(0, 50000),
-          processing_completed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', extraction.id)
-
-      return NextResponse.json({
-        data: {
-          extraction_id: extraction.id,
-          status: 'failed',
-          error: errorMessage,
-          file_url: fileUrl,
-        },
-        requestId: ctx.requestId,
-      }, { status: 422 })
-    }
+    // Return immediately with extraction_id and 'processing' status
+    return NextResponse.json({
+      data: {
+        extraction_id: extractionId,
+        status: 'processing',
+        file_url: fileUrl,
+      },
+      requestId: ctx.requestId,
+    }, { status: 202 })
   },
   { requireAuth: true, rateLimit: 'api', requiredRoles: ['owner', 'admin', 'pm', 'office'], auditAction: 'invoice_extraction.create' }
 )

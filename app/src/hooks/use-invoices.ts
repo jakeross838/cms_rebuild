@@ -632,18 +632,170 @@ export function useUploadInvoice() {
   })
 }
 
+export interface BatchUploadResultItem {
+  filename: string
+  extraction_id: string | null
+  status: 'processing' | 'error'
+  file_url: string | null
+  error?: string
+}
+
+export interface BatchUploadResponse {
+  data: {
+    total: number
+    successful: number
+    failed: number
+    items: BatchUploadResultItem[]
+  }
+  requestId: string
+}
+
+export function useUploadInvoiceBatch() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (files: File[]) => {
+      const formData = new FormData()
+      for (const file of files) {
+        formData.append('files', file)
+      }
+      return fetchJson<BatchUploadResponse>(`${BASE}/extract/batch`, {
+        method: 'POST',
+        body: formData,
+      })
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['extractions'] })
+    },
+  })
+}
+
+export interface DuplicateWarning {
+  has_duplicate: boolean
+  match_type: string | null
+  confidence: number | null
+  duplicate_invoice_id: string | null
+  duplicate_invoice_number: string | null
+  duplicate_amount: number | null
+  reason: string | null
+}
+
+export class DuplicateError extends Error {
+  duplicate: DuplicateWarning
+  hint: string
+  constructor(message: string, duplicate: DuplicateWarning, hint: string) {
+    super(message)
+    this.name = 'DuplicateError'
+    this.duplicate = duplicate
+    this.hint = hint
+  }
+}
+
 export function useConfirmExtraction(extractionId: string) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: { corrections?: Record<string, unknown>; vendor_id?: string; job_id?: string; cost_code_id?: string }) =>
-      fetchJson(`${BASE}/extractions/${extractionId}/confirm`, {
+    mutationFn: async (data: { corrections?: Record<string, unknown>; vendor_id?: string; job_id?: string; cost_code_id?: string; force?: boolean }) => {
+      const res = await fetch(`${BASE}/extractions/${extractionId}/confirm`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
-      }),
+      })
+      const body = await res.json()
+      if (res.status === 409 && body.duplicate) {
+        throw new DuplicateError(body.message, body.duplicate, body.hint)
+      }
+      if (!res.ok) {
+        throw new Error(body.message || `Request failed: ${res.status}`)
+      }
+      return body
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['extractions'] })
       qc.invalidateQueries({ queryKey: ['invoices'] })
     },
   })
 }
+
+export function useRejectExtraction(extractionId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (data: { reason?: string }) => {
+      const res = await fetch(`${BASE}/extractions/${extractionId}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      const body = await res.json()
+      if (!res.ok) {
+        throw new Error(body.message || `Request failed: ${res.status}`)
+      }
+      return body
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['extractions'] })
+    },
+  })
+}
+
+export function useExtractionMetrics() {
+  return useQuery({
+    queryKey: ['extraction-metrics'],
+    queryFn: () => fetchJson(`${BASE}/extractions/metrics`),
+    staleTime: 60_000, // Cache for 1 minute
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Invoice Activity
+// ---------------------------------------------------------------------------
+
+export function useInvoiceActivity(invoiceId: string) {
+  return useQuery({
+    queryKey: ['invoice-activity', invoiceId],
+    queryFn: () => fetchJson(`${BASE}/${invoiceId}/activity`),
+    enabled: !!invoiceId,
+    staleTime: 30_000,
+  })
+}
+
+export function useRecordActivity(invoiceId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (payload: { action: string; details?: Record<string, unknown> }) => {
+      const res = await fetch(`/api/v2/invoices/${invoiceId}/activity`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error('Failed to record activity')
+      return res.json()
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['invoice-activity', invoiceId] })
+    },
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Invoice Status Change (with stamping)
+// ---------------------------------------------------------------------------
+
+export function useChangeInvoiceStatus(invoiceId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (payload: { status: string; approved_by?: string }) => {
+      const res = await fetch(`/api/v2/invoices/${invoiceId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error('Failed to update status')
+      return res.json()
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['invoice', invoiceId] })
+      qc.invalidateQueries({ queryKey: ['invoices'] })
+      qc.invalidateQueries({ queryKey: ['invoice-activity', invoiceId] })
+    },
+  })
+}
+

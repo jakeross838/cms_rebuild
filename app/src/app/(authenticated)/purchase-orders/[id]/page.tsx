@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 
-import { ArrowLeft, Calendar, DollarSign, FileText, Loader2, MapPin, Save, ShoppingCart, Truck } from 'lucide-react'
+import { ArrowLeft, Calendar, DollarSign, FileText, Loader2, MapPin, Plus, Save, ShoppingCart, Trash2, Truck } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { usePurchaseOrder, useUpdatePurchaseOrder, useDeletePurchaseOrder } from '@/hooks/use-purchase-orders'
+import { usePurchaseOrder, useUpdatePurchaseOrder, useDeletePurchaseOrder, usePurchaseOrderLines, useCreatePoLine, useDeletePoLine } from '@/hooks/use-purchase-orders'
 import { useJobs } from '@/hooks/use-jobs'
 import { useVendors } from '@/hooks/use-vendors'
 import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
@@ -72,10 +72,17 @@ export default function PurchaseOrderDetailPage() {
   const { data: vendorsResponse } = useVendors({ limit: 1000 } as Record<string, string | number | boolean | undefined>)
   const vendors = ((vendorsResponse as { data: VendorInfo[] } | undefined)?.data ?? []) as VendorInfo[]
 
+  const { data: linesResponse } = usePurchaseOrderLines(poId)
+  const poLines = (linesResponse as { data: { id: string; description: string; quantity: number; unit: string; unit_price: number; amount: number; received_quantity: number; cost_code_id: string | null; sort_order: number }[] } | undefined)?.data ?? []
+  const createLine = useCreatePoLine(poId)
+  const deleteLine = useDeletePoLine(poId)
+
   const job = jobs.find((j) => j.id === po?.job_id) ?? null
   const vendor = vendors.find((v) => v.id === po?.vendor_id) ?? null
 
   const [editing, setEditing] = useState(false)
+  const [addingLine, setAddingLine] = useState(false)
+  const [newLine, setNewLine] = useState({ description: '', quantity: '1', unit: 'ea', unit_price: '0' })
   const [error, setError] = useState<string | null>(null)
   const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
@@ -132,19 +139,19 @@ export default function PurchaseOrderDetailPage() {
       const totalAmount = subtotal + taxAmount + shippingAmount
 
       await updatePo.mutateAsync({
-        po_number: formData.po_number || undefined,
+        po_number: formData.po_number || null,
         title: formData.title || undefined,
         status: formData.status || undefined,
-        job_id: formData.job_id || undefined,
-        vendor_id: formData.vendor_id || undefined,
+        job_id: formData.job_id || null,
+        vendor_id: formData.vendor_id || null,
         subtotal,
         tax_amount: taxAmount,
         shipping_amount: shippingAmount,
         total_amount: totalAmount,
-        delivery_date: formData.delivery_date || undefined,
-        shipping_address: formData.shipping_address || undefined,
-        terms: formData.terms || undefined,
-        notes: formData.notes || undefined,
+        delivery_date: formData.delivery_date || null,
+        shipping_address: formData.shipping_address || null,
+        terms: formData.terms || null,
+        notes: formData.notes || null,
       })
       toast.success('Purchase order updated')
       setEditing(false)
@@ -167,6 +174,35 @@ export default function PurchaseOrderDetailPage() {
       setError(errorMessage)
       toast.error(errorMessage)
       setArchiving(false)
+    }
+  }
+
+  const handleAddLine = async () => {
+    if (!newLine.description.trim()) { toast.error('Description is required'); return }
+    const qty = parseFloat(newLine.quantity) || 1
+    const price = parseFloat(newLine.unit_price) || 0
+    try {
+      await createLine.mutateAsync({
+        description: newLine.description,
+        quantity: qty,
+        unit: newLine.unit || 'ea',
+        unit_price: price,
+        amount: qty * price,
+      })
+      toast.success('Line item added')
+      setNewLine({ description: '', quantity: '1', unit: 'ea', unit_price: '0' })
+      setAddingLine(false)
+    } catch (err) {
+      toast.error((err as Error)?.message || 'Failed to add line')
+    }
+  }
+
+  const handleDeleteLine = async (lineId: string) => {
+    try {
+      await deleteLine.mutateAsync(lineId)
+      toast.success('Line item removed')
+    } catch (err) {
+      toast.error((err as Error)?.message || 'Failed to remove line')
     }
   }
 
@@ -270,6 +306,109 @@ export default function PurchaseOrderDetailPage() {
                     <p className="text-lg font-bold text-foreground">{formatCurrency(po.total_amount)}</p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Line Items */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-muted-foreground" />
+                    Line Items
+                  </CardTitle>
+                  {(po.status === 'draft' || po.status === 'pending_approval') && (
+                    <Button size="sm" variant="outline" onClick={() => setAddingLine(true)}>
+                      <Plus className="h-4 w-4 mr-1" />Add Line
+                    </Button>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent>
+                {poLines.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border">
+                          <th className="text-left py-2 pr-3 font-medium text-muted-foreground">Description</th>
+                          <th className="text-right py-2 px-3 font-medium text-muted-foreground">Qty</th>
+                          <th className="text-left py-2 px-3 font-medium text-muted-foreground">Unit</th>
+                          <th className="text-right py-2 px-3 font-medium text-muted-foreground">Unit Price</th>
+                          <th className="text-right py-2 px-3 font-medium text-muted-foreground">Amount</th>
+                          <th className="text-right py-2 px-3 font-medium text-muted-foreground">Received</th>
+                          {(po.status === 'draft' || po.status === 'pending_approval') && (
+                            <th className="w-8" />
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {poLines.map((line) => (
+                          <tr key={line.id}>
+                            <td className="py-2 pr-3">{line.description}</td>
+                            <td className="py-2 px-3 text-right">{line.quantity}</td>
+                            <td className="py-2 px-3">{line.unit}</td>
+                            <td className="py-2 px-3 text-right">{formatCurrency(line.unit_price)}</td>
+                            <td className="py-2 px-3 text-right font-medium">{formatCurrency(line.amount)}</td>
+                            <td className="py-2 px-3 text-right text-muted-foreground">{line.received_quantity}</td>
+                            {(po.status === 'draft' || po.status === 'pending_approval') && (
+                              <td className="py-2 pl-2">
+                                <button onClick={() => handleDeleteLine(line.id)} className="text-muted-foreground hover:text-destructive" title="Remove line">
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </td>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr className="border-t border-border">
+                          <td colSpan={4} className="py-2 pr-3 text-right font-medium">Total</td>
+                          <td className="py-2 px-3 text-right font-bold">{formatCurrency(poLines.reduce((sum, l) => sum + l.amount, 0))}</td>
+                          <td />
+                          {(po.status === 'draft' || po.status === 'pending_approval') && <td />}
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No line items yet.</p>
+                )}
+
+                {/* Add Line Form */}
+                {addingLine && (
+                  <div className="mt-4 p-3 border border-border rounded-md space-y-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="col-span-2 space-y-1">
+                        <label className="text-xs text-muted-foreground">Description</label>
+                        <Input value={newLine.description} onChange={(e) => setNewLine((p) => ({ ...p, description: e.target.value }))} placeholder="Item description" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs text-muted-foreground">Quantity</label>
+                        <Input type="number" min="0" step="1" value={newLine.quantity} onChange={(e) => setNewLine((p) => ({ ...p, quantity: e.target.value }))} />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs text-muted-foreground">Unit</label>
+                        <Input value={newLine.unit} onChange={(e) => setNewLine((p) => ({ ...p, unit: e.target.value }))} placeholder="ea" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-xs text-muted-foreground">Unit Price</label>
+                        <Input type="number" min="0" step="0.01" value={newLine.unit_price} onChange={(e) => setNewLine((p) => ({ ...p, unit_price: e.target.value }))} />
+                      </div>
+                      <div className="self-end text-sm text-muted-foreground">
+                        = {formatCurrency((parseFloat(newLine.quantity) || 0) * (parseFloat(newLine.unit_price) || 0))}
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={handleAddLine} disabled={createLine.isPending}>
+                        {createLine.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : null}
+                        Add
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => { setAddingLine(false); setNewLine({ description: '', quantity: '1', unit: 'ea', unit_price: '0' }) }}>Cancel</Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

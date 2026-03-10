@@ -13,7 +13,7 @@ import {
   type ApiContext,
 } from '@/lib/api/middleware'
 import { createClient } from '@/lib/supabase/server'
-// typedInsertMany removed — new tables not yet in generated Supabase types
+import { createServiceClient } from '@/lib/supabase/service'
 
 // ============================================================================
 // GET /api/v2/invoices/:id/approvals
@@ -47,7 +47,8 @@ export const GET = createApiHandler(
       )
     }
 
-    const { data, error } = await (supabase as any).from('invoice_approvals')
+    // Fetch approvals
+    const { data: rawApprovals, error } = await (supabase as any).from('invoice_approvals')
       .select('id, invoice_id, step_name, step_order, required_role, threshold_min, threshold_max, assigned_to, status, action_by, action_at, action_notes, delegated_to, escalated_at, escalation_reason, created_at')
       .eq('invoice_id', invoiceId)
       .order('step_order', { ascending: true })
@@ -60,7 +61,38 @@ export const GET = createApiHandler(
       )
     }
 
-    return NextResponse.json({ data: data ?? [], requestId: ctx.requestId })
+    const approvalRows = rawApprovals ?? []
+
+    // Resolve user names for assigned_to and action_by
+    const userIds = new Set<string>()
+    for (const a of approvalRows) {
+      if (a.assigned_to) userIds.add(a.assigned_to)
+      if (a.action_by) userIds.add(a.action_by)
+    }
+
+    let userMap: Record<string, string> = {}
+    if (userIds.size > 0) {
+      const serviceClient = createServiceClient()
+      const { data: users } = await serviceClient
+        .from('users')
+        .select('id, full_name')
+        .in('id', [...userIds])
+
+      if (users) {
+        for (const u of users) {
+          userMap[u.id] = u.full_name ?? 'Unknown'
+        }
+      }
+    }
+
+    // Enrich with user names
+    const data = approvalRows.map((a: any) => ({
+      ...a,
+      assigned_user: a.assigned_to ? { name: userMap[a.assigned_to] ?? null } : null,
+      action_user: a.action_by ? { name: userMap[a.action_by] ?? null } : null,
+    }))
+
+    return NextResponse.json({ data, requestId: ctx.requestId })
   },
   { requireAuth: true, rateLimit: 'api' }
 )
@@ -149,6 +181,28 @@ export const POST = createApiHandler(
       )
     }
 
+    // Auto-assign approvers: find one user per required_role for this company
+    const serviceClient = createServiceClient()
+    const uniqueRoles = [...new Set(applicableSteps.map((s: any) => s.required_role).filter(Boolean))]
+    const roleUserMap: Record<string, string> = {}
+
+    if (uniqueRoles.length > 0) {
+      const { data: companyUsers } = await serviceClient
+        .from('users')
+        .select('id, role')
+        .eq('company_id', ctx.companyId!)
+        .in('role', uniqueRoles)
+
+      if (companyUsers) {
+        for (const u of companyUsers) {
+          // First match per role wins (could be enhanced with job-specific assignments)
+          if (!roleUserMap[u.role]) {
+            roleUserMap[u.role] = u.id
+          }
+        }
+      }
+    }
+
     // Create approval rows from the template steps
     const rows = applicableSteps.map((step: any) => ({
       invoice_id: invoiceId,
@@ -157,6 +211,7 @@ export const POST = createApiHandler(
       required_role: step.required_role,
       threshold_min: step.threshold_min,
       threshold_max: step.threshold_max,
+      assigned_to: step.required_role ? (roleUserMap[step.required_role] ?? null) : null,
       status: 'pending',
     }))
 

@@ -1,5 +1,139 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 59 — Draw Request & Purchase Order List/Detail Enhancements (2026-03-10)
+
+### Invoice List — Click-to-Modal with Split-Screen PDF + Details
+Updated `src/app/(authenticated)/invoices/page.tsx` and created two new client components:
+
+**`src/components/invoices/invoice-detail-modal.tsx`** — Full-screen modal (95vw × 90vh) with:
+- Left pane: PDF preview iframe (stamped/original toggle, stamp button, open-in-new-tab)
+- Right pane (420px fixed): Amount hero, due date, approval pipeline visualization, status action buttons, details grid (vendor, job, dates, PO, cost code, lien waiver, payment terms), payment info (if paid), AI processing info with confidence badge, notes, activity timeline
+- "Open Full Details" link to navigate to full `/invoices/[id]` page
+- Uses `useInvoice`, `useUpdateInvoice`, `useStampInvoice`, `useInvoiceActivity` hooks
+- All hooks safely disabled when no invoice selected (empty string ID)
+
+**`src/components/invoices/invoice-list-cards.tsx`** — Client component replacing inline card rendering:
+- Receives `invoices: InvoiceCardData[]` from server page
+- Each card is a `<div role="button">` instead of `<Link>` — clicking opens `InvoiceDetailModal`
+- RowActions (three-dot menu) wrapped in `e.stopPropagation()` div to prevent modal opening
+- Includes all badge/icon rendering previously inline in server page (status, type, contract type, AI confidence, lien waiver, due date, vendor, job, cost code, PO, retainage)
+- Empty state with "Create Invoice" button
+
+**Server page changes** (`page.tsx`):
+- Removed ~200 lines of inline card rendering JSX
+- Removed `getDueDateLabel`, `getLienWaiverBadge` helpers (moved to client component)
+- Removed `getDaysUntilDue` function (no longer needed)
+- Removed unused imports: Receipt, Building2, Briefcase, Link2, ShieldCheck, RowActions, formatDate, INVOICE_STATUS_CONFIG, INVOICE_TYPE_CONFIG, CONTRACT_TYPE_CONFIG, InvoiceType, ContractType, LienWaiverStatus, PaymentMethod
+- Simplified `InvoiceRow` interface (index signature, since full typing in client component)
+
+### Draw Requests List Page — Stats Cards, Status Filters, Job Column
+Updated `src/app/(authenticated)/draw-requests/page.tsx`:
+- Added parallel stats query fetching all draw request statuses and current_due amounts
+- Added 3 stats cards: Drafts (count + amount), Pending Review (count + amount), Total Funded (amount)
+- Added status filter tab buttons (All, Draft, Pending, Approved, Funded) using `buildHref` helper
+- Added Job column to the table showing joined `jobs.name`
+- Switched status badges from generic `getStatusColor` to draw-specific `DRAW_STATUS_COLORS` map
+- Empty state now responds to both search and status filter context
+- Sort buttons now use `buildHref` helper instead of inline URLSearchParams
+
+### Draw Requests Detail Page — G702/G703 Experience (previous session, documented)
+Enhanced `src/app/(authenticated)/draw-requests/[id]/page.tsx`:
+- G702 summary cards (Contract Value, Previous Billed, This Period, Progress %)
+- G703 Schedule of Values table with columns: Item, Description, Scheduled Value, Previous, This Period, Materials, Total, %, Balance
+- Line totals footer row
+- Submit button (draft → pending_review) and Approve button (pending_review → approved)
+- Inline "Add Line" form for draft draw requests
+- Job name display from joined data
+
+### Purchase Orders List Page — Stats Cards
+Updated `src/app/(authenticated)/purchase-orders/page.tsx`:
+- Added parallel stats query fetching all PO statuses and total_amounts
+- Added 3 stats cards: Open POs (count of draft/pending/approved/sent), Committed (total of active POs), Received/Closed (total of received+closed POs)
+
+### Purchase Orders Detail Page — Line Items Table
+Updated `src/app/(authenticated)/purchase-orders/[id]/page.tsx`:
+- Added `usePurchaseOrderLines`, `useCreatePoLine`, `useDeletePoLine` hooks
+- Added Line Items card in view mode with table: Description, Qty, Unit, Unit Price, Amount, Received
+- Footer row shows line items total
+- "Add Line" button (visible for draft/pending_approval POs) opens inline form with description, quantity, unit, unit_price fields
+- Delete line button (trash icon) for each row when PO is editable
+- Live amount preview (qty × price) in add form
+
+## Session 59b — Bug Fixes from Intensive Audit (2026-03-10)
+
+### Draw Requests Search Fix
+`src/app/(authenticated)/draw-requests/page.tsx` — Changed `.ilike('lender_reference', ...)` to `.or('lender_reference.ilike...')`. The `.ilike()` method with `safeOrIlike` wrapper produced literal double-quote characters that prevented any search matches. Now uses the `.or()` pattern consistent with PO and invoice pages.
+
+### Purchase Order Detail — Clearable Fields Fix
+`src/app/(authenticated)/purchase-orders/[id]/page.tsx` — Changed `|| undefined` to `|| null` for clearable fields (`po_number`, `job_id`, `vendor_id`, `delivery_date`, `shipping_address`, `terms`, `notes`). Previously, `JSON.stringify` stripped `undefined` keys, making it impossible to unassign a job or vendor once set. Required fields (`title`, `status`) kept as `|| undefined` since they should never be blank.
+
+`src/hooks/use-purchase-orders.ts` — Updated `PoCreateInput` type: `job_id` and `vendor_id` now accept `string | null`, `po_number` now accepts `string | null`. This allows the update mutation (`Partial<PoCreateInput>`) to send `null` to explicitly clear these fields.
+
+### Purchase Orders Page — Stats Error Handling
+`src/app/(authenticated)/purchase-orders/page.tsx` — Added `if (statsResult.error) throw statsResult.error` check. Previously stats query errors were silently swallowed, stats would show $0.00 with no indication of failure.
+
+## Session 58 — Invoice Job Sidebar + Approval Workflow Enhancements (2026-03-10)
+
+### Invoices Layout — Job Filter Sidebar
+Created `src/app/(authenticated)/invoices/layout.tsx` — client component layout that adds a left sidebar for filtering invoices by job. Sidebar fetches jobs from Supabase, shows search, "All Jobs" link, and scrollable job list with status colors. Clicking a job sets `?job=` search param. Only visible on the `/invoices` list page; sub-pages (upload, extractions, detail) render without sidebar.
+
+### Invoices Page — Job Filter Wired
+Updated `src/app/(authenticated)/invoices/page.tsx`:
+- Added `job` to searchParams type
+- Filters main query and stats query by `job_id` when `?job=` param present
+- Fetches selected job name for header display ("Invoices — Job Name")
+- Preserves `?job=` param in all filter/pagination URLs via `buildFilterHref`
+- Removed non-existent `ListPagination` import; replaced with inline Previous/Next pagination
+
+### Approval Action API — Role Enforcement
+Updated `src/app/api/v2/invoices/[id]/approvals/[approvalId]/route.ts`:
+- Fetches approval step and validates it exists and is actionable (pending/delegated/escalated)
+- Returns 409 if step already actioned
+- Enforces role hierarchy: user must have `required_role` level or higher, OR be assigned to the step
+- Role hierarchy: owner(7) > admin(6) > pm(5) > superintendent(4) > office(3) > field(2) > read_only(1)
+- Delegate action now updates `assigned_to` to the delegated user
+
+### Approval Creation — Auto-Assign Approvers
+Updated `src/app/api/v2/invoices/[id]/approvals/route.ts`:
+- When creating approval steps from template, auto-assigns users by looking up company users with matching role
+- Uses `createServiceClient()` to find first user per required_role
+- GET endpoint now resolves user names (assigned_user, action_user) via service client user lookup
+
+### Approval UI — Visual Timeline + Delegate/Escalate
+Updated `src/app/(authenticated)/invoices/[id]/page.tsx` ApprovalsTab:
+- Added progress bar showing X of N steps approved, with color coding (amber=in progress, emerald=complete, red=rejected)
+- Added visual timeline with connecting line and numbered step nodes
+- Each step card shows color-coded border/background based on status
+- Added Delegate button with user ID input form (blue accent)
+- Added Escalate button with reason textarea (orange accent)
+- Steps in delegated/escalated state are still actionable (can be approved/rejected)
+- Shows threshold range info, escalation reason, delegation status in expanded view
+
+### New Reusable Invoice Components (from reference app patterns)
+Created 4 new components in `src/components/invoices/`:
+- **`ai-confidence-badge.tsx`** — `AIConfidenceBadge` (badge variant) and `AIConfidenceBar` (progress bar variant) with 4-tier confidence levels (high/medium/low/very-low) and color coding
+- **`review-flags.tsx`** — `ReviewFlagBadge`, `ReviewFlagsList`, `ReviewStatusSummary` with 11 predefined flags (verify_job, select_job, verify_vendor, possible_duplicate, etc.) and severity levels (error/warning/info)
+- **`payment-status-badge.tsx`** — `PaymentStatusBadge` showing unpaid/partial/paid vendor payment status with amount tooltips
+- **`activity-timeline.tsx`** — `ActivityTimeline` with 20+ activity action types (uploaded, processed, approved, denied, stamped, paid, etc.) with icons, colors, and time-ago labels
+
+### Invoice Detail Page — Enhanced Overview Tab
+Transformed Overview tab from single-column to two-column layout:
+- **Left column**: Review flags alert (if present), invoice details card with PaymentStatusBadge, payment info, progress billing, notes
+- **Right column**: PDF preview with iframe (stamped/original toggle + re-stamp button), AI processing card with per-field confidence bars, activity timeline
+- New fields on Invoice interface: payment_status, review_flags, billable_amount, non_billable_reason
+
+### Invoice Activity API
+Created `src/app/api/v2/invoices/[id]/activity/route.ts`:
+- GET: List activities for an invoice with user name resolution
+- POST: Record new activity entry
+- DB migration: `20260310000000_invoice_activity.sql` — creates `invoice_activity` table + adds payment_status, review_flags, billable_amount, non_billable_reason columns to invoices
+
+### Invoice Activity Hooks
+Added to `src/hooks/use-invoices.ts`:
+- `useInvoiceActivity(invoiceId)` — fetch activity log
+- `useRecordActivity(invoiceId)` — record new activity
+- `useChangeInvoiceStatus(invoiceId)` — status change with activity invalidation
+
 ## Session 57 — Security Headers, Notification Casts, Error/Loading Boundaries (2026-03-03)
 
 ### Security Headers Wired to Middleware
@@ -4711,3 +4845,296 @@ Every hook created via `createApiHooks` factory now has a dedicated unit test fi
 - **`document-management.spec.ts`** (5 tests) — Upload, folder organization, search, download
 - **`scheduling.spec.ts`** (7 tests) — Calendar events, Gantt interactions, task dependencies
 - **`notifications-settings.spec.ts`** (7 tests) — Notification preferences, mark read, bulk actions, settings page
+
+---
+
+## Module 13 — AI Invoice Processing
+
+### Upload & Extract (`POST /api/v2/invoices/extract`)
+**File:** `src/app/api/v2/invoices/extract/route.ts`
+- Accepts FormData with single `file` (PDF, PNG, JPEG, TIFF)
+- Validates file type, checks `ANTHROPIC_API_KEY` is set
+- Uploads file to Supabase Storage at `invoices/extractions/{companyId}/{timestamp}-{safeFilename}`
+- Creates `invoice_extractions` record with status `processing` and metadata in `extracted_data._meta`
+- Fires `processExtraction()` in background (fire-and-forget via `void`)
+- Returns 202 immediately with `{ extraction_id, status: 'processing', file_url }`
+
+### Batch Upload (`POST /api/v2/invoices/extract/batch`)
+**File:** `src/app/api/v2/invoices/extract/batch/route.ts`
+- Accepts FormData with multiple `files` (max 10 per batch)
+- Same validation per file as single upload
+- Returns 202 with array of per-file results (extraction_id or error)
+
+### List Extractions (`GET /api/v2/invoices/extractions`)
+**File:** `src/app/api/v2/invoices/extractions/route.ts`
+- Lists extraction records for current company, paginated
+- Status filter via `?status=` query param (maps `extracted`→`completed`, `review`→`needs_review` for DB)
+- Transforms DB records into frontend `ExtractionRecord` shape
+- Includes `polling` hint when any extraction is still `processing`
+
+### Get Extraction (`GET /api/v2/invoices/extractions/:id`)
+**File:** `src/app/api/v2/invoices/extractions/[id]/route.ts`
+- Returns single transformed extraction record
+- Includes `polling` hint when status is `processing`
+
+### Update Extraction (`PATCH /api/v2/invoices/extractions/:id`)
+**File:** `src/app/api/v2/invoices/extractions/[id]/route.ts`
+- Updates extraction record fields directly
+
+### Confirm Extraction (`POST /api/v2/invoices/extractions/:id/confirm`)
+**File:** `src/app/api/v2/invoices/extractions/[id]/confirm/route.ts`
+- Merges extracted data with user corrections
+- Runs duplicate detection before creating invoice
+- Returns 409 Conflict if duplicate found (unless `force: true` in body)
+- Creates invoice record + line items from extraction
+- Updates extraction to status `completed` with reviewer info
+
+### Background Extraction Processor
+**File:** `src/lib/invoice/extraction-processor.ts`
+- Orchestrates full pipeline: AI extraction → vendor matching → cost code matching → duplicate detection
+- Loads company context (known vendors, cost codes, jobs) from DB
+- Calls Claude API via `ai-extractor.ts` with PDF/image bytes
+- Runs vendor matcher, cost code matcher, duplicate detector
+- Stores all results in `extracted_data._meta` (vendor_match, cost_code_match, duplicate_check, confidence_scores)
+- Updates extraction to `completed` or `failed` with error_message
+
+### AI Extractor
+**File:** `src/lib/invoice/ai-extractor.ts`
+- Sends PDF as `document` content block or image directly to Claude API
+- Falls back to text-only prompt when no file bytes
+- Model: `claude-sonnet-4-20250514`
+- Returns structured data: vendor, invoice number, dates, amounts, line items, cost codes, etc.
+- Returns per-field confidence scores
+
+### Vendor Matcher
+**File:** `src/lib/invoice/vendor-matcher.ts`
+- Fuzzy matching: Levenshtein distance + Jaccard token overlap (no external deps)
+- Name normalization: strips LLC/Inc/Corp, lowercases, removes punctuation
+- Auto-assign threshold: 0.85 confidence
+- Returns top suggestions with confidence scores
+
+### Cost Code Matcher
+**File:** `src/lib/invoice/cost-code-matcher.ts`
+- 5 matching strategies: exact, containment, Levenshtein, Jaccard, per-token fuzzy
+- Per-line-item matching + invoice-level suggestion (weighted by amount × confidence)
+- Auto-assign threshold: 0.75
+- Returns invoice-level and line-item-level matches
+
+### Duplicate Detector
+**File:** `src/lib/invoice/duplicate-detector.ts`
+- SHA-256 hash from vendor_name + invoice_number + amount
+- Exact match: same invoice_number + amount → 0.99 confidence
+- Fuzzy match: same vendor + amount ±1% + date ±30 days → 0.75 confidence
+- `checkForDuplicates()` queries DB, `buildDuplicateWarningMeta()` for response
+
+### Transform Shape (frontend `ExtractionRecord`)
+Both list and detail endpoints transform DB records identically:
+- `status`: DB `completed` → `extracted`, DB `needs_review` → `review`
+- `confidence`: DB `confidence_score` (0-100) → normalized (0-1)
+- `vendor_match`: from `_meta.vendor_match` (auto_assigned, confidence, matched_vendor_id/name, suggestions)
+- `cost_code_match`: from `_meta.cost_code_match` (invoice_level + line_item_matches)
+- `duplicate_check`: from `_meta.duplicate_check` (has_duplicate, match_type, confidence, duplicate_invoice_id/number/amount, reason)
+- `field_confidences`: from `_meta.confidence_scores`
+- `file_url`: from `_meta.file_url`
+
+### Upload Page
+**File:** `src/app/(authenticated)/invoices/upload/page.tsx`
+- Drag-and-drop + file picker for PDF/PNG/JPEG/TIFF
+- Queue-based: single files use `/extract`, multiple use `/extract/batch`
+- Shows extraction progress via polling
+
+### Hooks
+**File:** `src/hooks/use-invoices.ts`
+- `useUploadInvoiceBatch()`: mutation for batch uploads via FormData
+
+---
+
+## Module 13 — AI Invoice Processing: Extraction Review Queue (continuation)
+
+### Extraction Review Queue List Page
+**File:** `src/app/(authenticated)/invoices/extractions/page.tsx`
+- Server component using `getServerAuth()` + `createServiceClient()`
+- Queries `invoice_extractions` table (as any) filtered by `company_id`
+- **Stats cards row:** Processing, Ready for Review, Confirmed, Failed — each shows count computed from all extractions for the company
+- **Filter tabs:** All | Processing | Ready | Failed | Confirmed — controlled via URL param `?status=X`
+- **Table columns:** Document (filename + invoice number), Vendor, Amount (formatted currency), Date, Status badge, Confidence bar
+- **Status mapping:** DB `completed` → frontend `extracted`/`Ready`, DB `needs_review` → frontend `review`/`Needs Review`
+- **Duplicate badge:** Shown on rows where `_meta.duplicate_check.has_duplicate` is truthy
+- **Pagination:** Previous/Next buttons appear when >20 results
+- **Row click:** Each row links to `/invoices/extractions/[id]`
+- **Back arrow:** Links to `/invoices`
+- **"Upload Invoices" button:** Links to `/invoices/upload`
+
+### Extraction Detail Page
+**File:** `src/app/(authenticated)/invoices/extractions/[id]/page.tsx`
+- Client component (`'use client'`) with split-view layout (left panel + right panel)
+- **Left panel:** PDF/image viewer — iframe for PDF files, img tag for images, placeholder message when no file URL
+- **Right panel:** Full editable form with all extracted fields
+- **Form fields:**
+  - `invoice_number` (text input)
+  - `vendor` (searchable dropdown, pre-populated from `_meta.vendor_match`)
+  - `amount` (number input)
+  - `invoice_date` (date input)
+  - `due_date` (date input)
+  - `description` (textarea)
+  - `job` (searchable dropdown)
+  - `cost_code` (searchable dropdown, pre-populated from `_meta.cost_code_match`)
+  - `line_items` (read-only table display)
+- **AI match pre-population:** `vendor_match` and `cost_code_match` from `_meta` auto-set dropdown values on load
+- **Confidence display:** Overall confidence bar at top + per-field confidence dots next to each field
+- **Duplicate warning banner:** Shown when `_meta.duplicate_check.has_duplicate` is true — includes "Create Anyway" button (sends `force: true`) and "Dismiss" button
+- **Processing state:** Shows spinner with "AI is processing" message, disables form
+- **Failed state:** Shows error message from extraction record
+- **Confirmed state:** Shows success banner with link back to list page
+- **"Confirm & Create Invoice" button:** Calls `useConfirmExtraction` mutation hook
+- **After confirm:** Redirects to `/invoices/extractions`
+
+### Navigation Link — Invoices Page Header
+**File:** `src/app/(authenticated)/invoices/page.tsx`
+- Added "AI Extractions" button with Sparkles icon to page header, positioned next to existing "Upload PDF" and "New Invoice" buttons
+
+---
+
+## Module 13 — AI Invoice Processing: Correction Tracking, Reject Flow & Status Fix (continuation)
+
+### Correction Tracking (Confirm Endpoint)
+**File:** `src/app/api/v2/invoices/extractions/[id]/confirm/route.ts`
+- On confirm, compares `corrections` object fields against original `extractedFields` to detect user corrections
+- Also detects `vendor_id` and `cost_code_id` overrides vs AI-matched values from `_meta.vendor_match` and `_meta.cost_code_match`
+- Stores corrections in `extracted_data._meta.corrections` as `Array<{ field, original, corrected }>` with `corrected_at` (ISO timestamp) and `corrected_by` (user ID)
+- This data feeds the AI learning loop — future extraction sessions can read `_meta.corrections` to improve accuracy
+- Response includes `corrections_tracked: number` indicating how many fields were corrected
+
+### Reject Extraction Endpoint
+**File:** `src/app/api/v2/invoices/extractions/[id]/reject/route.ts`
+- `POST /api/v2/invoices/extractions/:id/reject`
+- Accepts optional `{ reason?: string }` body
+- Validates extraction exists and belongs to the authenticated user's company
+- If extraction is already confirmed (status `completed` + `reviewed_by` set), returns 409 Conflict
+- Sets extraction status to `failed` and stores rejection reason in `error_message` column
+- Uses service client for DB operations (same pattern as other extraction endpoints)
+
+### Reject Hook
+**File:** `src/hooks/use-invoices.ts`
+- `useRejectExtraction(extractionId)` — React Query mutation hook
+- Calls `POST /api/v2/invoices/extractions/:id/reject` with `{ reason }` body
+- Invalidates `['extractions']` queries on success to refresh list/detail views
+
+### Reject UI in Detail Page
+**File:** `src/app/(authenticated)/invoices/extractions/[id]/page.tsx`
+- **"Reject" button:** Red outline button with XCircle icon, positioned next to "Confirm & Create Invoice"
+- **Inline reject dialog:** Clicking "Reject" reveals an inline form (not a modal) with:
+  - Optional reason text input
+  - "Confirm Reject" button (destructive action)
+  - "Cancel" button (hides dialog, returns to normal view)
+- **After rejection:** Redirects to `/invoices/extractions`
+- **Error state:** Displays error message if reject API call fails
+
+### Status Mapping Fix
+**Problem:** DB check constraint only allows `processing`, `completed`, `needs_review`, `failed`, `pending` — no `confirmed` status value.
+**Solution:** Use `reviewed_by` column as the discriminator for confirmed state.
+
+**File:** `src/app/(authenticated)/invoices/extractions/page.tsx`
+- `mapDbStatus()` function now accepts optional `reviewed_by` parameter
+- If DB status is `completed` and `reviewed_by` is set → mapped status is `confirmed`
+- If DB status is `completed` and `reviewed_by` is null → mapped status is `extracted` (ready for review)
+- Stats card counts use `reviewed_by` to distinguish confirmed vs ready extractions
+- Filter query for "confirmed" tab uses `.not('reviewed_by', 'is', null)`
+- Filter query for "extracted"/"ready" tab uses `.is('reviewed_by', null)`
+
+**File:** `src/app/api/v2/invoices/extractions/[id]/route.ts`
+- `transformExtraction()` function checks `row.reviewed_by` to determine status
+- If `row.status === 'completed'` and `row.reviewed_by` is set → returns `status: 'confirmed'`
+- If `row.status === 'completed'` and no `reviewed_by` → returns `status: 'extracted'`
+- Links to `/invoices/extractions`
+
+---
+
+## Module 13 — AI Invoice Processing: AI Settings, Settings-Driven Extraction, Metrics (continuation)
+
+### AI Settings Enhancement
+**Files:** `src/app/api/v1/settings/company/route.ts`, `src/app/(authenticated)/settings/general/page.tsx`, `src/lib/config/resolve-config.ts`, `src/lib/config/types.ts`
+
+7 new AI settings added to the existing Settings > AI & Automation tab:
+
+- `aiAutomationLevel`: `'suggest' | 'auto_review' | 'full_auto'` — Controls how AI-extracted invoices are handled (default: `'suggest'`)
+- `aiHighConfidenceThreshold`: `number` (default 95) — Extractions at or above this threshold are auto-accepted with minimal review
+- `aiMediumConfidenceThreshold`: `number` (default 80) — Extractions between medium and high are pre-filled but flagged for review
+- `aiAutoApproveMaxAmount`: `number` (default 10000) — Maximum invoice amount eligible for auto-approval in `full_auto` mode
+- `aiDuplicateDetectionEnabled`: `boolean` (default true) — When enabled, extraction pipeline flags potential duplicate invoices
+- `aiAnomalyDetectionEnabled`: `boolean` (default true) — When enabled, flags unusual amounts or patterns
+- `aiCrossTenantLearningEnabled`: `boolean` (default false) — Opt-in anonymized cross-company learning for improved AI accuracy
+
+**Settings storage:** All 7 settings stored in `tenant_configs` table with `section='ai'`, using the existing `/api/v1/settings/company` endpoint for read/write.
+
+**Zod validation:** Updated to include all 7 new fields with proper type validation.
+
+**CompanySettings type:** `src/lib/config/types.ts` updated with all 7 new properties on the `CompanySettings` interface.
+
+**Defaults:** `src/lib/config/resolve-config.ts` updated with default values and settings-to-config mapping for all 7 fields.
+
+**AI tab UI enhancement:** `src/app/(authenticated)/settings/general/page.tsx`
+- AI & Automation tab now split into two cards:
+  - **"Invoice Processing" card:** Automation level radio/select (suggest / auto_review / full_auto), high confidence threshold input, medium confidence threshold input, auto-approve max amount input
+  - **"AI Features" card:** Three toggle switches — Duplicate Detection, Anomaly Detection, Cross-Tenant Learning (each with description text)
+- All controls read from and write to company settings via the existing settings API
+
+### Settings-Driven Extraction Processor
+**File:** `src/lib/invoice/extraction-processor.ts`
+- Processor calls `getCompanySettings()` at the start of each extraction run
+- **Confidence-based status:** Uses `aiMediumConfidenceThreshold` setting to determine extraction outcome:
+  - Confidence below threshold → status set to `needs_review`
+  - Confidence at or above threshold → status set to `completed`
+- **Conditional duplicate detection:** Skips duplicate detection step entirely if `aiDuplicateDetectionEnabled` is `false` in settings
+- **Settings audit trail:** Stores a snapshot of the active AI settings in `extracted_data._meta.ai_settings` so each extraction records which configuration was in effect at processing time
+
+### AI Extraction Metrics Endpoint
+**File:** `src/app/api/v2/invoices/extractions/metrics/route.ts`
+- `GET /api/v2/invoices/extractions/metrics` — Returns comprehensive extraction performance metrics
+- **Summary stats:**
+  - `totalExtractions` — Total count of all extractions for the company
+  - `completed` — Count with status `completed`
+  - `failed` — Count with status `failed`
+  - `processing` — Count with status `processing`
+  - `reviewed` — Count where `reviewed_by` is set
+  - `accuracyRate` — Percentage of reviewed extractions that had zero corrections
+  - `avgConfidence` — Average confidence score across all extractions
+  - `avgProcessingTimeMs` — Average processing duration in milliseconds
+- **Correction stats:**
+  - `totalCorrections` — Sum of all individual field corrections across all extractions
+  - `extractionsWithCorrections` — Count of extractions that had at least one correction
+  - `correctionRate` — Percentage of reviewed extractions that required corrections
+  - `topCorrectedFields` — Ranked list of most frequently corrected field names with counts
+- **Confidence distribution:**
+  - `high` — Count of extractions with confidence >= high threshold
+  - `medium` — Count between medium and high thresholds
+  - `low` — Count below medium threshold
+- **Monthly trend (last 6 months):** Array of monthly objects with `month`, `total`, `reviewed`, `corrected`, `avgConfidence`
+- **Accuracy rate formula:** `(reviewed without corrections) / total reviewed * 100`
+- Metrics computed on-the-fly from extraction records (no pre-aggregation tables)
+- Filtered by authenticated user's `company_id`
+
+### AI Metrics Dashboard Page
+**File:** `src/app/(authenticated)/invoices/extractions/metrics/page.tsx`
+- Client component (`'use client'`) at route `/invoices/extractions/metrics`
+- **Summary stat cards row:** Total Extractions, Accuracy Rate (%), Avg Confidence (%), Avg Processing Time (ms)
+- **Confidence distribution panel:** Visual bars for high/medium/low counts with percentage labels
+- **Corrections panel:** Total corrections count, correction rate percentage, ordered list of top corrected fields with counts
+- **Monthly trend table:** Columns: Month, Extractions, Reviewed, Corrected, Avg Confidence — shows last 6 months of data
+- **Status breakdown section:** Shows counts for completed, reviewed, processing, failed, and total
+- **Navigation links:**
+  - Back link to extraction queue (`/invoices/extractions`)
+  - "AI Settings" button linking to Settings > AI & Automation tab
+- Uses `useExtractionMetrics()` hook for data fetching
+
+### `useExtractionMetrics()` Hook
+**File:** `src/hooks/use-invoices.ts`
+- React Query hook fetching from `GET /api/v2/invoices/extractions/metrics`
+- `staleTime: 60_000` (1-minute cache before refetch)
+- Returns standard React Query result object with metrics data
+
+### Navigation — Extraction Queue Page Header
+**File:** `src/app/(authenticated)/invoices/extractions/page.tsx`
+- Added "Metrics" button with `BarChart3` icon to the extraction queue page header
+- Links to `/invoices/extractions/metrics`
+- `BarChart3` imported from `lucide-react`

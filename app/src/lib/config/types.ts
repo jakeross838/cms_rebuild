@@ -479,6 +479,13 @@ export interface CompanySettings {
   costCodeSuggestionEnabled: boolean
   riskDetectionEnabled: boolean
   invoiceAutoRouteThreshold: number
+  aiAutomationLevel: 'suggest' | 'auto_review' | 'full_auto'
+  aiHighConfidenceThreshold: number
+  aiMediumConfidenceThreshold: number
+  aiAutoApproveMaxAmount: number
+  aiDuplicateDetectionEnabled: boolean
+  aiAnomalyDetectionEnabled: boolean
+  aiCrossTenantLearningEnabled: boolean
 
   // Portal
   clientPortalEnabled: boolean
