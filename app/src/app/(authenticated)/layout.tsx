@@ -2,8 +2,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { redirect } from 'next/navigation'
 
 import Providers from '@/app/providers'
-import { Sidebar } from '@/components/layout/sidebar'
-import { TopNav } from '@/components/layout/top-nav'
+import { UnifiedNavAuth } from '@/components/layout/unified-nav-auth'
 import getQueryClient from '@/lib/query/get-query-client'
 import { createClient } from '@/lib/supabase/server'
 import type { PermissionsMode, UserProfile } from '@/types/auth'
@@ -55,12 +54,12 @@ export default async function AuthenticatedLayout({
       }
     : null
 
-  // Transform for Sidebar/TopNav props (companies: null → undefined)
-  const sidebarUser = profile
+  // Transform for nav props
+  const navUser = profile
     ? {
         name: profile.name,
+        email: profile.email,
         role: profile.role ?? 'field',
-        companies: profile.companies ? { name: profile.companies.name } : undefined,
       }
     : null
 
@@ -78,20 +77,14 @@ export default async function AuthenticatedLayout({
       permissionsMode={permissionsMode}
     >
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <div className="flex h-screen bg-muted">
-          {/* Sidebar */}
-          <Sidebar user={sidebarUser} />
+        <div className="flex flex-col h-screen bg-muted">
+          {/* Top navigation */}
+          <UnifiedNavAuth user={navUser} />
 
-          {/* Main content area */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Top navigation */}
-            <TopNav user={sidebarUser} />
-
-            {/* Page content */}
-            <main className="flex-1 overflow-y-auto p-4 md:p-6">
-              {children}
-            </main>
-          </div>
+          {/* Page content */}
+          <main className="flex-1 overflow-y-auto p-4 md:p-6">
+            {children}
+          </main>
         </div>
       </HydrationBoundary>
     </Providers>
