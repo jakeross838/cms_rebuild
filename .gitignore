@@ -41,3 +41,11 @@ test-results/
 
 # Vercel
 .vercel/
+
+# Screenshots
+*.png
+screenshot_*.png
+ss_*.png
+
+# Backup files
+*.bak
