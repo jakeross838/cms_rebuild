@@ -164,6 +164,7 @@ export default async function InvoicesPage({
     .from('invoices')
     .select('*, vendors(name), jobs(name), cost_codes(code, name), purchase_orders(po_number)', { count: 'exact' })
     .eq('company_id', companyId)
+    .is('deleted_at', null)
     .order(sort.column, { ascending: sort.ascending })
 
   // Job filtering (from sidebar)
@@ -196,6 +197,7 @@ export default async function InvoicesPage({
     .from('invoices')
     .select('amount, status, due_date, retainage_amount')
     .eq('company_id', companyId)
+    .is('deleted_at', null)
 
   if (params.job) {
     statsQuery = statsQuery.eq('job_id', params.job)

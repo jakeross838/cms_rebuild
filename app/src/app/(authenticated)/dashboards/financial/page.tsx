@@ -51,16 +51,19 @@ export default async function FinancialDashboardPage() {
     // Total invoiced (exclude denied/archived invoices)
     supabase.from('invoices').select('amount')
       .eq('company_id', companyId)
+      .is('deleted_at', null)
       .neq('status', 'denied'),
 
     // Total paid
     supabase.from('invoices').select('amount')
       .eq('company_id', companyId)
+      .is('deleted_at', null)
       .eq('status', 'paid'),
 
     // Outstanding AR (draft + pending statuses)
     supabase.from('invoices').select('amount')
       .eq('company_id', companyId)
+      .is('deleted_at', null)
       .in('status', ['draft', 'pm_pending', 'accountant_pending', 'owner_pending', 'approved', 'in_draw']),
 
     // AP balance (unpaid, non-voided bills)
