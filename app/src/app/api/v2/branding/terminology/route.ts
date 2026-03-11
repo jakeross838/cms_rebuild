@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('builder_terminology')
       .select('id, company_id, default_term, custom_term, context, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.context) {
       query = query.eq('context', filters.context)

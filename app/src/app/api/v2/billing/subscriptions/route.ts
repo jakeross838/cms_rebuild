@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('company_subscriptions')
       .select('id, company_id, plan_id, status, billing_cycle, current_period_start, current_period_end, trial_start, trial_end, cancelled_at, cancel_reason, grandfathered_plan, metadata, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.status) {
       query = query.eq('status', filters.status)
@@ -100,6 +101,7 @@ export const POST = createApiHandler(
       .from('company_subscriptions')
       .select('id')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {

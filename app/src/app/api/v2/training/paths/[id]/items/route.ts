@@ -131,6 +131,7 @@ export const POST = createApiHandler(
       .select('id')
       .eq('id', pathId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (pError || !path) {

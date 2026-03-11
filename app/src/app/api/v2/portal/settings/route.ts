@@ -44,6 +44,7 @@ export const GET = createApiHandler(
       .from('portal_settings')
       .select('id, company_id, job_id, is_enabled, branding_logo_url, branding_primary_color, welcome_message, show_budget, show_schedule, show_documents, show_photos, show_daily_logs, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('job_id', job_id)
       .single()
 

@@ -48,6 +48,7 @@ export const GET = createApiHandler(
     let query = (supabase as any).from('retainage_rules')
       .select('id, company_id, name, scope, job_id, vendor_id, retainage_percent, release_at_percent_complete, auto_release, is_active, created_at, updated_at, jobs(name), vendors(name)', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.scope) {
       query = query.eq('scope', filters.scope)

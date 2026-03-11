@@ -63,6 +63,7 @@ export const GET = createApiHandler(
       .select('id')
       .eq('id', talkId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (talkError || !talk) {
@@ -77,6 +78,7 @@ export const GET = createApiHandler(
       .select('id, talk_id, company_id, attendee_name, attendee_id, trade, company_name, signed, signed_at, notes, created_at', { count: 'exact' })
       .eq('talk_id', talkId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true })
       .range(offset, offset + limit - 1)
 
@@ -126,6 +128,7 @@ export const POST = createApiHandler(
       .select('id')
       .eq('id', talkId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (talkError || !talk) {

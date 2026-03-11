@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('ar_receipts')
       .select('id, company_id, client_id, receipt_date, amount, payment_method, reference_number, memo, status, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.client_id) {
       query = query.eq('client_id', filters.client_id)

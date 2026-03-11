@@ -57,6 +57,7 @@ export const POST = createApiHandler(
       .eq('id', signerId)
       .eq('contract_id', contractId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -86,6 +87,7 @@ export const POST = createApiHandler(
       .eq('id', signerId)
       .eq('contract_id', contractId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, contract_id, company_id, name, email, role, status, sign_order, signed_at, declined_at, decline_reason, viewed_at, ip_address, user_agent, created_at, updated_at')
       .single()
 
@@ -112,6 +114,7 @@ export const POST = createApiHandler(
         .update({ status: 'fully_signed', executed_at: now, updated_at: now })
         .eq('id', contractId)
         .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       if (statusErr) {
         const mapped = mapDbError(statusErr)
         return NextResponse.json(
@@ -125,6 +128,7 @@ export const POST = createApiHandler(
         .update({ status: 'partially_signed', updated_at: now })
         .eq('id', contractId)
         .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       if (statusErr) {
         const mapped = mapDbError(statusErr)
         return NextResponse.json(

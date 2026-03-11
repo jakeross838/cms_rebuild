@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('user_training_progress')
       .select('id, company_id, user_id, item_type, item_id, status, progress_pct, started_at, completed_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.user_id) {
       query = query.eq('user_id', filters.user_id)

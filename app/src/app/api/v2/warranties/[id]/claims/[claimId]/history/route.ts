@@ -66,6 +66,7 @@ export const GET = createApiHandler(
       .eq('id', claimId)
       .eq('warranty_id', warrantyId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (claimError || !claim) {
@@ -80,6 +81,7 @@ export const GET = createApiHandler(
       .select('id, claim_id, company_id, action, previous_status, new_status, details, performed_by, created_at', { count: 'exact' })
       .eq('claim_id', claimId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
 

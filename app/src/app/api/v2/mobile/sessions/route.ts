@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('mobile_sessions')
       .select('id, company_id, user_id, device_id, status, ip_address, user_agent, started_at, last_activity_at, expires_at, ended_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.device_id) {
       query = query.eq('device_id', filters.device_id)

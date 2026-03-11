@@ -58,6 +58,7 @@ export const PUT = createApiHandler(
       .select('id')
       .eq('id', talkId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (talkError || !talk) {
@@ -124,6 +125,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', talkId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (talkError || !talk) {
@@ -139,6 +141,7 @@ export const DELETE = createApiHandler(
       .eq('id', attendeeId)
       .eq('talk_id', talkId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

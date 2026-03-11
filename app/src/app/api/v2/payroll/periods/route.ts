@@ -45,6 +45,7 @@ export const GET = createApiHandler(
       .from('payroll_periods')
       .select('id, company_id, period_start, period_end, status, exported_at, exported_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.status) {
       query = query.eq('status', filters.status)
@@ -99,6 +100,7 @@ export const POST = createApiHandler(
       .from('payroll_periods')
       .select('id')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .lte('period_start', input.period_end)
       .gte('period_end', input.period_start)
       .limit(1)

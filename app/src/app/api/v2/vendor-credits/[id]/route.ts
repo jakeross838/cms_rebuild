@@ -34,6 +34,7 @@ export const GET = createApiHandler(
       .select('id, company_id, vendor_id, credit_number, original_invoice_id, original_po_id, amount, applied_amount, balance, reason, status, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -85,6 +86,7 @@ export const PATCH = createApiHandler(
       .update(updates as any)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, vendor_id, credit_number, original_invoice_id, original_po_id, amount, applied_amount, balance, reason, status, created_at, updated_at')
       .single()
 
@@ -122,6 +124,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError && existError.code !== 'PGRST116') {
@@ -143,6 +146,7 @@ export const DELETE = createApiHandler(
       .update({ status: 'voided', updated_at: new Date().toISOString() } as any)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

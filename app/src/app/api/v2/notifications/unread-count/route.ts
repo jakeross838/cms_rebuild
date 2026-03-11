@@ -16,6 +16,7 @@ export const GET = createApiHandler(
       .from('notifications')
       .select('id', { count: 'exact', head: true })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('user_id', ctx.user!.id)
       .eq('read', false)
       .eq('archived', false)

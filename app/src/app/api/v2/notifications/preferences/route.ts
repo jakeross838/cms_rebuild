@@ -26,7 +26,8 @@ export const GET = createApiHandler(
       .from('user_notification_preferences')
       .select('id, category, channel, enabled')
       .eq('user_id', ctx.user!.id)
-      .eq('company_id', ctx.companyId!) as unknown as { data: PreferenceRow[] | null; error: { message: string } | null }
+      .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null) as unknown as { data: PreferenceRow[] | null; error: { message: string } | null }
 
     if (error) {
       const mapped = mapDbError(error)

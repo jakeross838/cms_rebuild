@@ -47,6 +47,7 @@ export const GET = createApiHandler(
     let query = (supabase as any).from('vendor_credits')
       .select('id, company_id, vendor_id, credit_number, original_invoice_id, original_po_id, amount, applied_amount, balance, reason, status, created_at, updated_at, vendors(name)', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.vendor_id) {
       query = query.eq('vendor_id', filters.vendor_id)

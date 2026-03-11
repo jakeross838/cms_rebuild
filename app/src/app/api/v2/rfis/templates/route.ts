@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('rfi_templates')
       .select('id, company_id, name, category, subject_template, question_template, default_priority, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('is_active', true)
 
     if (filters.category) {

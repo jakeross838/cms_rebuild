@@ -41,6 +41,7 @@ export const PUT = createApiHandler(
       .select('id, company_id, job_id, parent_folder_id, name, path, sort_order, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (fetchError || !current) {
@@ -69,6 +70,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, job_id, parent_folder_id, name, path, sort_order, created_by, created_at, updated_at')
       .single()
 
@@ -104,6 +106,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -119,6 +122,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('parent_folder_id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .limit(1)
 
     if (childrenError) {
@@ -142,6 +146,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('folder_id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .neq('status', 'deleted')
       .limit(1)
 
@@ -165,6 +170,7 @@ export const DELETE = createApiHandler(
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

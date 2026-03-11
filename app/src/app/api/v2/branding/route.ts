@@ -27,6 +27,7 @@ export const GET = createApiHandler(
       .from('builder_branding')
       .select('id, company_id, logo_url, logo_dark_url, favicon_url, primary_color, secondary_color, accent_color, font_family, header_style, login_background_url, login_message, powered_by_visible, custom_css, metadata, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -82,6 +83,7 @@ export const PUT = createApiHandler(
       .from('builder_branding')
       .select('id')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {
@@ -113,6 +115,7 @@ export const PUT = createApiHandler(
         .from('builder_branding')
         .update(updates)
         .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
         .select('id, company_id, logo_url, logo_dark_url, favicon_url, primary_color, secondary_color, accent_color, font_family, header_style, login_background_url, login_message, powered_by_visible, custom_css, metadata, created_at, updated_at')
         .single()
 

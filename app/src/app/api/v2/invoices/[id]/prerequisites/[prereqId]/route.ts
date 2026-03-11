@@ -50,6 +50,7 @@ export const PATCH = createApiHandler(
       .select('id')
       .eq('id', invoiceId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (invoiceError || !invoice) {
@@ -71,6 +72,7 @@ export const PATCH = createApiHandler(
       .eq('id', prereqId)
       .eq('invoice_id', invoiceId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, invoice_id, prerequisite_type, label, is_met, met_at, met_by, notes, created_at')
       .single()
 

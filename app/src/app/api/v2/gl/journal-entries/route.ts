@@ -50,6 +50,7 @@ export const GET = createApiHandler(
       .from('gl_journal_entries')
       .select('id, company_id, entry_date, reference_number, memo, status, source_type, source_id, posted_by, posted_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.status) {
       query = query.eq('status', filters.status)

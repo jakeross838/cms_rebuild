@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .eq('id', checklistId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -112,6 +113,7 @@ export const PUT = createApiHandler(
       .eq('id', checklistId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, session_id, category, title, description, is_completed, is_required, completed_at, completed_by, sort_order, created_at, updated_at')
       .single()
 

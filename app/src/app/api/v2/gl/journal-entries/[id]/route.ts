@@ -29,6 +29,7 @@ export const GET = createApiHandler(
       .select('id, company_id, entry_date, reference_number, memo, status, source_type, source_id, posted_by, posted_at, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -83,6 +84,7 @@ export const PUT = createApiHandler(
       .select('status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {
@@ -131,6 +133,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('status', 'draft')
       .select('id, company_id, entry_date, reference_number, memo, status, source_type, source_id, posted_by, posted_at, created_by, created_at, updated_at')
       .single()

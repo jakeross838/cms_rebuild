@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .select('id, company_id, plan_id, status, billing_cycle, current_period_start, current_period_end, trial_start, trial_end, cancelled_at, cancel_reason, grandfathered_plan, metadata, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -100,6 +101,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, plan_id, status, billing_cycle, current_period_start, current_period_end, trial_start, trial_end, cancelled_at, cancel_reason, grandfathered_plan, metadata, created_at, updated_at')
       .single()
 

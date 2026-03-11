@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('lien_waiver_tracking')
       .select('id, company_id, job_id, vendor_id, period_start, period_end, expected_amount, waiver_id, is_compliant, notes, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.job_id) {
       query = query.eq('job_id', filters.job_id)

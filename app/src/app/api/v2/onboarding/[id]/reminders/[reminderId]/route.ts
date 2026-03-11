@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .eq('id', reminderId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -108,6 +109,7 @@ export const PUT = createApiHandler(
       .eq('id', reminderId)
       .eq('session_id', sessionId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, session_id, reminder_type, subject, message, scheduled_at, sent_at, status, created_at, updated_at')
       .single()
 

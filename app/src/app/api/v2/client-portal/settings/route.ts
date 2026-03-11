@@ -27,6 +27,7 @@ export const GET = createApiHandler(
       .from('client_portal_settings')
       .select('id, company_id, branding, custom_domain, feature_flags, visibility_rules, notification_rules, approval_config, email_templates, footer_text, privacy_policy_url, terms_of_service_url, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .maybeSingle()
 
     if (error) {

@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('lead_sources')
       .select('id, company_id, name, description, source_type, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.source_type) {
       query = query.eq('source_type', filters.source_type)

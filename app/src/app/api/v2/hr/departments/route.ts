@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('departments')
       .select('id, company_id, name, description, parent_id, head_user_id, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.is_active !== undefined) {
       query = query.eq('is_active', filters.is_active)

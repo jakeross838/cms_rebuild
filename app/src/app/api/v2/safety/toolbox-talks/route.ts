@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('toolbox_talks')
       .select('id, company_id, job_id, title, topic, description, talk_date, talk_time, duration_minutes, status, presenter_id, location, materials, notes, completed_at, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.job_id) {
       query = query.eq('job_id', filters.job_id)

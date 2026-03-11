@@ -50,6 +50,7 @@ export const GET = createApiHandler(
       .from('inventory_transactions')
       .select('id, company_id, item_id, from_location_id, to_location_id, transaction_type, quantity, unit_cost, total_cost, reference_type, reference_id, job_id, cost_code_id, notes, performed_by, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.item_id) {
       query = query.eq('item_id', filters.item_id)

@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('portal_shared_documents')
       .select('id, company_id, job_id, document_id, shared_by, shared_at, notes, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('job_id', filters.job_id)
       .order('shared_at', { ascending: false })
 

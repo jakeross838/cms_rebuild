@@ -32,6 +32,7 @@ export const GET = createApiHandler(
       .select('id, company_id, job_id, sender_id, sender_type, subject, body, parent_message_id, is_read, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -81,6 +82,7 @@ export const PUT = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, job_id, sender_id, sender_type, subject, body, parent_message_id, is_read, created_at, updated_at')
       .single()
 

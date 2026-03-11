@@ -53,6 +53,7 @@ export const GET = createApiHandler(
       .from('invoice_extractions')
       .select('id, company_id, document_id, status, extracted_data, confidence_score, vendor_match_id, job_match_id, matched_bill_id, extraction_model, processing_time_ms, error_message, reviewed_by, reviewed_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.status) {
       query = query.eq('status', filters.status)

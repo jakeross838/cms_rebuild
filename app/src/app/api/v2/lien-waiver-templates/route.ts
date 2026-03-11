@@ -46,6 +46,7 @@ export const GET = createApiHandler(
       .from('lien_waiver_templates')
       .select('id, company_id, waiver_type, template_name, template_content, state_code, is_default, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.waiver_type) {
       query = query.eq('waiver_type', filters.waiver_type)

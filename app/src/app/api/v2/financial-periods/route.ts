@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('financial_periods')
       .select('id, company_id, period_name, period_start, period_end, status, fiscal_year, fiscal_quarter, closed_by, closed_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.status) {
       query = query.eq('status', filters.status)

@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('user_certifications')
       .select('id, company_id, user_id, certification_name, certification_level, description, passing_score, assessment_score, passed, attempt_count, certified_at, expires_at, time_limit_minutes, issued_by, notes, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.user_id) {
       query = query.eq('user_id', filters.user_id)

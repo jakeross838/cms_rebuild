@@ -51,6 +51,7 @@ export const GET = createApiHandler(
       .from('cost_transactions')
       .select('id, company_id, job_id, budget_line_id, cost_code_id, transaction_type, amount, description, reference_type, reference_id, transaction_date, vendor_id, created_by, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.job_id) {
       query = query.eq('job_id', filters.job_id)

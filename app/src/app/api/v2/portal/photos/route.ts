@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('portal_shared_photos')
       .select('id, company_id, job_id, storage_path, caption, album_name, sort_order, shared_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('job_id', filters.job_id)
 
     if (filters.album_name) {

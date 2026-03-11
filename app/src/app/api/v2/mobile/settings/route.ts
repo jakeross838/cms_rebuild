@@ -23,6 +23,7 @@ export const GET = createApiHandler(
       .from('mobile_app_settings')
       .select('id, company_id, user_id, data_saver_mode, auto_sync, sync_on_wifi_only, photo_quality, location_tracking, gps_accuracy, biometric_enabled, quiet_hours_start, quiet_hours_end, push_notifications, offline_storage_limit_mb, theme, preferences, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('user_id', ctx.user!.id)
       .single()
 
@@ -79,6 +80,7 @@ export const PUT = createApiHandler(
       .from('mobile_app_settings')
       .select('id')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('user_id', ctx.user!.id)
       .single()
 
@@ -111,6 +113,7 @@ export const PUT = createApiHandler(
         .from('mobile_app_settings')
         .update(updates)
         .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
         .eq('user_id', ctx.user!.id)
         .select('id, company_id, user_id, data_saver_mode, auto_sync, sync_on_wifi_only, photo_quality, location_tracking, gps_accuracy, biometric_enabled, quiet_hours_start, quiet_hours_end, push_notifications, offline_storage_limit_mb, theme, preferences, created_at, updated_at')
         .single()

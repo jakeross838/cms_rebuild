@@ -24,6 +24,7 @@ export const GET = createApiHandler(
       .from('document_folders')
       .select('id, company_id, job_id, parent_folder_id, name, path, sort_order, created_by, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true })
       .order('name', { ascending: true })
 
@@ -76,6 +77,7 @@ export const POST = createApiHandler(
         .select('path')
         .eq('id', input.parent_folder_id)
         .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
         .single()
 
       if (parentError && parentError.code !== 'PGRST116') {

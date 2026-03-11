@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('pipelines')
       .select('id, company_id, name, description, is_default, is_active, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.is_active !== undefined) {
       query = query.eq('is_active', filters.is_active)

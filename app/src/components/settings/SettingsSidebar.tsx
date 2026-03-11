@@ -11,6 +11,7 @@ import {
   Layers,
   Users,
   Shield,
+  Link2,
 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { href: '/settings/phases', label: 'Phases', icon: Layers },
   { href: '/settings/users', label: 'Users', icon: Users },
   { href: '/settings/roles', label: 'Roles', icon: Shield },
+  { href: '/settings/quickbooks', label: 'QuickBooks', icon: Link2 },
 ]
 
 export function SettingsSidebar() {

@@ -37,6 +37,7 @@ export const GET = createApiHandler(
       .eq('id', inspectionId)
       .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -52,6 +53,7 @@ export const GET = createApiHandler(
       .select('id, company_id, inspection_id, result, result_notes, deficiencies, conditions_to_satisfy, inspector_comments, photos, is_first_time_pass, responsible_vendor_id, recorded_by, recorded_at, created_at, updated_at')
       .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('recorded_at', { ascending: false })
 
     return NextResponse.json({
@@ -103,6 +105,7 @@ export const PUT = createApiHandler(
       .eq('id', inspectionId)
       .eq('permit_id', permitId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -128,6 +131,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', inspectionId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, permit_id, job_id, inspection_type, status, scheduled_date, scheduled_time, inspector_name, inspector_phone, notes, completed_at, is_reinspection, original_inspection_id, created_by, created_at, updated_at')
       .single()
 

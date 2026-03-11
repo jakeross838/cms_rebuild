@@ -53,6 +53,7 @@ export const PATCH = createApiHandler(
       .select('id')
       .eq('id', invoiceId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (invoiceError || !invoice) {
@@ -145,6 +146,7 @@ export const PATCH = createApiHandler(
         .update({ status: 'denied', updated_at: now } as any)
         .eq('id', invoiceId)
         .eq('company_id', ctx.companyId!)
+        .is('deleted_at', null)
       if (rejectError) {
         const mapped = mapDbError(rejectError)
         return NextResponse.json(
@@ -156,17 +158,26 @@ export const PATCH = createApiHandler(
 
     // If approved, check if this was the final step
     if (input.action === 'approved') {
-      const { data: pendingSteps } = await (supabase as any).from('invoice_approvals')
+      const { data: pendingSteps, error: pendingError } = await (supabase as any).from('invoice_approvals')
         .select('id')
         .eq('invoice_id', invoiceId)
         .in('status', ['pending', 'delegated', 'escalated'])
 
-      const allApproved = !pendingSteps || pendingSteps.length === 0
+      if (pendingError) {
+        const mapped = mapDbError(pendingError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
+
+      const allApproved = pendingSteps.length === 0
       if (allApproved) {
         const { error: approveError } = await supabase.from('invoices')
           .update({ status: 'approved', updated_at: now } as any)
           .eq('id', invoiceId)
           .eq('company_id', ctx.companyId!)
+          .is('deleted_at', null)
         if (approveError) {
           const mapped = mapDbError(approveError)
           return NextResponse.json(

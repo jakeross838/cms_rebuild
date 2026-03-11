@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('contract_clauses')
       .select('id, company_id, name, description, category, content, is_required, is_active, sort_order, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('is_active', true)
 
     if (filters.category) {

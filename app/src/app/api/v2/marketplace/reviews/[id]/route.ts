@@ -34,6 +34,7 @@ export const GET = createApiHandler(
       .select('id, company_id, template_id, user_id, rating, title, review_text, publisher_response, publisher_responded_at, is_verified_purchase, is_flagged, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -82,6 +83,7 @@ export const PUT = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -106,6 +108,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, template_id, user_id, rating, title, review_text, publisher_response, publisher_responded_at, is_verified_purchase, is_flagged, created_at, updated_at')
       .single()
 
@@ -144,6 +147,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {
@@ -166,6 +170,7 @@ export const DELETE = createApiHandler(
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

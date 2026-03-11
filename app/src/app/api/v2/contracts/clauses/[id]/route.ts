@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .select('id, company_id, name, description, category, content, is_required, is_active, sort_order, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -88,6 +89,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, name, description, category, content, is_required, is_active, sort_order, created_by, created_at, updated_at')
       .single()
 
@@ -125,6 +127,7 @@ export const DELETE = createApiHandler(
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, name, description, category, content, is_required, is_active, sort_order, created_by, created_at, updated_at')
       .single()
 

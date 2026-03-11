@@ -68,6 +68,7 @@ export const GET = createApiHandler(
       .select('id, vendor_id, company_id, requirement_type, requirement_name, status, expiration_date, document_id, notes, created_at, updated_at', { count: 'exact' })
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.status) {
       query = query.eq('status', filters.status)

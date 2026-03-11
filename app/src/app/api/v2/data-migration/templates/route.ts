@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('migration_mapping_templates')
       .select('id, company_id, name, description, source_platform, mappings, is_system, is_active, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.source_platform) {
       query = query.eq('source_platform', filters.source_platform)

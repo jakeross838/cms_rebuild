@@ -56,6 +56,7 @@ export const POST = createApiHandler(
       .eq('id', taskId)
       .eq('schedule_id', scheduleId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -87,6 +88,7 @@ export const POST = createApiHandler(
       })
       .eq('id', taskId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, schedule_id, title, description, status, due_date, completed_at, completed_by, actual_cost, notes, created_at, updated_at')
       .single()
 

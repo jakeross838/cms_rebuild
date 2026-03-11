@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('api_keys')
       .select('id, company_id, name, key_prefix, permissions, status, rate_limit_per_minute, last_used_at, expires_at, revoked_at, revoked_by, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.status) {
       query = query.eq('status', filters.status)

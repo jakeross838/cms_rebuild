@@ -53,6 +53,7 @@ export const POST = createApiHandler(
       .select('id, status')
       .eq('id', talkId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -82,6 +83,7 @@ export const POST = createApiHandler(
       .update(updates)
       .eq('id', talkId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, job_id, title, topic, description, talk_date, talk_time, duration_minutes, status, presenter_id, location, materials, notes, completed_at, created_by, created_at, updated_at')
       .single()
 

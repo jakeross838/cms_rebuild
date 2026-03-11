@@ -63,6 +63,7 @@ export const GET = createApiHandler(
       .select('id, company_id, vendor_score_id, vendor_id, quality_score, timeliness_score, communication_score, budget_adherence_score, safety_score, overall_score, snapshot_date, notes, created_at', { count: 'exact' })
       .eq('vendor_id', vendorId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('snapshot_date', { ascending: filters.sort_order === 'asc' })
       .range(offset, offset + limit - 1)
 

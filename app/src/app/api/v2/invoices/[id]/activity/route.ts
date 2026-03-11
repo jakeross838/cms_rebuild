@@ -38,6 +38,7 @@ export const GET = createApiHandler(
       .select('id')
       .eq('id', invoiceId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (!invoice) {

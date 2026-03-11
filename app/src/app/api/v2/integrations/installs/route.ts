@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('integration_installs')
       .select('id, company_id, listing_id, status, configuration, installed_by, installed_at, uninstalled_at, uninstalled_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.listing_id) {
       query = query.eq('listing_id', filters.listing_id)
@@ -120,6 +121,7 @@ export const POST = createApiHandler(
       .from('integration_installs')
       .select('id, status')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('listing_id', input.listing_id)
       .single()
 

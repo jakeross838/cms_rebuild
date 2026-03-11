@@ -44,6 +44,7 @@ export const GET = createApiHandler(
       .eq('id', resultId)
       .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -93,6 +94,7 @@ export const PUT = createApiHandler(
       .eq('id', resultId)
       .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -118,6 +120,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', resultId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, inspection_id, result, result_notes, deficiencies, conditions_to_satisfy, inspector_comments, photos, is_first_time_pass, responsible_vendor_id, recorded_by, recorded_at, created_at, updated_at')
       .single()
 

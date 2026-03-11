@@ -102,6 +102,7 @@ export const GET = createApiHandler(
       .from('invoice_extractions' as any)
       .select('*', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
 
     if (status) {

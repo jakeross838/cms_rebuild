@@ -39,6 +39,7 @@ export const GET = createApiHandler(
       .select('id')
       .eq('id', invoiceId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (invoiceError || !invoice) {
@@ -52,6 +53,7 @@ export const GET = createApiHandler(
       .select('id, company_id, invoice_id, prerequisite_type, label, is_met, met_at, met_by, notes, created_at')
       .eq('invoice_id', invoiceId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true })
 
     if (error) {
@@ -104,6 +106,7 @@ export const POST = createApiHandler(
       .select('id')
       .eq('id', invoiceId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (invoiceError || !invoice) {

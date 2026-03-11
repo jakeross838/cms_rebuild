@@ -29,6 +29,7 @@ export const GET = createApiHandler(
       .select('id, company_id, period_start, period_end, status, exported_at, exported_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -44,6 +45,7 @@ export const GET = createApiHandler(
       .select('id, company_id, payroll_period_id, export_format, file_path, total_hours, total_amount, employee_count, exported_by, created_at')
       .eq('payroll_period_id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
 
     return NextResponse.json({
@@ -87,6 +89,7 @@ export const PUT = createApiHandler(
       .select('status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (fetchError || !existing) {
@@ -121,6 +124,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, period_start, period_end, status, exported_at, exported_by, created_at, updated_at')
       .single()
 

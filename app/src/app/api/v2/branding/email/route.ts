@@ -27,6 +27,7 @@ export const GET = createApiHandler(
       .from('builder_email_config')
       .select('id, company_id, from_name, from_email, reply_to_email, email_header_html, email_footer_html, email_signature, use_custom_smtp, smtp_host, smtp_port, smtp_username, is_verified, verified_at, created_at, updated_at')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -64,6 +65,7 @@ export const PUT = createApiHandler(
       .from('builder_email_config')
       .select('id')
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {
@@ -93,6 +95,7 @@ export const PUT = createApiHandler(
         .from('builder_email_config')
         .update(updates)
         .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
         .select('id, company_id, from_name, from_email, reply_to_email, email_header_html, email_footer_html, email_signature, use_custom_smtp, smtp_host, smtp_port, smtp_username, is_verified, verified_at, created_at, updated_at')
         .single()
 

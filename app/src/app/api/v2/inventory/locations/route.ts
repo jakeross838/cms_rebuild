@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('inventory_locations')
       .select('id, company_id, name, location_type, address, job_id, is_active, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.location_type) {
       query = query.eq('location_type', filters.location_type)

@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('testimonials')
       .select('id, company_id, contact_name, contact_title, company_display_name, quote_text, rating, video_url, photo_url, is_approved, is_featured, display_on, collected_at, approved_by, approved_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.is_approved !== undefined) {
       query = query.eq('is_approved', filters.is_approved)

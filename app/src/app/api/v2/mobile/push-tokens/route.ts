@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('push_notification_tokens')
       .select('id, company_id, user_id, device_id, provider, is_active, last_used_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.device_id) {
       query = query.eq('device_id', filters.device_id)

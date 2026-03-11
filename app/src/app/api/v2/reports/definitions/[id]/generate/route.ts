@@ -44,6 +44,7 @@ export const POST = createApiHandler(
       .select('id, report_type, config, is_active')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (defError || !definition) {

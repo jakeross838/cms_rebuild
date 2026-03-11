@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .select('id, company_id, user_id, device_id, provider, is_active, last_used_at, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -84,6 +85,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, user_id, device_id, provider, is_active, last_used_at, created_at, updated_at')
       .single()
 
@@ -121,6 +123,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -135,6 +138,7 @@ export const DELETE = createApiHandler(
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

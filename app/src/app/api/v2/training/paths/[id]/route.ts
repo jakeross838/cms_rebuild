@@ -57,6 +57,7 @@ export const GET = createApiHandler(
       .select('id')
       .eq('path_id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     return NextResponse.json({
       data: {
@@ -111,6 +112,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, name, description, role_key, estimated_hours, sort_order, is_active, created_by, created_at, updated_at')
       .single()
 
@@ -150,6 +152,7 @@ export const DELETE = createApiHandler(
       .update({ is_active: false, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, name, description, role_key, estimated_hours, sort_order, is_active, created_by, created_at, updated_at')
       .single()
 

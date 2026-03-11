@@ -63,6 +63,7 @@ export const GET = createApiHandler(
       .select('id')
       .eq('id', campaignId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (campaignError || !campaign) {
@@ -77,6 +78,7 @@ export const GET = createApiHandler(
       .select('id, campaign_id, company_id, contact_name, contact_email, contact_phone, status, sent_at, opened_at, clicked_at, converted_at, lead_id, notes, created_at, updated_at', { count: 'exact' })
       .eq('campaign_id', campaignId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.status) {
       query = query.eq('status', filters.status)
@@ -135,6 +137,7 @@ export const POST = createApiHandler(
       .select('id')
       .eq('id', campaignId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (campaignError || !campaign) {

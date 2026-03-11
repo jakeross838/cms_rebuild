@@ -45,6 +45,7 @@ export const GET = createApiHandler(
       .eq('id', stageId)
       .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -102,6 +103,7 @@ export const PUT = createApiHandler(
       .eq('id', stageId)
       .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, pipeline_id, name, stage_type, sequence_order, probability_default, color, is_active, created_at, updated_at')
       .single()
 
@@ -141,6 +143,7 @@ export const DELETE = createApiHandler(
       .eq('id', stageId)
       .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, pipeline_id, name, stage_type, sequence_order, probability_default, color, is_active, created_at, updated_at')
       .single()
 

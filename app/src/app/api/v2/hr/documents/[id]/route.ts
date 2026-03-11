@@ -34,6 +34,7 @@ export const GET = createApiHandler(
       .select('id, company_id, employee_id, document_type, title, description, file_url, file_name, file_size_bytes, uploaded_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -89,6 +90,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, employee_id, document_type, title, description, file_url, file_name, file_size_bytes, uploaded_by, created_at, updated_at')
       .single()
 
@@ -127,6 +129,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError && existError.code !== 'PGRST116') {
@@ -149,6 +152,7 @@ export const DELETE = createApiHandler(
       .delete()
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (error) {
       const mapped = mapDbError(error)

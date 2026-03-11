@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('report_schedules')
       .select('id, company_id, report_definition_id, frequency, day_of_week, day_of_month, recipients, is_active, last_run_at, next_run_at, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.report_definition_id) {
       query = query.eq('report_definition_id', filters.report_definition_id)
@@ -99,6 +100,7 @@ export const POST = createApiHandler(
       .select('id')
       .eq('id', input.report_definition_id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (defError || !definition) {

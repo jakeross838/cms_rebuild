@@ -31,6 +31,7 @@ export const GET = createApiHandler(
       .select('id, quiet_start, quiet_end, timezone, digest_mode, digest_frequency, digest_time, critical_bypass_quiet')
       .eq('user_id', ctx.user!.id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single() as unknown as { data: SettingsRow | null; error: { message: string; code?: string } | null }
 
     if (error && error.code !== 'PGRST116') {

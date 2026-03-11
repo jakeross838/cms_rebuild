@@ -48,6 +48,7 @@ export const GET = createApiHandler(
       .from('portal_messages')
       .select('id, company_id, job_id, sender_id, sender_type, subject, body, parent_message_id, is_read, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('job_id', filters.job_id)
 
     query = query.order('created_at', { ascending: false })

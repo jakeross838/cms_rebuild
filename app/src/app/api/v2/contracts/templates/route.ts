@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('contract_templates')
       .select('id, company_id, name, description, contract_type, content, clauses, variables, is_active, is_system, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .eq('is_active', true)
 
     if (filters.contract_type) {

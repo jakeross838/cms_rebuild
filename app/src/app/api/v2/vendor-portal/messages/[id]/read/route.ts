@@ -44,12 +44,19 @@ export const POST = createApiHandler(
 
     if (existing.is_read) {
       // Already read, return current state
-      const { data } = await supabase
+      const { data, error: refetchError } = await supabase
         .from('vendor_messages')
         .select('id, company_id, vendor_id, job_id, subject, body, direction, sender_id, is_read, read_at, attachments, parent_message_id, created_at, updated_at')
         .eq('id', id)
         .eq('company_id', ctx.companyId!)
         .single()
+
+      if (refetchError) {
+        return NextResponse.json(
+          { error: 'Database Error', message: refetchError.message, requestId: ctx.requestId },
+          { status: 500 }
+        )
+      }
 
       return NextResponse.json({ data, requestId: ctx.requestId })
     }

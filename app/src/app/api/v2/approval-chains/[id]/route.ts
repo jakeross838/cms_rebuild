@@ -113,11 +113,18 @@ export const PATCH = createApiHandler(
       }
     }
 
-    const { data } = await (supabase as any)
+    const { data, error: fetchError } = await (supabase as any)
       .from('approval_chain_templates')
       .select('*, approval_chain_steps(*)')
       .eq('id', id)
       .single()
+
+    if (fetchError) {
+      return NextResponse.json(
+        { error: 'Database Error', message: fetchError.message, requestId: ctx.requestId },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({ data, requestId: ctx.requestId })
   },

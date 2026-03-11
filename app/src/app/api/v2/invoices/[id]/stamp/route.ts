@@ -47,6 +47,7 @@ export const POST = createApiHandler(
       `)
       .eq('id', invoiceId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (invoiceError || !invoice) {
@@ -122,6 +123,7 @@ export const POST = createApiHandler(
       })
       .eq('id', invoiceId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (updateError) {
       const mapped = mapDbError(updateError)

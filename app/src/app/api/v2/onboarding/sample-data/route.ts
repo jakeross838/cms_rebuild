@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('sample_data_sets')
       .select('id, company_id, name, description, data_type, status, content, applied_at, applied_by, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.data_type) {
       query = query.eq('data_type', filters.data_type)

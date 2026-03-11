@@ -32,6 +32,7 @@ export const GET = createApiHandler(
       .select('id, company_id, job_id, title, topic, description, talk_date, talk_time, duration_minutes, status, presenter_id, location, materials, notes, completed_at, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -47,6 +48,7 @@ export const GET = createApiHandler(
       .select('id, talk_id, company_id, attendee_name, attendee_id, trade, company_name, signed, signed_at, notes, created_at')
       .eq('talk_id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true })
 
     return NextResponse.json({
@@ -94,6 +96,7 @@ export const PUT = createApiHandler(
       .select('id, status')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existError || !existing) {
@@ -122,6 +125,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, job_id, title, topic, description, talk_date, talk_time, duration_minutes, status, presenter_id, location, materials, notes, completed_at, created_by, created_at, updated_at')
       .single()
 

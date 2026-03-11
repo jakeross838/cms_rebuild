@@ -53,6 +53,7 @@ export const POST = createApiHandler(
       .select('id, status, matched_bill_id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (fetchError || !extraction) {
@@ -132,6 +133,7 @@ export const POST = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (linkErr) {
       const mapped = mapDbError(linkErr)

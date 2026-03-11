@@ -50,6 +50,7 @@ export const GET = createApiHandler(
       .from('extraction_rules')
       .select('id, company_id, vendor_id, rule_type, conditions, actions, is_active, priority, created_by, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.vendor_id) {
       query = query.eq('vendor_id', filters.vendor_id)

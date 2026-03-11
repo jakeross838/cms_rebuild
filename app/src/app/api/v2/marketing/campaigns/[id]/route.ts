@@ -38,6 +38,7 @@ export const GET = createApiHandler(
       .select('id, company_id, name, description, campaign_type, status, channel, start_date, end_date, budget, actual_spend, utm_source, utm_medium, utm_campaign, leads_generated, proposals_sent, contracts_won, contract_value_won, roi_pct, target_audience, notes, created_by, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error || !data) {
@@ -104,6 +105,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, name, description, campaign_type, status, channel, start_date, end_date, budget, actual_spend, utm_source, utm_medium, utm_campaign, leads_generated, proposals_sent, contracts_won, contract_value_won, roi_pct, target_audience, notes, created_by, created_at, updated_at')
       .single()
 

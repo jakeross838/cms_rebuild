@@ -54,6 +54,7 @@ export const GET = createApiHandler(
       .eq('id', inspectionId)
       .eq('permit_id', permitId!)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (inspError) {
@@ -68,6 +69,7 @@ export const GET = createApiHandler(
       .select('id, company_id, inspection_id, result, result_notes, deficiencies, conditions_to_satisfy, inspector_comments, photos, is_first_time_pass, responsible_vendor_id, recorded_by, recorded_at, created_at, updated_at', { count: 'exact' })
       .eq('inspection_id', inspectionId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .order('recorded_at', { ascending: false })
       .range(offset, offset + limit - 1)
 
@@ -117,6 +119,7 @@ export const POST = createApiHandler(
       .eq('id', inspectionId)
       .eq('permit_id', permitId!)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (inspError || !inspection) {
@@ -170,6 +173,7 @@ export const POST = createApiHandler(
         })
         .eq('id', inspectionId)
         .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       if (statusError) {
         logger.error('Failed to update inspection status', { inspectionId, error: statusError.message })
       }

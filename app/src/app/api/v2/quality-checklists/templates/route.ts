@@ -49,6 +49,7 @@ export const GET = createApiHandler(
       .from('quality_checklist_templates')
       .select('id, company_id, name, description, category, trade, is_active, is_system, created_at, updated_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.category) {
       query = query.eq('category', filters.category)

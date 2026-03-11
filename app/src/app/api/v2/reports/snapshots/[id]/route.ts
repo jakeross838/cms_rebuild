@@ -30,6 +30,7 @@ export const GET = createApiHandler(
       .select('id, company_id, report_definition_id, period_start, period_end, snapshot_data, generated_by, generated_at, created_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {

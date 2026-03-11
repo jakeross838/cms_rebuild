@@ -59,6 +59,7 @@ export const GET = createApiHandler(
       .select('id')
       .eq('id', pipelineId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (pipelineError || !pipeline) {
@@ -73,6 +74,7 @@ export const GET = createApiHandler(
       .select('id, company_id, pipeline_id, name, stage_type, sequence_order, probability_default, color, is_active, created_at, updated_at', { count: 'exact' })
       .eq('pipeline_id', pipelineId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.stage_type) {
       query = query.eq('stage_type', filters.stage_type)
@@ -134,6 +136,7 @@ export const POST = createApiHandler(
       .select('id')
       .eq('id', pipelineId)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (pipelineError || !pipeline) {

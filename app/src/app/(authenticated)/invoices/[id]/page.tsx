@@ -7,17 +7,14 @@ import { useParams, useRouter } from 'next/navigation'
 
 import {
   ArrowLeft,
-  CheckCircle2,
-  DollarSign,
   Edit3,
   Loader2,
   Save,
-  XCircle,
 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import {
   useInvoice,
@@ -28,10 +25,9 @@ import { useJobs } from '@/hooks/use-jobs'
 import { useVendors } from '@/hooks/use-vendors'
 import { usePurchaseOrders } from '@/hooks/use-purchase-orders'
 import { useCostCodes } from '@/hooks/use-cost-codes'
-import { formatCurrency, formatDate, getStatusColor, formatStatus, cn } from '@/lib/utils'
+import { formatDate, getStatusColor, formatStatus, cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import {
-  INVOICE_STATUS_TRANSITIONS,
   INVOICE_STATUS_CONFIG,
   INVOICE_TYPE_CONFIG,
   CONTRACT_TYPE_CONFIG,
@@ -43,13 +39,9 @@ import type {
 
 // Extracted components
 import type { ListItem, CostCodeItem, PoItem, TabId, InvoiceFormData } from '@/components/invoices/invoice-detail-types'
-import {
-  TABS,
-  STATUS_PIPELINE,
-  PIPELINE_LABELS,
-  getDaysUntilDue,
-} from '@/components/invoices/invoice-detail-types'
+import { TABS } from '@/components/invoices/invoice-detail-types'
 import { InvoiceEditForm } from '@/components/invoices/invoice-edit-form'
+import { AmountHeroCard, ApprovalPipelineCard, StatusTransitionButtons } from '@/components/invoices/invoice-header-cards'
 import { OverviewTab } from '@/components/invoices/invoice-overview-tab'
 import { LineItemsTab } from '@/components/invoices/invoice-line-items-tab'
 import { AllocationsTab } from '@/components/invoices/invoice-allocations-tab'
@@ -133,10 +125,7 @@ export default function InvoiceDetailPage() {
     return cc ? `${cc.code} - ${cc.name}` : null
   }, [invoice?.cost_code_id, invoice?.cost_codes, costCodes])
 
-  const dueInfo = useMemo(() => getDaysUntilDue(invoice?.due_date ?? null), [invoice?.due_date])
-
   const currentStatus = (invoice?.status ?? 'draft') as InvoiceStatus
-  const transitions = INVOICE_STATUS_TRANSITIONS[currentStatus] ?? []
   const statusConfig = INVOICE_STATUS_CONFIG[currentStatus]
   const typeConfig = invoice ? INVOICE_TYPE_CONFIG[invoice.invoice_type] : null
   const contractConfig = invoice ? CONTRACT_TYPE_CONFIG[invoice.contract_type] : null
@@ -302,16 +291,6 @@ export default function InvoiceDetailPage() {
     )
   }
 
-  // -- Pipeline visualization -------------------------------------------------
-  const currentPipelineIndex = STATUS_PIPELINE.indexOf(currentStatus)
-  const isDenied = currentStatus === 'denied'
-  // If the status is one of the *_pending ones not in the pipeline, map it near pm_pending
-  const effectivePipelineIndex = currentPipelineIndex >= 0
-    ? currentPipelineIndex
-    : (currentStatus === 'accountant_pending' || currentStatus === 'owner_pending')
-      ? 1 // treat as review phase
-      : -1
-
   // -- Render -----------------------------------------------------------------
   return (
     <div className="max-w-5xl mx-auto">
@@ -398,128 +377,13 @@ export default function InvoiceDetailPage() {
         />
       ) : (
         <div className="space-y-6">
-          {/* -- AMOUNT HERO CARD ---------------------------------------------- */}
-          <Card>
-            <CardContent className="py-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success-bg">
-                    <DollarSign className="h-6 w-6 text-success-dark" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Amount</p>
-                    <p className="text-3xl font-bold tracking-tight">{formatCurrency(invoice.amount)}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-6 text-sm">
-                  {invoice.retainage_percent > 0 && (
-                    <div className="text-center">
-                      <p className="text-muted-foreground">Net (after {invoice.retainage_percent}% retainage)</p>
-                      <p className="text-xl font-semibold">{formatCurrency(netAmount)}</p>
-                    </div>
-                  )}
-                  <div className="text-center">
-                    <p className="text-muted-foreground">Due Date</p>
-                    <p className="text-lg font-semibold">{formatDate(invoice.due_date) || '--'}</p>
-                    {dueInfo && (
-                      <p className={cn('text-xs mt-0.5', dueInfo.className)}>
-                        {dueInfo.label}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* -- APPROVAL PIPELINE --------------------------------------------- */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Approval Pipeline</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isDenied ? (
-                <div className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
-                  <XCircle className="h-5 w-5 text-destructive shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-destructive">Invoice Denied</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      This invoice was denied. You can reopen it as a draft to restart the workflow.
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1 overflow-x-auto py-2">
-                  {STATUS_PIPELINE.map((status, index) => {
-                    const isComplete = index < effectivePipelineIndex
-                    const isCurrent = index === effectivePipelineIndex
-                    return (
-                      <div key={status} className="flex items-center">
-                        {index > 0 && (
-                          <div
-                            className={cn(
-                              'h-0.5 w-8 sm:w-12 shrink-0',
-                              isComplete ? 'bg-emerald-500' : 'bg-border'
-                            )}
-                          />
-                        )}
-                        <div className="flex flex-col items-center gap-1.5 shrink-0">
-                          <div
-                            className={cn(
-                              'flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-colors',
-                              isComplete
-                                ? 'bg-emerald-100 text-emerald-700'
-                                : isCurrent
-                                  ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-300'
-                                  : 'bg-muted text-muted-foreground'
-                            )}
-                          >
-                            {isComplete ? (
-                              <CheckCircle2 className="h-4 w-4" />
-                            ) : (
-                              index + 1
-                            )}
-                          </div>
-                          <span
-                            className={cn(
-                              'text-[10px] sm:text-xs text-center max-w-[60px] sm:max-w-[80px] leading-tight',
-                              isCurrent ? 'font-semibold text-foreground' : 'text-muted-foreground'
-                            )}
-                          >
-                            {PIPELINE_LABELS[status] ?? formatStatus(status)}
-                          </span>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* -- QUICK ACTION BUTTONS ------------------------------------------ */}
-          {transitions.length > 0 && (
-            <div className="flex flex-wrap gap-3">
-              {transitions.map((action) => (
-                <Button
-                  key={action.next}
-                  variant={action.variant === 'destructive' ? 'destructive' : 'default'}
-                  onClick={() => handleStatusChange(action.next)}
-                  disabled={updateMutation.isPending}
-                >
-                  {updateMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : action.variant === 'destructive' ? (
-                    <XCircle className="h-4 w-4 mr-2" />
-                  ) : (
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                  )}
-                  {action.label}
-                </Button>
-              ))}
-            </div>
-          )}
+          <AmountHeroCard invoice={invoice} netAmount={netAmount} />
+          <ApprovalPipelineCard currentStatus={currentStatus} />
+          <StatusTransitionButtons
+            currentStatus={currentStatus}
+            onStatusChange={handleStatusChange}
+            isPending={updateMutation.isPending}
+          />
 
           {/* -- TABS ---------------------------------------------------------- */}
           <div className="border-b">

@@ -36,6 +36,7 @@ export const POST = createApiHandler(
       .select('id, company_id, vendor_id, invoice_number, amount, invoice_date')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (invoiceError) {

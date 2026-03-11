@@ -49,6 +49,7 @@ export const PUT = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (fetchError || !existing) {
@@ -66,6 +67,7 @@ export const PUT = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, vendor_id, rule_type, conditions, actions, is_active, priority, created_by, created_at, updated_at')
       .single()
 
@@ -105,6 +107,7 @@ export const DELETE = createApiHandler(
       .select('id')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (fetchError || !existing) {
@@ -123,6 +126,7 @@ export const DELETE = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, vendor_id, rule_type, conditions, actions, is_active, priority, created_by, created_at, updated_at')
       .single()
 

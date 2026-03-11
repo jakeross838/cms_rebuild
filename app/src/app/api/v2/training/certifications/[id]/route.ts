@@ -33,6 +33,7 @@ export const GET = createApiHandler(
       .select('id, company_id, user_id, certification_name, certification_level, description, passing_score, assessment_score, passed, attempt_count, certified_at, expires_at, time_limit_minutes, issued_by, notes, created_at, updated_at')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (error) {
@@ -93,6 +94,7 @@ export const PUT = createApiHandler(
       .update(updates)
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, user_id, certification_name, certification_level, description, passing_score, assessment_score, passed, attempt_count, certified_at, expires_at, time_limit_minutes, issued_by, notes, created_at, updated_at')
       .single()
 

@@ -47,6 +47,7 @@ export const POST = createApiHandler(
       .select('id, resolution')
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .single()
 
     if (existingError && existingError.code !== 'PGRST116') {
@@ -81,6 +82,7 @@ export const POST = createApiHandler(
       })
       .eq('id', id)
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
       .select('id, company_id, connection_id, entity_type, internal_data, external_data, resolution, resolved_by, resolved_at, created_at, updated_at')
       .single()
 

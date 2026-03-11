@@ -47,6 +47,7 @@ export const GET = createApiHandler(
       .from('sync_logs')
       .select('id, company_id, connection_id, sync_type, direction, status, entities_processed, entities_created, entities_updated, entities_failed, started_at, completed_at, created_at', { count: 'exact' })
       .eq('company_id', ctx.companyId!)
+      .is('deleted_at', null)
 
     if (filters.connection_id) {
       query = query.eq('connection_id', filters.connection_id)
