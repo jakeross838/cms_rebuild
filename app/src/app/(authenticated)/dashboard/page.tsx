@@ -73,7 +73,7 @@ export default async function DashboardPage() {
       name: 'Pending Draws',
       value: pendingDraws || 0,
       icon: FileText,
-      href: '/draws?status=pending',
+      href: '/draw-requests?status=pending',
       color: 'text-stone-600 bg-warm-100',
     },
     {
@@ -205,7 +205,7 @@ export default async function DashboardPage() {
 
               {(pendingDraws || 0) > 0 && (
                 <Link
-                  href="/draws?status=pending"
+                  href="/draw-requests?status=pending"
                   className="flex items-center gap-4 p-4 rounded-xl bg-warm-50/50 hover:bg-warm-50 transition-colors border border-warm-100"
                 >
                   <div className="p-2 rounded-lg bg-warm-100">
