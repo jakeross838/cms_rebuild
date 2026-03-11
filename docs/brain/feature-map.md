@@ -294,6 +294,17 @@ Created 4 new components in `src/components/invoices/`:
 - **`payment-status-badge.tsx`** — `PaymentStatusBadge` showing unpaid/partial/paid vendor payment status with amount tooltips
 - **`activity-timeline.tsx`** — `ActivityTimeline` with 20+ activity action types (uploaded, processed, approved, denied, stamped, paid, etc.) with icons, colors, and time-ago labels
 
+### Invoice Detail Page — Refactored to Composable Components (Session 65)
+Page refactored from 2,446 lines to 586 lines. All tab components extracted:
+- `invoice-detail-types.ts` — shared types, constants, getDaysUntilDue helper
+- `invoice-overview-tab.tsx` — two-column overview with PDF, AI, activity
+- `invoice-edit-form.tsx` — edit form with InvoiceFormData type
+- `invoice-line-items-tab.tsx` — line items CRUD
+- `invoice-allocations-tab.tsx` — job/budget allocations
+- `invoice-approvals-tab.tsx` — approval timeline with delegate/escalate
+- `invoice-disputes-tab.tsx` — dispute creation, resolution, messaging
+- `invoice-prerequisites-tab.tsx` — payment prerequisites checklist
+
 ### Invoice Detail Page — Enhanced Overview Tab
 Transformed Overview tab from single-column to two-column layout:
 - **Left column**: Review flags alert (if present), invoice details card with PaymentStatusBadge, payment info, progress billing, notes
@@ -1134,6 +1145,17 @@ All detail pages with archive buttons now have `archiving` state preventing doub
 - All mutations require role: owner/admin/pm
 - GET routes use permission: `jobs:read:all`
 - POST routes use permission: `jobs:update:all`
+
+## Session 65 — Dashboard Enhancement + Approval Chains Fix
+
+### Dashboard Overdue Invoices
+- Main dashboard (`/dashboard`) now queries for overdue invoices (past due_date, not paid/denied)
+- Shows red action item card with count and link to overdue filter
+- "All caught up" message now requires zero overdue invoices too
+
+### Approval Chains Error Handling
+- `api/v2/approval-chains/route.ts` POST: added error checks on `is_default` reset update and steps insert
+- Previously these mutations silently swallowed failures
 
 ## Session 32 (final) — Billing Badge + Currency Fix + Dashboard Filter (2026-02-27)
 

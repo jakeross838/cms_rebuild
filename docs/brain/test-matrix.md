@@ -1,5 +1,30 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 65 — Invoice Refactoring & Polish (2026-03-11)
+
+### Invoice Detail Page Refactoring
+- [ ] Invoice detail page loads correctly at `/invoices/[id]`
+- [ ] Overview tab renders with PDF preview, AI confidence, activity timeline
+- [ ] Edit mode shows InvoiceEditForm with all fields
+- [ ] Line Items tab shows CRUD for line items
+- [ ] Allocations tab shows job/budget allocations
+- [ ] Approvals tab shows approval timeline with delegate/escalate
+- [ ] Disputes tab shows dispute creation, resolution, messaging
+- [ ] Prerequisites tab shows payment prerequisites checklist
+- [ ] Tab switching works correctly
+- [ ] Save/cancel in edit mode works
+
+### Dashboard Overdue Invoices
+- [ ] Dashboard shows overdue invoice count when invoices past due date exist
+- [ ] Overdue card links to `/invoices?status=overdue`
+- [ ] "All caught up" only shows when zero pending, zero draws, zero overdue
+- [ ] Overdue count excludes paid and denied invoices
+
+### Approval Chains Error Handling
+- [ ] POST `/api/v2/approval-chains` with is_default=true returns 500 if default reset fails
+- [ ] POST `/api/v2/approval-chains` with steps returns 500 if steps insert fails
+- [ ] Successful creation still works normally
+
 ## Session 64d — Module 14 & 15 Enhancements (2026-03-11)
 
 ### Lien Waiver Rejection

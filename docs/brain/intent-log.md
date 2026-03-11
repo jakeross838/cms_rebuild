@@ -1,5 +1,24 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-11: Session 65 — Invoice Page Refactoring & Polish
+
+### Why
+The invoice detail page was a 2,446-line monolithic file with 8 inline components. Previous agent had extracted the components into separate files and rewritten the main page imports, but the supporting files (types, edit form) were incomplete or deleted. Also, the dashboard lacked overdue invoice alerts, and the approval-chains POST route had silent error handling.
+
+### What Changed
+- Created `src/components/invoices/invoice-detail-types.ts` — shared types (ListItem, CostCodeItem, PoItem, TabId, InvoiceFormData) and constants (TABS, STATUS_PIPELINE, getDaysUntilDue)
+- Created `src/components/invoices/invoice-overview-tab.tsx` — overview tab with PDF preview, AI confidence, activity timeline
+- Created `src/components/invoices/invoice-edit-form.tsx` — edit form with invoice info, assignment, progress billing, notes
+- Verified existing extracted tabs: line-items, allocations, approvals, disputes, prerequisites
+- Invoice detail page confirmed at 586 lines (down from 2,446)
+- Dashboard: added overdue invoices count query and red action item card
+- `approval-chains/route.ts`: added error checks on is_default reset update and steps insert
+
+### Decisions
+- Used `InvoiceFormData` interface instead of `Record<string, string>` for type safety
+- Overdue = past due_date AND not paid/denied
+- Approval chain steps insert failure now returns 500 instead of silently succeeding
+
 ## 2026-03-11: Session 64d — Module 14 & 15 Enhancements
 
 ### Why
