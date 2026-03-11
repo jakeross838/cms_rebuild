@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { toast } from 'sonner'
 
 interface RowActionsProps {
   editHref: string
@@ -20,6 +21,21 @@ interface RowActionsProps {
     entityType: string
     entityName?: string
   }
+}
+
+// Maps entityType used by pages → actual API path for DELETE (soft-delete)
+const ENTITY_DELETE_PATH: Record<string, string> = {
+  clients: '/api/v1/clients',
+  jobs: '/api/v1/jobs',
+  vendors: '/api/v1/vendors',
+  leads: '/api/v2/crm/leads',
+  bids: '/api/v2/bid-packages',
+  'punch-lists': '/api/v2/punch-list',
+}
+
+function getDeleteUrl(entityType: string, entityId: string): string {
+  const basePath = ENTITY_DELETE_PATH[entityType] || `/api/v2/${entityType}`
+  return `${basePath}/${entityId}`
 }
 
 export function RowActions({ editHref, archiveAction }: RowActionsProps) {
@@ -31,12 +47,16 @@ export function RowActions({ editHref, archiveAction }: RowActionsProps) {
     if (!archiveAction) return
     setArchiving(true)
     try {
-      const res = await fetch(`/api/${archiveAction.entityType}/${archiveAction.entityId}/archive`, {
-        method: 'POST',
-      })
+      const url = getDeleteUrl(archiveAction.entityType, archiveAction.entityId)
+      const res = await fetch(url, { method: 'DELETE' })
       if (res.ok) {
+        toast.success(`${archiveAction.entityName || 'Item'} archived`)
         router.refresh()
+      } else {
+        toast.error(`Failed to archive ${archiveAction.entityName || 'item'}`)
       }
+    } catch {
+      toast.error(`Failed to archive ${archiveAction.entityName || 'item'}`)
     } finally {
       setArchiving(false)
       setShowConfirm(false)
