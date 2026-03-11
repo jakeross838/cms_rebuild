@@ -1,5 +1,19 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 64c — Error Handling Gaps (2026-03-11)
+
+### Fixed: `api/v2/invoices/batch-approve/route.ts`
+`invoice_approvals.update()` now checks for errors and pushes failure result per-invoice.
+
+### Fixed: `api/v2/invoices/extractions/batch/confirm/route.ts`
+`invoice_line_items.insert()` now checks for errors, pushes error result, and increments error counter.
+
+### Fixed: `api/v2/approval-chains/[id]/route.ts`
+Both `approval_chain_steps.delete()` and `.insert()` now check for errors and return 500.
+
+### Fixed: `api/v2/invoices/[id]/approvals/[approvalId]/route.ts`
+Invoice status updates for rejection (→denied) and final approval (→approved) now check for errors and return mapped error responses.
+
 ## Session 64b — Search Bug Fix & Dead Code Removal (2026-03-11)
 
 ### Fixed: 17 broken search pages

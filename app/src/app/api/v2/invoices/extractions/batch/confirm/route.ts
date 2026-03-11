@@ -152,9 +152,14 @@ export const POST = createApiHandler(
             sort_order: i,
           }))
 
-          await (supabase as any)
+          const { error: liError } = await (supabase as any)
             .from('invoice_line_items')
             .insert(lineItems)
+          if (liError) {
+            results.push({ extraction_id: extractionId, status: 'error', error: `Line items failed: ${liError.message}` })
+            errors++
+            continue
+          }
         }
 
         // Update extraction record

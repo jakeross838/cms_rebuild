@@ -77,10 +77,17 @@ export const PATCH = createApiHandler(
 
     // Replace steps if provided
     if (steps) {
-      await (supabase as any)
+      const { error: deleteError } = await (supabase as any)
         .from('approval_chain_steps')
         .delete()
         .eq('chain_id', id)
+
+      if (deleteError) {
+        return NextResponse.json(
+          { error: 'Database Error', message: deleteError.message, requestId: ctx.requestId },
+          { status: 500 }
+        )
+      }
 
       if (steps.length > 0) {
         const stepRows = steps.map((s: Record<string, unknown>, i: number) => ({
@@ -93,9 +100,16 @@ export const PATCH = createApiHandler(
           auto_escalate_hours: s.auto_escalate_hours ?? 48,
         }))
 
-        await (supabase as any)
+        const { error: insertError } = await (supabase as any)
           .from('approval_chain_steps')
           .insert(stepRows)
+
+        if (insertError) {
+          return NextResponse.json(
+            { error: 'Database Error', message: insertError.message, requestId: ctx.requestId },
+            { status: 500 }
+          )
+        }
       }
     }
 

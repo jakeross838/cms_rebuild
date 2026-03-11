@@ -1,5 +1,23 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 64c — Error Handling (2026-03-11)
+
+### Batch Approve Error Handling
+- [ ] Approval update failure → per-invoice error in results array
+- [ ] Invoice update succeeds but approval fails → invoice not marked as success
+
+### Batch Confirm Error Handling
+- [ ] Line items insert failure → extraction counted as error, not confirmed
+- [ ] Invoice created but line items fail → error surfaced in results
+
+### Approval Chain Error Handling
+- [ ] Steps delete failure → 500 returned, steps not re-inserted
+- [ ] Steps insert failure → 500 returned
+
+### Individual Approval Error Handling
+- [ ] Rejection invoice update failure → 500 returned (not silent)
+- [ ] Final approval invoice update failure → 500 returned (not silent)
+
 ## Session 64b — Search Bug Fix (2026-03-11)
 
 ### Search with safeOrIlike (.or pattern)

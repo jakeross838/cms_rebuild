@@ -1,5 +1,20 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-11: Session 64c — Error Handling Gaps
+
+### Why
+Audit found 6 database mutations in API routes that silently swallowed errors — if the DB operation failed, the endpoint would continue as if it succeeded. This could cause data inconsistency (e.g., approval marked complete but invoice status never updated, line items failing to insert on batch confirm).
+
+### What Changed
+- `batch-approve/route.ts` — Added error check on `invoice_approvals.update()`, surfaces failure per-invoice
+- `extractions/batch/confirm/route.ts` — Added error check on `invoice_line_items.insert()`, counts as error in results
+- `approval-chains/[id]/route.ts` — Added error checks on both `approval_chain_steps.delete()` and `.insert()`, returns 500
+- `approvals/[approvalId]/route.ts` — Added error checks on invoice status update for both rejection (→denied) and final approval (→approved)
+
+### Decisions
+- Batch operations surface errors per-item and continue processing remaining items
+- Non-batch operations return 500 immediately on failure using `mapDbError`
+
 ## 2026-03-11: Session 64b — Search Bug Fix & Dead Code Removal
 
 ### Why

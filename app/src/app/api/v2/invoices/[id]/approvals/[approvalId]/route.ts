@@ -141,10 +141,17 @@ export const PATCH = createApiHandler(
 
     // If rejected, update invoice status to 'denied'
     if (input.action === 'rejected') {
-      await supabase.from('invoices')
+      const { error: rejectError } = await supabase.from('invoices')
         .update({ status: 'denied', updated_at: now } as any)
         .eq('id', invoiceId)
         .eq('company_id', ctx.companyId!)
+      if (rejectError) {
+        const mapped = mapDbError(rejectError)
+        return NextResponse.json(
+          { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+          { status: mapped.status }
+        )
+      }
     }
 
     // If approved, check if this was the final step
@@ -156,10 +163,17 @@ export const PATCH = createApiHandler(
 
       const allApproved = !pendingSteps || pendingSteps.length === 0
       if (allApproved) {
-        await supabase.from('invoices')
+        const { error: approveError } = await supabase.from('invoices')
           .update({ status: 'approved', updated_at: now } as any)
           .eq('id', invoiceId)
           .eq('company_id', ctx.companyId!)
+        if (approveError) {
+          const mapped = mapDbError(approveError)
+          return NextResponse.json(
+            { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
+            { status: mapped.status }
+          )
+        }
       }
     }
 

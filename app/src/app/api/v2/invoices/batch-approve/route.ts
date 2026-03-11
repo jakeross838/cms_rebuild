@@ -68,7 +68,7 @@ export const POST = createApiHandler(
           continue
         }
 
-        await (supabase as any)
+        const { error: approvalError } = await (supabase as any)
           .from('invoice_approvals')
           .update({
             status: action,
@@ -78,6 +78,11 @@ export const POST = createApiHandler(
           })
           .eq('invoice_id', invoiceId)
           .eq('status', 'pending')
+
+        if (approvalError) {
+          results.push({ id: invoiceId, success: false, error: approvalError.message })
+          continue
+        }
 
         results.push({ id: invoiceId, success: true })
       } catch {
