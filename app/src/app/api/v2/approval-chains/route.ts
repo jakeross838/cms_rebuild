@@ -58,12 +58,18 @@ export const POST = createApiHandler(
 
     // If marking as default, unset other defaults
     if (is_default) {
-      await (supabase as any)
+      const { error: resetError } = await (supabase as any)
         .from('approval_chain_templates')
         .update({ is_default: false })
         .eq('company_id', ctx.companyId!)
         .eq('chain_type', chain_type || 'invoice')
         .eq('is_default', true)
+      if (resetError) {
+        return NextResponse.json(
+          { error: 'Database Error', message: resetError.message, requestId: ctx.requestId },
+          { status: 500 }
+        )
+      }
     }
 
     const { data: chain, error: chainError } = await (supabase as any)
@@ -98,9 +104,15 @@ export const POST = createApiHandler(
         auto_escalate_hours: s.auto_escalate_hours ?? 48,
       }))
 
-      await (supabase as any)
+      const { error: stepsError } = await (supabase as any)
         .from('approval_chain_steps')
         .insert(stepRows)
+      if (stepsError) {
+        return NextResponse.json(
+          { error: 'Database Error', message: stepsError.message, requestId: ctx.requestId },
+          { status: 500 }
+        )
+      }
     }
 
     // Re-fetch with steps
