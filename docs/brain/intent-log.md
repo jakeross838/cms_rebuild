@@ -1,5 +1,25 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-11: Session 66 — Soft-Delete Audit & API Hardening
+
+### Why
+Discovered 139+ v2 API routes were missing `.is('deleted_at', null)` filters, meaning archived records would still appear in query results. This is a critical multi-tenancy data integrity issue. Also found silent error handling in several key routes (approval-chains PATCH, vendor-portal message read, invoice approval final step check).
+
+### What Changed
+- Added `.is('deleted_at', null)` to 139 v2 API routes across contracts, CRM, inventory, GL, HR, safety, training, marketing, portal, notifications, payroll, and more
+- Built full QuickBooks settings page (`settings/quickbooks/page.tsx`) with connection status, sync settings, and account mapping UI — replaces redirect stub
+- Added QuickBooks nav item to SettingsSidebar
+- Fixed `approval-chains/[id]` PATCH: re-fetch after update now checks for error
+- Fixed `vendor-portal/messages/[id]/read`: re-fetch of already-read message now checks error
+- Fixed `invoices/[id]/approvals/[approvalId]`: pending steps query error was treated as "all approved" — now properly returns 500
+- Added `.gitignore` entries for screenshots (*.png) and backup files (*.bak)
+- Removed 25 stray screenshot files from git tracking
+
+### Decisions
+- Skip `deleted_at` for genuinely append-only tables: analytics/events, analytics/metrics, billing/events, billing/usage, ai-documents/queue
+- Adding `deleted_at` filter on update queries is correct (prevents updating archived records)
+- QuickBooks page shows "not enabled" warning when feature flag is off, with link to Features page
+
 ## 2026-03-11: Session 65 — Invoice Page Refactoring & Polish
 
 ### Why

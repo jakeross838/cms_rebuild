@@ -1,5 +1,36 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 66 — Soft-Delete Audit & API Hardening (2026-03-11)
+
+### Soft-Delete Filter Audit (139 routes)
+- [ ] GET `/api/v2/contracts/clauses` does not return archived clauses
+- [ ] GET `/api/v2/crm/pipelines` does not return archived pipelines
+- [ ] GET `/api/v2/inventory/locations` does not return archived locations
+- [ ] GET `/api/v2/gl/accounts` does not return archived GL accounts
+- [ ] GET `/api/v2/gl/journal-entries` does not return archived entries
+- [ ] GET `/api/v2/notifications` does not return archived notifications
+- [ ] GET `/api/v2/safety/toolbox-talks` does not return archived talks
+- [ ] GET `/api/v2/training/certifications` does not return archived certifications
+- [ ] GET `/api/v2/vendor-credits` does not return archived credits
+- [ ] PATCH routes on archived records fail gracefully (no update performed)
+
+### QuickBooks Settings Page
+- [ ] `/settings/quickbooks` renders without errors
+- [ ] Shows "not enabled" warning when quickbooks_integration feature flag is off
+- [ ] Connect button disabled when feature not enabled
+- [ ] Connect button triggers fetch to `/api/v2/integrations/quickbooks/connect`
+- [ ] Connected state shows company name, connection date, last sync
+- [ ] Sync Now button triggers POST to sync endpoint
+- [ ] Disconnect button shows confirmation before disconnecting
+- [ ] Sync settings card shows entity types with direction badges
+- [ ] Account mapping card shows cost code → QB account mappings
+- [ ] QuickBooks appears in Settings sidebar navigation
+
+### Error Handling Fixes
+- [ ] PATCH `/api/v2/approval-chains/[id]` returns 500 if re-fetch fails
+- [ ] POST `/api/v2/vendor-portal/messages/[id]/read` returns 500 if re-fetch fails
+- [ ] PATCH `/api/v2/invoices/[id]/approvals/[approvalId]` returns 500 if pending steps query fails (not auto-approve)
+
 ## Session 65 — Invoice Refactoring & Polish (2026-03-11)
 
 ### Invoice Detail Page Refactoring

@@ -1,5 +1,43 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 66 — Soft-Delete Audit & API Hardening (2026-03-11)
+
+### New: `settings/quickbooks/page.tsx`
+Full QuickBooks integration settings page with:
+- Connection status card (not connected / connected / error states)
+- Feature flag check with warning banner when QB not enabled
+- Connect/disconnect/sync-now buttons
+- Sync settings card showing entity sync configuration (vendors, clients, bills, draws, chart of accounts, jobs)
+- Account mapping card (cost code category → QB account)
+- All API calls gracefully handle missing endpoints (QB backend not yet built)
+
+### Updated: SettingsSidebar
+Added QuickBooks nav item with Link2 icon, removed unused Sparkles import.
+
+### Fixed: 139 v2 API routes — missing `.is('deleted_at', null)`
+Routes across these domains now properly filter out archived records:
+- contracts (clauses, templates, signer actions)
+- CRM (pipelines, stages, sources)
+- inventory (locations, stock, transactions)
+- GL (accounts, journal entries)
+- HR (certifications, departments, documents, positions)
+- safety (toolbox talks, attendees)
+- training (certifications, paths, progress)
+- marketing (campaigns, reviews)
+- portal (documents, messages, photos, settings)
+- notifications (preferences, settings, unread count)
+- billing (subscriptions, addons, plans)
+- and 50+ more
+
+### Fixed: `approval-chains/[id]/route.ts` PATCH
+Re-fetch query after update now checks for database error.
+
+### Fixed: `vendor-portal/messages/[id]/read/route.ts`
+Re-fetch of already-read message now checks for database error.
+
+### Fixed: `invoices/[id]/approvals/[approvalId]/route.ts`
+Pending steps query error was treated as "all steps approved" (null → allApproved=true). Now properly returns 500 on error.
+
 ## Session 64d — Module 14 & 15 Enhancements (2026-03-11)
 
 ### New: `api/v2/lien-waivers/[id]/reject/route.ts`
