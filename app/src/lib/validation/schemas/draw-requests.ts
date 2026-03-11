@@ -92,3 +92,9 @@ export const submitDrawRequestSchema = z.object({
 export const approveDrawRequestSchema = z.object({
   notes: z.string().trim().max(5000).optional(),
 })
+
+// ── Reject Draw Request ───────────────────────────────────────────────────
+
+export const rejectDrawRequestSchema = z.object({
+  reason: z.string().trim().max(5000).optional(),
+})

@@ -1,5 +1,22 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 64d — Module 14 & 15 Enhancements (2026-03-11)
+
+### New: `api/v2/lien-waivers/[id]/reject/route.ts`
+POST endpoint to reject a lien waiver. Accepts `{ reason?: string }`. Only allows rejection of waivers with status 'received', 'pending', or 'sent'. Updates status to 'rejected' and appends reason to notes.
+
+### New: `api/v2/draw-requests/[id]/reject/route.ts`
+POST endpoint to reject a draw request. Accepts `{ reason?: string }`. Only allows rejection of draws with status 'pending_review'.
+
+### Updated: Lien waiver pages
+- Detail page: added reject button, vendor name display
+- Create page: added vendor selector dropdown using `useVendors` hook
+- List page: added vendor name column
+- New: job-scoped detail page at `jobs/[id]/lien-waivers/[waiverId]/page.tsx` (read-only)
+
+### Updated: Draw request detail page
+Added submit/approve/reject workflow buttons with proper status gating.
+
 ## Session 64c — Error Handling Gaps (2026-03-11)
 
 ### Fixed: `api/v2/invoices/batch-approve/route.ts`

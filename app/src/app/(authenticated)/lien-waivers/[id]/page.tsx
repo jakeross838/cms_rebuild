@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
-import { useLienWaiver, useUpdateLienWaiver, useDeleteLienWaiver } from '@/hooks/use-lien-waivers'
+import { useLienWaiver, useUpdateLienWaiver, useDeleteLienWaiver, useRejectLienWaiver } from '@/hooks/use-lien-waivers'
+import { useVendors } from '@/hooks/use-vendors'
 import { formatCurrency, formatDate, formatStatus, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -25,6 +26,7 @@ const WAIVER_TYPES = [
 
 interface LienWaiverData {
   id: string
+  vendor_id: string | null
   claimant_name: string | null
   waiver_type: string | null
   status: string | null
@@ -47,15 +49,23 @@ export default function LienWaiverDetailPage() {
   const { data: response, isLoading: loading, error: fetchError } = useLienWaiver(entityId)
   const updateWaiver = useUpdateLienWaiver(entityId)
   const deleteWaiver = useDeleteLienWaiver()
+  const rejectWaiver = useRejectLienWaiver(entityId)
   const waiver = (response as { data: LienWaiverData } | undefined)?.data ?? null
+
+  const { data: vendorsResponse, isLoading: vendorsLoading, isError: vendorsError } = useVendors({ limit: 500 })
+  const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
+  const vendorName = waiver?.vendor_id ? vendors.find((v) => v.id === waiver.vendor_id)?.name ?? null : null
 
   const [editing, setEditing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [showRejectDialog, setShowRejectDialog] = useState(false)
+  const [rejectReason, setRejectReason] = useState('')
 
   const [formData, setFormData] = useState({
     claimant_name: '',
+    vendor_id: '',
     waiver_type: 'conditional_progress',
     amount: '',
     through_date: '',
@@ -67,6 +77,7 @@ export default function LienWaiverDetailPage() {
     if (waiver) {
       setFormData({
         claimant_name: waiver.claimant_name || '',
+        vendor_id: waiver.vendor_id || '',
         waiver_type: waiver.waiver_type || 'conditional_progress',
         amount: waiver.amount != null ? String(waiver.amount) : '',
         through_date: waiver.through_date || '',
@@ -88,6 +99,7 @@ export default function LienWaiverDetailPage() {
     try {
       await updateWaiver.mutateAsync({
         claimant_name: formData.claimant_name || null,
+        vendor_id: formData.vendor_id || null,
         waiver_type: formData.waiver_type || undefined,
         amount: formData.amount ? parseFloat(formData.amount) : null,
         through_date: formData.through_date || null,
@@ -115,6 +127,20 @@ export default function LienWaiverDetailPage() {
       setError(errorMessage)
       toast.error(errorMessage)
       setArchiving(false)
+    }
+  }
+
+  const canReject = waiver && ['received', 'pending', 'sent'].includes(waiver.status || '')
+
+  const handleReject = async () => {
+    try {
+      await rejectWaiver.mutateAsync({ reason: rejectReason || undefined })
+      toast.success('Lien waiver rejected')
+      setShowRejectDialog(false)
+      setRejectReason('')
+    } catch (err) {
+      const errorMessage = (err as Error)?.message || 'Failed to reject'
+      toast.error(errorMessage)
     }
   }
 
@@ -155,7 +181,7 @@ export default function LienWaiverDetailPage() {
               <Button onClick={() => setEditing(true)} variant="outline">Edit</Button>
             ) : (
               <>
-                <Button onClick={() => { setEditing(false); setError(null); if (waiver) { setFormData({ claimant_name: waiver.claimant_name || '', waiver_type: waiver.waiver_type || 'conditional_progress', amount: waiver.amount != null ? String(waiver.amount) : '', through_date: waiver.through_date || '', check_number: waiver.check_number || '', notes: waiver.notes || '' }) } }} variant="outline">Cancel</Button>
+                <Button onClick={() => { setEditing(false); setError(null); if (waiver) { setFormData({ claimant_name: waiver.claimant_name || '', vendor_id: waiver.vendor_id || '', waiver_type: waiver.waiver_type || 'conditional_progress', amount: waiver.amount != null ? String(waiver.amount) : '', through_date: waiver.through_date || '', check_number: waiver.check_number || '', notes: waiver.notes || '' }) } }} variant="outline">Cancel</Button>
                 <Button onClick={handleSave} disabled={updateWaiver.isPending}>
                   {updateWaiver.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                   Save
@@ -182,6 +208,10 @@ export default function LienWaiverDetailPage() {
                   <div>
                     <dt className="text-muted-foreground">Claimant</dt>
                     <dd className="font-medium text-foreground mt-0.5">{waiver.claimant_name || '-'}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">Vendor</dt>
+                    <dd className="font-medium text-foreground mt-0.5">{vendorsLoading ? 'Loading...' : vendorName || '-'}</dd>
                   </div>
                   <div>
                     <dt className="text-muted-foreground">Waiver Type</dt>
@@ -239,7 +269,12 @@ export default function LienWaiverDetailPage() {
               </Card>
             )}
 
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
+              {canReject && (
+                <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowRejectDialog(true)} disabled={rejectWaiver.isPending}>
+                  {rejectWaiver.isPending ? 'Rejecting...' : 'Reject'}
+                </Button>
+              )}
               <Button variant="outline" className="text-destructive hover:text-destructive" onClick={() => setShowArchiveDialog(true)} disabled={archiving}>
                 {archiving ? 'Archiving...' : 'Archive Lien Waiver'}
               </Button>
@@ -254,9 +289,26 @@ export default function LienWaiverDetailPage() {
                 <CardDescription>Update lien waiver information</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label htmlFor="claimant_name" className="text-sm font-medium">Claimant Name <span className="text-red-500">*</span></label>
-                  <Input id="claimant_name" name="claimant_name" value={formData.claimant_name} onChange={handleChange} required />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="claimant_name" className="text-sm font-medium">Claimant Name <span className="text-red-500">*</span></label>
+                    <Input id="claimant_name" name="claimant_name" value={formData.claimant_name} onChange={handleChange} required />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="vendor_id" className="text-sm font-medium">Vendor</label>
+                    <select
+                      id="vendor_id"
+                      name="vendor_id"
+                      value={formData.vendor_id}
+                      onChange={handleChange}
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    >
+                      <option value="">{vendorsLoading ? 'Loading vendors...' : vendorsError ? 'Failed to load vendors' : 'Select a vendor...'}</option>
+                      {vendors.map((vendor) => (
+                        <option key={vendor.id} value={vendor.id}>{vendor.name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -316,6 +368,27 @@ export default function LienWaiverDetailPage() {
         confirmLabel="Archive"
         onConfirm={handleArchive}
       />
+
+      <ConfirmDialog
+        open={showRejectDialog}
+        onOpenChange={(open) => { setShowRejectDialog(open); if (!open) setRejectReason('') }}
+        title="Reject lien waiver?"
+        description="This will mark the lien waiver as rejected."
+        confirmLabel="Reject"
+        onConfirm={handleReject}
+      >
+        <div className="space-y-1.5 px-1">
+          <label htmlFor="reject-reason" className="text-sm font-medium">Reason (optional)</label>
+          <textarea
+            id="reject-reason"
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            rows={3}
+            placeholder="Why is this waiver being rejected?"
+            className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          />
+        </div>
+      </ConfirmDialog>
     </div>
   )
 }

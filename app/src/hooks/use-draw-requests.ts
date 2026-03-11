@@ -124,6 +124,25 @@ export function useApproveDrawRequest(drawRequestId: string) {
   })
 }
 
+// ── Reject Draw Request ─────────────────────────────────────────────────────
+
+/** Reject a draw request */
+export function useRejectDrawRequest(drawRequestId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data?: { reason?: string }) =>
+      fetchJson(`/api/v2/draw-requests/${drawRequestId}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data ?? {}),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['draw-requests'] })
+      qc.invalidateQueries({ queryKey: ['draw-requests', drawRequestId] })
+    },
+  })
+}
+
 // ── Re-export types ─────────────────────────────────────────────────────────
 
 export type {

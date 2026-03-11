@@ -90,6 +90,25 @@ export function useApproveLienWaiver(waiverId: string) {
   })
 }
 
+// ── Reject a Lien Waiver ────────────────────────────────────────────────────
+
+/** Reject a lien waiver with an optional reason */
+export function useRejectLienWaiver(waiverId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data?: { reason?: string }) =>
+      fetchJson(`/api/v2/lien-waivers/${waiverId}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data ?? {}),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['lien-waivers'] })
+      qc.invalidateQueries({ queryKey: ['lien-waivers', waiverId] })
+    },
+  })
+}
+
 // ── Lien Waiver Templates ───────────────────────────────────────────────────
 
 type TemplateListParams = {

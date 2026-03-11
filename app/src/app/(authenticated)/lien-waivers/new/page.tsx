@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { useCreateLienWaiver } from '@/hooks/use-lien-waivers'
 import { useJobs } from '@/hooks/use-jobs'
+import { useVendors } from '@/hooks/use-vendors'
 import { formatStatus } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -31,10 +32,14 @@ export default function NewLienWaiverPage() {
   const { data: jobsResponse, isLoading: jobsLoading, isError: jobsError } = useJobs({ limit: 500 })
   const jobs = ((jobsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
 
+  const { data: vendorsResponse, isLoading: vendorsLoading, isError: vendorsError } = useVendors({ limit: 500 })
+  const vendors = ((vendorsResponse as { data: { id: string; name: string }[] } | undefined)?.data ?? [])
+
   const [formData, setFormData] = useState({
     claimant_name: '',
     waiver_type: 'conditional_progress',
     job_id: '',
+    vendor_id: '',
     amount: '',
     through_date: '',
     check_number: '',
@@ -56,6 +61,7 @@ export default function NewLienWaiverPage() {
     try {
       await createLienWaiver.mutateAsync({
         job_id: formData.job_id,
+        vendor_id: formData.vendor_id || null,
         claimant_name: formData.claimant_name,
         waiver_type: formData.waiver_type,
         amount: formData.amount ? parseFloat(formData.amount) : null,
@@ -93,9 +99,26 @@ export default function NewLienWaiverPage() {
             <CardDescription>Basic lien waiver information</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="claimant_name" className="text-sm font-medium">Claimant Name <span className="text-red-500">*</span></label>
-              <Input id="claimant_name" name="claimant_name" value={formData.claimant_name} onChange={handleChange} placeholder="e.g., ABC Plumbing Inc." required />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="claimant_name" className="text-sm font-medium">Claimant Name <span className="text-red-500">*</span></label>
+                <Input id="claimant_name" name="claimant_name" value={formData.claimant_name} onChange={handleChange} placeholder="e.g., ABC Plumbing Inc." required />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="vendor_id" className="text-sm font-medium">Vendor</label>
+                <select
+                  id="vendor_id"
+                  name="vendor_id"
+                  value={formData.vendor_id}
+                  onChange={handleChange}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                >
+                  <option value="">{vendorsLoading ? 'Loading vendors...' : vendorsError ? 'Failed to load vendors' : 'Select a vendor...'}</option>
+                  {vendors.map((vendor) => (
+                    <option key={vendor.id} value={vendor.id}>{vendor.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">

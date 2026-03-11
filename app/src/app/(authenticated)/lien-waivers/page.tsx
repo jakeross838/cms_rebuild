@@ -14,6 +14,7 @@ export const metadata: Metadata = { title: 'Lien Waivers' }
 
 interface LienWaiver {
   id: string
+  vendor_id: string | null
   waiver_type: string | null
   status: string | null
   amount: number | null
@@ -43,7 +44,7 @@ export default async function LienWaiversPage({
 
   let query = supabase
     .from('lien_waivers')
-    .select('id, waiver_type, status, amount, claimant_name, through_date, check_number, created_at', { count: 'exact' })
+    .select('id, vendor_id, waiver_type, status, amount, claimant_name, through_date, check_number, created_at', { count: 'exact' })
     .eq('company_id', companyId)
     .is('deleted_at', null)
     .order(sort.column, { ascending: sort.ascending })
@@ -58,6 +59,19 @@ export default async function LienWaiversPage({
   if (error) throw error
   const waivers = (waiversData || []) as LienWaiver[]
   const totalPages = Math.ceil((count || 0) / pageSize)
+
+  // Fetch vendor names for waivers that have a vendor_id
+  const vendorIds = [...new Set(waivers.map((w) => w.vendor_id).filter(Boolean))] as string[]
+  let vendorMap: Record<string, string> = {}
+  if (vendorIds.length > 0) {
+    const { data: vendorsData } = await supabase
+      .from('vendors')
+      .select('id, name')
+      .in('id', vendorIds)
+    if (vendorsData) {
+      vendorMap = Object.fromEntries((vendorsData as { id: string; name: string }[]).map((v) => [v.id, v.name]))
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -124,6 +138,7 @@ export default async function LienWaiversPage({
               <thead>
                 <tr className="border-b border-border bg-muted/50">
                   <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Claimant</th>
+                  <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Vendor</th>
                   <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Type</th>
                   <th scope="col" className="text-right px-4 py-3 font-medium text-muted-foreground">Amount</th>
                   <th scope="col" className="text-left px-4 py-3 font-medium text-muted-foreground">Status</th>
@@ -141,6 +156,9 @@ export default async function LienWaiversPage({
                       >
                         {waiver.claimant_name || 'Unknown'}
                       </Link>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {waiver.vendor_id ? vendorMap[waiver.vendor_id] || '-' : '-'}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {waiver.waiver_type || '-'}

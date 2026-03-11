@@ -1,5 +1,30 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 64d — Module 14 & 15 Enhancements (2026-03-11)
+
+### Lien Waiver Rejection
+- [ ] POST /api/v2/lien-waivers/:id/reject with status 'received' → status becomes 'rejected'
+- [ ] POST /api/v2/lien-waivers/:id/reject with status 'approved' → 400 error
+- [ ] Reject with reason → reason appended to notes
+- [ ] Reject button visible on detail page when status allows
+
+### Lien Waiver Vendor Selector
+- [ ] Create form shows vendor dropdown populated from vendors table
+- [ ] Selecting vendor sets vendor_id on created waiver
+- [ ] Detail page shows vendor name when vendor_id exists
+- [ ] List page shows vendor name column
+
+### Lien Waiver Job Detail Page
+- [ ] Navigate to /jobs/:id/lien-waivers/:waiverId → shows waiver details
+- [ ] Shows claimant name, type, status, amount, through date, notes
+- [ ] Back link returns to job lien waivers list
+
+### Draw Request Workflow
+- [ ] Submit button visible when status is 'draft'
+- [ ] Approve button visible when status is 'pending_review'
+- [ ] Reject button visible when status is 'pending_review'
+- [ ] Reject with reason → status becomes 'rejected'
+
 ## Session 64c — Error Handling (2026-03-11)
 
 ### Batch Approve Error Handling

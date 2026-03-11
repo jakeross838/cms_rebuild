@@ -1,5 +1,27 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-11: Session 64d — Module 14 & 15 Enhancements
+
+### Why
+Module 14 (Lien Waivers) had missing rejection workflow, no vendor selector on forms, and no job-scoped detail page. Module 15 (Draw Requests) already had reject endpoint but needed a Zod schema for the reject input.
+
+### What Changed
+- Created `api/v2/lien-waivers/[id]/reject/route.ts` — reject endpoint with reason
+- Created `api/v2/draw-requests/[id]/reject/route.ts` — reject endpoint (was referencing existing hook)
+- Added `useRejectLienWaiver` hook to `use-lien-waivers.ts`
+- Added `useRejectDrawRequest` hook to `use-draw-requests.ts` (if not already present)
+- Enhanced lien waiver detail page with reject button and vendor display
+- Enhanced lien waiver create page with vendor selector dropdown
+- Enhanced lien waiver list page with vendor name column
+- Created job-scoped lien waiver detail page `jobs/[id]/lien-waivers/[waiverId]/page.tsx`
+- Added reject reason Zod schema to `draw-requests.ts` validation
+- Added submit/approve/reject buttons to draw request detail page
+
+### Decisions
+- Rejection only allowed for waivers with status 'received', 'pending', or 'sent'
+- Draw rejection only allowed for status 'pending_review'
+- Job-scoped detail page is read-only (edit via company-level page)
+
 ## 2026-03-11: Session 64c — Error Handling Gaps
 
 ### Why

@@ -16,6 +16,7 @@ import {
   Save,
   Send,
   Trash2,
+  XCircle,
 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -37,6 +38,7 @@ import {
   useCreateDrawRequestLine,
   useSubmitDrawRequest,
   useApproveDrawRequest,
+  useRejectDrawRequest,
 } from '@/hooks/use-draw-requests'
 import { useCostCodes } from '@/hooks/use-cost-codes'
 import { formatCurrency, formatDate, formatStatus, getStatusColor, cn } from '@/lib/utils'
@@ -112,6 +114,7 @@ export default function DrawRequestDetailPage() {
   const deleteDraw = useDeleteDrawRequest()
   const submitDraw = useSubmitDrawRequest(drawId)
   const approveDraw = useApproveDrawRequest(drawId)
+  const rejectDraw = useRejectDrawRequest(drawId)
   const { data: linesResponse } = useDrawRequestLines(drawId)
   const { data: costCodesResponse } = useCostCodes()
 
@@ -123,6 +126,8 @@ export default function DrawRequestDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [archiving, setArchiving] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [showRejectDialog, setShowRejectDialog] = useState(false)
+  const [rejectReason, setRejectReason] = useState('')
   const [showAddLine, setShowAddLine] = useState(false)
 
   const createLine = useCreateDrawRequestLine(drawId)
@@ -227,6 +232,17 @@ export default function DrawRequestDetailPage() {
       toast.success('Draw request approved')
     } catch (err) {
       toast.error((err as Error)?.message || 'Failed to approve')
+    }
+  }
+
+  const handleReject = async () => {
+    try {
+      await rejectDraw.mutateAsync({ reason: rejectReason || undefined })
+      toast.success('Draw request rejected')
+      setShowRejectDialog(false)
+      setRejectReason('')
+    } catch (err) {
+      toast.error((err as Error)?.message || 'Failed to reject')
     }
   }
 
@@ -335,10 +351,16 @@ export default function DrawRequestDetailPage() {
               </Button>
             )}
             {isPendingReview && (
-              <Button onClick={handleApprove} disabled={approveDraw.isPending} className="bg-emerald-600 hover:bg-emerald-700">
-                {approveDraw.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
-                Approve
-              </Button>
+              <>
+                <Button onClick={() => setShowRejectDialog(true)} variant="outline" className="text-destructive hover:text-destructive" disabled={rejectDraw.isPending}>
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Reject
+                </Button>
+                <Button onClick={handleApprove} disabled={approveDraw.isPending} className="bg-emerald-600 hover:bg-emerald-700">
+                  {approveDraw.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+                  Approve
+                </Button>
+              </>
             )}
             {!editing ? (
               <Button onClick={() => setEditing(true)} variant="outline">
@@ -623,6 +645,33 @@ export default function DrawRequestDetailPage() {
         confirmLabel="Archive"
         onConfirm={handleArchive}
       />
+
+      <ConfirmDialog
+        open={showRejectDialog}
+        onOpenChange={(open) => {
+          setShowRejectDialog(open)
+          if (!open) setRejectReason('')
+        }}
+        title="Reject draw request?"
+        description="This will reject the draw request and move it back to the submitter for revision."
+        confirmLabel="Reject"
+        onConfirm={handleReject}
+        loading={rejectDraw.isPending}
+      >
+        <div className="px-6 pb-2">
+          <div className="space-y-1">
+            <label htmlFor="reject-reason" className="text-sm font-medium">Reason (optional)</label>
+            <textarea
+              id="reject-reason"
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              rows={3}
+              placeholder="Explain why this draw is being rejected..."
+              className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            />
+          </div>
+        </div>
+      </ConfirmDialog>
     </div>
   )
 }
