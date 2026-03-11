@@ -199,7 +199,7 @@ export default async function JobInvoicesPage({
   const offset = (page - 1) * pageSize
   const { companyId, supabase } = await getServerAuth()
 
-  const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).single()
+  const { data: jobCheck } = await supabase.from('jobs').select('id').eq('id', jobId).eq('company_id', companyId).is('deleted_at', null).single()
   if (!jobCheck) notFound()
 
   // Sort configuration

@@ -1,5 +1,12 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 64 — Soft-Delete Consistency Hardening (2026-03-11)
+
+### Updated: All 23 job sub-pages under `src/app/(authenticated)/jobs/[id]/*/page.tsx`
+Each job sub-page queries `supabase.from('jobs').select(...)` to verify job ownership before rendering. All 23 pages now include `.is('deleted_at', null)` in this verification query. This ensures that navigating to any sub-page of a soft-deleted job returns 404 via `notFound()`.
+
+Affected pages: page.tsx, property, reports, invoices, schedule, permits, photos, submittals, inspections, team, time-clock, warranties, lien-waivers, purchase-orders, draws, files, rfis, selections, punch-list, budget, communications, change-orders, daily-logs.
+
 ## Session 63 — Anomaly Detection System (2026-03-11)
 
 ### New Module: `src/lib/invoice/anomaly-detector.ts`

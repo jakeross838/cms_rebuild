@@ -57,6 +57,7 @@ export default async function JobDetailPage({
     .select('*, clients(id, name, email, phone)')
     .eq('id', id)
     .eq('company_id', companyId)
+    .is('deleted_at', null)
     .single()
 
   if (error || !jobData) {

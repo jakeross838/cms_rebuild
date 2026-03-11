@@ -1,15 +1,34 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-11: Session 64 — Soft-Delete Consistency Hardening
+
+### Why
+Foundation hardening audit revealed that 23 job sub-pages queried the `jobs` table to verify job ownership but did not include `.is('deleted_at', null)`, meaning soft-deleted jobs could still render their sub-pages. This is a security/data integrity gap — users should get a 404 for any sub-page of a deleted job.
+
+### What Changed
+- Added `.is('deleted_at', null)` to the jobs verification query in all 23 job sub-pages:
+  - budget, communications, change-orders, daily-logs (Session 63)
+  - page.tsx, property, reports, invoices, schedule, permits, photos
+  - submittals, inspections, team, time-clock, warranties, lien-waivers, purchase-orders
+  - draws, files, rfis, selections, punch-list
+
+### Decisions
+- Only the jobs table query was modified — sub-resource queries (budget_lines, daily_logs, etc.) already had their own `deleted_at` filters
+- No other code changes — minimal blast radius
+
 ## 2026-03-11: Session 63 — Anomaly Detection System
 
 ### Why
 Module 13 gap: anomaly detection UI was listed as a remaining item. The `aiAnomalyDetectionEnabled` setting already existed (default: true) but no detection logic was implemented. Construction invoicing fraud often involves round-number invoices, weekend-dated documents, unusual vendor frequency, or amount outliers — the detector catches these patterns automatically during extraction.
 
 ### What Changed
-- Created `src/lib/invoice/anomaly-detector.ts` — 6-check detector with historical vendor analysis
-- Wired into extraction processor (step 5b after duplicate detection)
-- Added 6 anomaly review flags to `review-flags.tsx`
+- Rewrote `src/lib/invoice/anomaly-detector.ts` — 6-check detector with proper vendor-specific historical analysis (queries vendors table to resolve vendor_id, then queries invoices by vendor_id for accurate averages and frequency)
+- Wired into extraction processor (step 5b after duplicate detection) with typed `AnomalyCheckResult` variable
+- Added `ai_notes` generation — error-severity anomaly flags are written to `_meta.ai_notes` as `[ANOMALY] ...` strings
+- Added 6 anomaly review flags to `review-flags.tsx`, changed `amount_outlier` icon from `TrendingUp` to `AlertTriangle`
+- Updated `transformExtraction()` in extraction detail API route to include `anomaly_check` in response
 - Added anomaly warning card to extraction detail page
+- Added `anomalies` section to metrics API response (total flagged count + breakdown by type)
 - Result stored in `extracted_data._meta.anomaly_check`
 
 ### Decisions

@@ -1,5 +1,33 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 64 — Soft-Delete Consistency (2026-03-11)
+
+### Job Sub-Page Soft-Delete Filter
+- [ ] Navigate to `/jobs/{deleted_job_id}/budget` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/daily-logs` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/change-orders` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/communications` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/schedule` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/photos` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/permits` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/inspections` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/submittals` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/rfis` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/punch-list` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/selections` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/draws` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/files` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/purchase-orders` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/lien-waivers` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/warranties` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/team` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/time-clock` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/property` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/reports` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}/invoices` → 404
+- [ ] Navigate to `/jobs/{deleted_job_id}` (overview) → 404
+- [ ] Non-deleted job sub-pages render normally (no regression)
+
 ## Session 63 — Anomaly Detection (2026-03-11)
 
 ### Anomaly Detector (`src/lib/invoice/anomaly-detector.ts`)
@@ -22,12 +50,27 @@
 - [ ] No card shown when no anomalies detected
 
 ### Review Flags
-- [ ] `amount_outlier` flag renders with TrendingUp icon
+- [ ] `amount_outlier` flag renders with AlertTriangle icon (warning severity)
 - [ ] `unusual_frequency` flag renders with Clock icon
 - [ ] `weekend_date` flag renders with Calendar icon (info severity)
 - [ ] `round_amount` flag renders with DollarSign icon (info severity)
 - [ ] `high_amount` flag renders with AlertTriangle icon (error severity)
 - [ ] `missing_vendor` flag renders with Building2 icon (warning severity)
+
+### Extraction Processor Integration
+- [ ] Anomaly detection runs after duplicate detection when `aiAnomalyDetectionEnabled` is true
+- [ ] Anomaly result stored in `_meta.anomaly_check`
+- [ ] Error-severity flags written to `_meta.ai_notes` as `[ANOMALY] ...` strings
+- [ ] Anomaly detection failure does not block extraction completion
+
+### API Transform (`/api/v2/invoices/extractions/[id]`)
+- [ ] Response includes `anomaly_check` field when present in `_meta`
+- [ ] Returns `null` when no anomaly check data exists
+
+### Metrics Endpoint (`/api/v2/invoices/extractions/metrics`)
+- [ ] Response includes `anomalies.totalFlagged` count
+- [ ] Response includes `anomalies.byType` array with type and count
+- [ ] `byType` sorted by count descending
 
 ## Session 62 — Email Forwarding Setup Page (2026-03-11)
 

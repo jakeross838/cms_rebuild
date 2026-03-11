@@ -45,6 +45,7 @@ export default async function LienWaiversPage({
     .select('id, name')
     .eq('id', id)
     .eq('company_id', companyId)
+    .is('deleted_at', null)
     .single()
 
   if (jobError || !job) {
