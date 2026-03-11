@@ -29,17 +29,21 @@ export default async function DashboardPage() {
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
 
+  const today = now.toISOString().split('T')[0]
+
   // Fetch dashboard stats
   const [
     { count: activeJobs },
     { count: pendingInvoices },
     { count: pendingDraws },
+    { count: overdueInvoices },
     { data: recentJobsData },
     { data: monthlyDrawsData },
   ] = await Promise.all([
     supabase.from('jobs').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId).eq('status', 'active'),
     supabase.from('invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId).in('status', ['pm_pending', 'accountant_pending', 'owner_pending']),
     supabase.from('draw_requests').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId).eq('status', 'pending_approval'),
+    supabase.from('invoices').select('*', { count: 'exact', head: true }).is('deleted_at', null).eq('company_id', companyId).not('status', 'in', '("paid","denied")').lt('due_date', today),
     supabase.from('jobs').select('*, clients(name)').is('deleted_at', null).eq('company_id', companyId).order('updated_at', { ascending: false }).limit(5),
     supabase.from('draw_requests').select('current_due').is('deleted_at', null).eq('company_id', companyId).in('status', ['approved', 'funded']).gte('approved_at', monthStart),
   ])
@@ -217,7 +221,25 @@ export default async function DashboardPage() {
                 </Link>
               )}
 
-              {(pendingInvoices || 0) === 0 && (pendingDraws || 0) === 0 && (
+              {(overdueInvoices || 0) > 0 && (
+                <Link
+                  href="/invoices?status=overdue"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-red-50/50 hover:bg-red-50 transition-colors border border-red-100"
+                >
+                  <div className="p-2 rounded-lg bg-red-100">
+                    <AlertCircle className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-red-900">
+                      {overdueInvoices} overdue invoice{overdueInvoices !== 1 ? 's' : ''}
+                    </div>
+                    <div className="text-sm text-red-700">Past due date — follow up</div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-red-600" />
+                </Link>
+              )}
+
+              {(pendingInvoices || 0) === 0 && (pendingDraws || 0) === 0 && (overdueInvoices || 0) === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
                   <TrendingUp className="h-12 w-12 mx-auto mb-3 text-green-300" />
                   <p className="text-green-600 font-medium">All caught up!</p>
