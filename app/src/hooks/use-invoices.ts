@@ -799,3 +799,36 @@ export function useChangeInvoiceStatus(invoiceId: string) {
   })
 }
 
+// ── Batch Extraction Review ─────────────────────────────────────────────────
+
+export function useBatchConfirmExtractions() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { extraction_ids: string[]; force?: boolean }) =>
+      fetchJson('/api/v2/invoices/extractions/batch/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['extractions'] })
+      qc.invalidateQueries({ queryKey: ['invoices'] })
+    },
+  })
+}
+
+export function useBatchRejectExtractions() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { extraction_ids: string[]; reason?: string }) =>
+      fetchJson('/api/v2/invoices/extractions/batch/reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['extractions'] })
+    },
+  })
+}
+

@@ -26,6 +26,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { MatchExplanationTooltip } from '@/components/invoices/match-explanation-tooltip'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
 import {
@@ -897,9 +898,18 @@ function ReviewPanel({
                   {extraction.vendor_name || <span className="text-muted-foreground italic">Not found</span>}
                 </p>
                 {extraction.vendor_match?.confidence != null && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-0.5 inline-flex items-center gap-1">
                     Match: {Math.round(extraction.vendor_match.confidence * 100)}%
-                    {extraction.vendor_match.matched_vendor_name && ` → ${extraction.vendor_match.matched_vendor_name}`}
+                    {extraction.vendor_match.matched_vendor_name && ` \u2192 ${extraction.vendor_match.matched_vendor_name}`}
+                    {extraction.vendor_match.matched_vendor_name && (
+                      <MatchExplanationTooltip
+                        type="vendor"
+                        confidence={extraction.vendor_match.confidence}
+                        extractedText={extraction.vendor_name || 'Unknown'}
+                        matchedText={extraction.vendor_match.matched_vendor_name}
+                        autoAssigned={extraction.vendor_match.auto_assigned}
+                      />
+                    )}
                   </p>
                 )}
               </div>
@@ -1017,10 +1027,19 @@ function ReviewPanel({
                   {extraction.cost_code_label || <span className="text-muted-foreground italic">Not found</span>}
                 </p>
                 {extraction.cost_code_match?.invoice_level?.confidence != null && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="text-xs text-muted-foreground mt-0.5 inline-flex items-center gap-1">
                     Match: {Math.round(extraction.cost_code_match.invoice_level.confidence * 100)}%
                     {extraction.cost_code_match.invoice_level.matched_cost_code &&
-                      ` → ${extraction.cost_code_match.invoice_level.matched_cost_code}`}
+                      ` \u2192 ${extraction.cost_code_match.invoice_level.matched_cost_code}`}
+                    {extraction.cost_code_match.invoice_level.matched_cost_code && (
+                      <MatchExplanationTooltip
+                        type="cost_code"
+                        confidence={extraction.cost_code_match.invoice_level.confidence}
+                        extractedText={extraction.cost_code_label || 'Unknown'}
+                        matchedText={extraction.cost_code_match.invoice_level.matched_cost_code}
+                        autoAssigned={extraction.cost_code_match.invoice_level.auto_assigned}
+                      />
+                    )}
                   </p>
                 )}
               </div>

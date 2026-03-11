@@ -1,5 +1,137 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 63 — Anomaly Detection System (2026-03-11)
+
+### New Module: `src/lib/invoice/anomaly-detector.ts`
+Detects anomalies in extracted invoice data. Checks:
+1. Missing vendor (warning) — no vendor name extracted
+2. Weekend date (warning) — invoice dated Saturday/Sunday
+3. Round amount (warning) — amount is exact multiple of $1,000
+4. High amount (error) — amount exceeds $50,000 threshold
+5. Amount outlier vs vendor average (warning) — amount > 2x vendor's 90-day average
+6. Unusual frequency (warning) — >3 invoices from same vendor in 7 days
+
+Returns `AnomalyCheckResult` with `has_anomalies`, `risk_level` (low/medium/high), and `flags` array.
+Historical checks query vendors + invoices tables; gracefully skip on DB errors.
+
+### Wired into: `src/lib/invoice/extraction-processor.ts`
+Added step 5b after duplicate detection. Calls `detectAnomalies()` when `settings.aiAnomalyDetectionEnabled` is true. Stores result in `extracted_data._meta.anomaly_check`. Error-severity anomaly flags are appended to `_meta.ai_notes` as `[ANOMALY] ...` strings. Errors caught silently — extraction continues without anomaly data.
+
+### Updated: `src/components/invoices/review-flags.tsx`
+Added 6 new flags: `amount_outlier` (AlertTriangle icon, warning), `unusual_frequency` (Clock), `weekend_date` (Calendar, info severity), `round_amount` (DollarSign, info), `high_amount` (AlertTriangle, error), `missing_vendor` (Building2, warning). Removed unused `TrendingUp` import.
+
+### Updated: `src/app/api/v2/invoices/extractions/[id]/route.ts`
+Added `anomalyCheckMeta` extraction from `_meta.anomaly_check` in `transformExtraction()`. Maps `has_anomalies`, `risk_level`, and `flags` array to the frontend response shape.
+
+### Updated: `src/app/(authenticated)/invoices/extractions/[id]/page.tsx`
+Added `AnomalyCheckMeta` interface and `anomaly_check` to `ExtractionRecord`. Renders anomaly warning card after duplicate warning section — shows risk level badge, lists each flag with severity-colored dots and messages. Red styling for high risk, amber for medium/low.
+
+### Updated: `src/app/api/v2/invoices/extractions/metrics/route.ts`
+Added `anomalies` section to metrics response. Counts total extractions with anomalies flagged (`_meta.anomaly_check.has_anomalies = true`) and provides breakdown by anomaly type (`byType` array sorted by count descending).
+
+## Session 62 — Email Forwarding Setup Page for AI Invoice Processing (2026-03-11)
+
+### New Page: `src/app/(authenticated)/invoices/extractions/email-setup/page.tsx`
+Server component page for configuring email-based invoice forwarding. Uses `getServerAuth` for company ID, `createServiceClient` for querying extractions.
+
+**Header**: "Email Forwarding Setup" with Mail icon, back arrow to `/invoices/extractions`, "Back to Queue" button.
+
+**Email Address Card**: Displays company-specific forwarding address `invoices-{companyId.slice(0,8)}@inbox.rossos.com` in monospace code block with accent background. Includes `CopyEmailButton` client component and explanatory note.
+
+**Setup Instructions Card**: Numbered 4-step guide (copy address, create forwarding rule, forward invoices, check extraction queue). Uses primary-colored numbered circles.
+
+**Supported Formats Card**: Lists PDF, PNG/JPG, TIFF with icons and descriptions. Amber info box with 25MB limit note.
+
+**Recent Email-Forwarded Card**: Queries `invoice_extractions` for rows where `extracted_data._meta.source_type = 'email'`, shows up to 10 in a table (document name, vendor, status badge, confidence %, received date). Each row links to extraction detail page. Empty state with Mail icon and prompt to forward first invoice.
+
+### New Component: `src/components/invoices/copy-email-button.tsx`
+Client component (`'use client'`). Props: `email: string`. Copies email to clipboard via `navigator.clipboard.writeText`. Shows Check icon + "Copied!" for 2 seconds after click, then reverts to Copy icon + "Copy". Uses `Button variant="outline" size="sm"`.
+
+### Updated: Extractions List Page `src/app/(authenticated)/invoices/extractions/page.tsx`
+- Added `Mail` to lucide-react imports
+- Added "Email Setup" button (outline, sm) linking to `/invoices/extractions/email-setup` in header actions area, before Metrics button
+- Header now has 3 action buttons: Email Setup, Metrics, Upload Invoices
+
+## Session 61 — Batch Review Mode for AI Extractions (2026-03-11)
+
+### New API: `POST /api/v2/invoices/extractions/batch/confirm`
+Route file: `src/app/api/v2/invoices/extractions/batch/confirm/route.ts`
+- Accepts `{ extraction_ids: string[], force?: boolean }` (max 50 IDs, Zod validated)
+- Uses `createApiHandler` with auth, rate limiting, schema validation, audit logging
+- For each extraction: verifies company ownership, checks actionable status (completed+unreviewed or needs_review)
+- Runs duplicate detection per extraction; skips duplicates unless `force=true`
+- Creates invoice from extracted_data (same fields as single confirm: invoice_number, amount, tax, dates, vendor, cost code, AI confidence, line items)
+- Updates extraction record: sets reviewed_by, reviewed_at, matched_bill_id
+- Returns `{ confirmed, skipped, errors, results: [{ extraction_id, status, invoice_id?, error? }] }`
+- Required roles: owner, admin, pm, office
+
+### New API: `POST /api/v2/invoices/extractions/batch/reject`
+Route file: `src/app/api/v2/invoices/extractions/batch/reject/route.ts`
+- Accepts `{ extraction_ids: string[], reason?: string }` (max 50 IDs, Zod validated)
+- For each extraction: verifies company ownership, checks actionable status
+- Sets status to 'failed', error_message to reason, reviewed_by and reviewed_at
+- Returns `{ rejected, errors, results: [{ extraction_id, status, error? }] }`
+- Required roles: owner, admin, pm, office
+
+### New Hooks: `useBatchConfirmExtractions` and `useBatchRejectExtractions`
+Added to `src/hooks/use-invoices.ts`
+- `useBatchConfirmExtractions()`: POST to batch/confirm, invalidates extractions + invoices queries
+- `useBatchRejectExtractions()`: POST to batch/reject, invalidates extractions queries
+- Both use `fetchJson` for type-safe error handling
+
+### New Component: `src/components/invoices/extraction-batch-actions.tsx`
+Client component that renders the extraction table with batch selection capabilities:
+- Checkbox on each actionable row (status = extracted or review); non-actionable rows have no checkbox
+- "Select All" checkbox in table header — toggles all actionable items on current page
+- Selection state via `useState<Set<string>>`
+- Selected rows highlighted with `bg-emerald-50/50`
+- Sticky batch action bar appears when items are selected:
+  - "{n} selected" count
+  - "Confirm All" button (emerald, CheckCircle2 icon) — calls `useBatchConfirmExtractions`
+  - "Reject All" button (red outline, XCircle icon) — toggles inline reject reason input
+  - "Clear" button (X icon) to deselect all
+- Reject mode: shows Input for optional reason, "Reject {n}" button, "Cancel" button
+- Loading spinners on buttons during mutations
+- Success/error toasts via sonner after batch operations
+- Calls `router.refresh()` after mutation to re-fetch server data
+- Each row links to `/invoices/extractions/[id]` for individual cells (Document, Vendor, Amount, Date, Status, Confidence)
+- Table grid: `[40px_1fr_150px_120px_100px_100px_80px]` (added checkbox column)
+
+### Updated: Extractions List Page `src/app/(authenticated)/invoices/extractions/page.tsx`
+- Replaced inline table rendering with `<ExtractionBatchActions extractions={extractions} />` client component
+- Server page still handles: data fetching, stats cards, filter tabs, pagination
+- Removed unused imports: FileText, Building2, AlertTriangle, formatCurrency, formatDate
+- Removed unused server-side helpers: STATUS_CONFIG, mapDbStatus, getConfidenceColor, getConfidenceBg, StatusKey type
+- Added import for `ExtractionBatchActions`
+
+### Updated: `src/app/providers.tsx`
+- Added `Toaster` from sonner (positioned bottom-right, richColors enabled)
+- Required for toast notifications across the app (first time mounting sonner's Toaster)
+
+## Session 60 — "Why This Suggestion?" Tooltips for AI Match Explanations (2026-03-11)
+
+### New Component: `src/components/invoices/match-explanation-tooltip.tsx`
+Shared tooltip component explaining AI vendor/cost code match reasoning. Props: `type` (vendor | cost_code), `confidence`, `extractedText`, `matchedText`, `autoAssigned`.
+- Renders a small `Info` icon (lucide) as tooltip trigger
+- Tooltip content explains: match method (name similarity for vendor, code/description similarity for cost code), extracted text, matched text, confidence percentage
+- Lists strategies used: vendor = exact match, containment, Levenshtein, Jaccard; cost code = exact match, containment, Levenshtein, Jaccard, token-fuzzy
+- Shows "Auto-assigned (above threshold)" or "Manual review recommended" based on `autoAssigned` prop
+- Uses existing `Tooltip`/`TooltipTrigger`/`TooltipContent` from `@/components/ui/tooltip`
+- Styled with `text-xs`, `max-w-xs`, popover colors, border
+
+### Extraction Detail Page — `src/app/(authenticated)/invoices/extractions/[id]/page.tsx`
+- Vendor match confidence display now includes `MatchExplanationTooltip` info icon next to the "X% match" text
+- Only shown when `matched_vendor_name` is available (i.e., a match was actually found)
+- Cost code match confidence display now includes `MatchExplanationTooltip` info icon next to the "X% match" text
+- Only shown when `matched_cost_code` is available
+- Confidence text span changed to `inline-flex items-center gap-1` to align the icon with text
+
+### Upload Page — `src/app/(authenticated)/invoices/upload/page.tsx`
+- Vendor match line ("Match: X% -> VendorName") now includes `MatchExplanationTooltip` info icon
+- Cost code match line ("Match: X% -> CodeName") now includes `MatchExplanationTooltip` info icon
+- Both only shown when matched name/code is available
+- Match text containers changed to `inline-flex items-center gap-1` for proper icon alignment
+
 ## Session 59 — Draw Request & Purchase Order List/Detail Enhancements (2026-03-10)
 
 ### Invoice List — Click-to-Modal with Split-Screen PDF + Details

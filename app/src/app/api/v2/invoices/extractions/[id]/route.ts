@@ -21,6 +21,7 @@ function transformExtraction(row: Record<string, unknown>) {
   const vendorMatchMeta = (meta.vendor_match ?? null) as Record<string, unknown> | null
   const costCodeMatchMeta = (meta.cost_code_match ?? null) as Record<string, unknown> | null
   const duplicateCheckMeta = (meta.duplicate_check ?? null) as Record<string, unknown> | null
+  const anomalyCheckMeta = (meta.anomaly_check ?? null) as Record<string, unknown> | null
 
   let status = row.status as string
   if (status === 'completed' && row.reviewed_by) status = 'confirmed'
@@ -81,6 +82,11 @@ function transformExtraction(row: Record<string, unknown>) {
       duplicate_invoice_number: duplicateCheckMeta.duplicate_invoice_number ?? null,
       duplicate_amount: duplicateCheckMeta.duplicate_amount ?? null,
       reason: duplicateCheckMeta.reason ?? null,
+    } : null,
+    anomaly_check: anomalyCheckMeta ? {
+      has_anomalies: anomalyCheckMeta.has_anomalies ?? false,
+      risk_level: (anomalyCheckMeta.risk_level as string) ?? 'low',
+      flags: Array.isArray(anomalyCheckMeta.flags) ? anomalyCheckMeta.flags : [],
     } : null,
     error_message: (row.error_message as string) ?? null,
     created_at: row.created_at,

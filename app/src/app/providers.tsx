@@ -1,7 +1,7 @@
 'use client'
 
 import { QueryClient, QueryClientProvider, isServer } from '@tanstack/react-query'
-
+import { Toaster } from 'sonner'
 
 import { SideDrawerProvider } from '@/contexts/side-drawer-context'
 import { AuthProvider } from '@/lib/auth/auth-context'
@@ -62,6 +62,7 @@ export default function Providers({
       >
         <SideDrawerProvider>
           {children}
+          <Toaster position="bottom-right" richColors />
         </SideDrawerProvider>
       </AuthProvider>
     </QueryClientProvider>

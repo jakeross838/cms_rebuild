@@ -1,5 +1,84 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-11: Session 63 — Anomaly Detection System
+
+### Why
+Module 13 gap: anomaly detection UI was listed as a remaining item. The `aiAnomalyDetectionEnabled` setting already existed (default: true) but no detection logic was implemented. Construction invoicing fraud often involves round-number invoices, weekend-dated documents, unusual vendor frequency, or amount outliers — the detector catches these patterns automatically during extraction.
+
+### What Changed
+- Created `src/lib/invoice/anomaly-detector.ts` — 6-check detector with historical vendor analysis
+- Wired into extraction processor (step 5b after duplicate detection)
+- Added 6 anomaly review flags to `review-flags.tsx`
+- Added anomaly warning card to extraction detail page
+- Result stored in `extracted_data._meta.anomaly_check`
+
+### Decisions
+- Historical checks only run when vendor name is present (graceful degradation)
+- Used existing vendor matching pattern (normalize name, find vendor_id, query invoices)
+- Absolute $50K threshold is hardcoded constant; vendor average multiplier is 2x
+- Anomaly detection errors are caught silently — extraction continues without anomaly data
+- Risk levels: high (2+ errors or 3+ warnings), medium (1 error or 2 warnings), low (1 warning)
+
+## 2026-03-11: Session 62 — Email Forwarding Setup Page
+
+### Why
+Module 13 gap: email forwarding setup was listed as a remaining gap. Users need a way to discover their company's dedicated forwarding email address and learn how to configure their email client to auto-forward invoices for AI processing. This is a setup/configuration page, not actual email infrastructure (that would require SendGrid/Postmark inbound webhooks).
+
+### What Changed
+- Created email setup page at `src/app/(authenticated)/invoices/extractions/email-setup/page.tsx`
+- Created `CopyEmailButton` client component at `src/components/invoices/copy-email-button.tsx`
+- Added "Email Setup" navigation button to the extractions list page header
+
+### Decisions
+- Page is a server component; only the copy-to-clipboard button is a client component (minimal JS)
+- Company forwarding address uses `companyId.slice(0,8)` for a short, memorable prefix
+- Recent email-forwarded table filters by `_meta.source_type === 'email'` client-side after fetching last 50 extractions (avoids JSONB query complexity)
+- Used Card/CardHeader/CardTitle/CardContent components for consistent styling with other settings pages
+- Supported formats section includes a 25MB limit note in an amber info box
+
+## 2026-03-11: Session 61 — Batch Review Mode for AI Extractions
+
+### Why
+Module 13 gap: users could only confirm or reject extractions one at a time. When processing a large batch of uploaded invoices, this is extremely tedious. Batch review mode allows selecting multiple actionable extractions and confirming or rejecting them in a single operation.
+
+### What Changed
+- Created batch confirm API endpoint (`/api/v2/invoices/extractions/batch/confirm`)
+- Created batch reject API endpoint (`/api/v2/invoices/extractions/batch/reject`)
+- Added `useBatchConfirmExtractions` and `useBatchRejectExtractions` hooks to `use-invoices.ts`
+- Created `ExtractionBatchActions` client component with checkbox selection, batch action bar, and toast notifications
+- Refactored extractions list page: table rendering moved from server page to client component
+- Mounted sonner `<Toaster />` in app providers for global toast support
+
+### Decisions
+- Max 50 IDs per batch request — prevents abuse while covering typical batch sizes
+- Batch confirm reuses the same invoice creation logic as single confirm (extracted_data fields, line items, duplicate detection)
+- Batch confirm does NOT accept per-extraction corrections — corrections require individual review on the detail page
+- Duplicate extractions are skipped (not errored) unless `force=true` — counted separately in results
+- Non-actionable extractions (already confirmed, failed, processing) are skipped/errored, not silently ignored
+- Batch reject accepts a single shared reason string for all selected items
+- Server page remains a server component for data fetching + SEO; only the table with checkboxes is a client component
+- Used native `<input type="checkbox">` with `accent-emerald-600` instead of a shadcn Checkbox component (project has no Checkbox UI component)
+- Selection is per-page only (cleared on navigation) — intentionally simple
+
+## 2026-03-11: Session 60 — "Why This Suggestion?" Tooltips
+
+### Why
+Module 13 gap: AI-matched vendor and cost code displays showed confidence percentages but gave no explanation of how the match was determined. Users had no way to assess whether to trust the AI suggestion or override it. Adding "why this suggestion?" tooltips completes one of the remaining Module 13 gaps.
+
+### What Changed
+- Created `MatchExplanationTooltip` component in `src/components/invoices/match-explanation-tooltip.tsx`
+- Added tooltip to vendor match confidence in extraction detail page (`extractions/[id]/page.tsx`)
+- Added tooltip to cost code match confidence in extraction detail page
+- Added tooltip to vendor match confidence in upload page (`upload/page.tsx`)
+- Added tooltip to cost code match confidence in upload page
+
+### Decisions
+- Tooltip only renders when a matched name/code exists (no tooltip for "no match found" scenarios)
+- Used `Info` icon from lucide-react at 3.5x3.5 size to match UI density
+- Tooltip trigger is a `<button>` with `type="button"` for keyboard accessibility
+- Strategy list is static per type (vendor vs cost_code) since actual strategy breakdown isn't stored in extraction metadata — lists all possible strategies the matcher uses
+- Used existing `Tooltip` primitives from shadcn/radix rather than a custom tooltip
+
 ## 2026-03-10: Session 59 — Draw Request & Purchase Order Enhancements
 
 ### Why

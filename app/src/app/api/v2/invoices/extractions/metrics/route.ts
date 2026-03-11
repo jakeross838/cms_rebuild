@@ -56,6 +56,23 @@ export const GET = createApiHandler(
       }
     }
 
+    // Anomaly stats — count extractions with anomalies flagged
+    let extractionsWithAnomalies = 0
+    const anomalyTypeCounts: Record<string, number> = {}
+
+    for (const ext of all) {
+      const meta = (ext.extracted_data?._meta ?? {}) as Record<string, unknown>
+      const anomalyCheck = meta.anomaly_check as { has_anomalies?: boolean; flags?: Array<{ type: string }> } | undefined
+      if (anomalyCheck?.has_anomalies) {
+        extractionsWithAnomalies++
+        if (anomalyCheck.flags) {
+          for (const flag of anomalyCheck.flags) {
+            anomalyTypeCounts[flag.type] = (anomalyTypeCounts[flag.type] || 0) + 1
+          }
+        }
+      }
+    }
+
     // Confidence distribution
     const confidenceScores = all
       .filter(e => typeof e.confidence_score === 'number')
@@ -140,6 +157,12 @@ export const GET = createApiHandler(
           high: highConfidenceCount,
           medium: mediumConfidenceCount,
           low: lowConfidenceCount,
+        },
+        anomalies: {
+          totalFlagged: extractionsWithAnomalies,
+          byType: Object.entries(anomalyTypeCounts)
+            .sort(([, a], [, b]) => b - a)
+            .map(([type, count]) => ({ type, count })),
         },
         monthlyTrend,
       },

@@ -19,6 +19,7 @@
 import { getCompanySettings } from '@/lib/config'
 import { extractInvoiceData } from '@/lib/invoice/ai-extractor'
 import { matchCostCodes, type KnownCostCode } from '@/lib/invoice/cost-code-matcher'
+import { detectAnomalies, type AnomalyCheckResult } from '@/lib/invoice/anomaly-detector'
 import { checkForDuplicates, buildDuplicateWarningMeta } from '@/lib/invoice/duplicate-detector'
 import { matchVendor, type KnownVendor } from '@/lib/invoice/vendor-matcher'
 import { createLogger } from '@/lib/monitoring'
@@ -140,6 +141,33 @@ export async function processExtraction(input: ExtractionProcessorInput): Promis
     }
 
     // -----------------------------------------------------------------------
+    // 5b. Run anomaly detection (if enabled)
+    // -----------------------------------------------------------------------
+    let anomalyCheck: AnomalyCheckResult | null = null
+    if (settings.aiAnomalyDetectionEnabled) {
+      try {
+        anomalyCheck = await detectAnomalies({
+          vendorName: result.data.vendor_name ?? null,
+          amount: result.data.amount ?? 0,
+          invoiceDate: result.data.invoice_date ?? null,
+          companyId,
+          supabase,
+        })
+      } catch (err) {
+        logger.warn('Anomaly detection failed — continuing without it', { err })
+      }
+    }
+
+    // Build ai_notes from anomaly error-severity flags
+    const aiNotes: string[] = []
+    if (anomalyCheck?.has_anomalies) {
+      const errorFlags = anomalyCheck.flags.filter((f) => f.severity === 'error')
+      for (const flag of errorFlags) {
+        aiNotes.push(`[ANOMALY] ${flag.message}`)
+      }
+    }
+
+    // -----------------------------------------------------------------------
     // 6. Build extracted_data payload and update the DB record
     // -----------------------------------------------------------------------
     const extractedData = {
@@ -198,6 +226,8 @@ export async function processExtraction(input: ExtractionProcessorInput): Promis
           })),
         },
         duplicate_check: duplicateWarning,
+        anomaly_check: anomalyCheck,
+        ai_notes: aiNotes.length > 0 ? aiNotes.join('; ') : null,
         ai_settings: {
           automation_level: settings.aiAutomationLevel,
           high_confidence_threshold: settings.aiHighConfidenceThreshold,

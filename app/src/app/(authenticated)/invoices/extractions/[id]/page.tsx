@@ -24,6 +24,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { MatchExplanationTooltip } from '@/components/invoices/match-explanation-tooltip'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import {
   useExtraction,
@@ -78,6 +79,12 @@ interface DuplicateCheckMeta {
   reason: string | null
 }
 
+interface AnomalyCheckMeta {
+  has_anomalies: boolean
+  risk_level: 'low' | 'medium' | 'high'
+  flags: Array<{ type: string; severity: 'warning' | 'error'; message: string }>
+}
+
 interface ExtractionRecord {
   id: string
   filename: string | null
@@ -100,6 +107,7 @@ interface ExtractionRecord {
   field_confidences: Record<string, number>
   file_url: string | null
   duplicate_check: DuplicateCheckMeta | null
+  anomaly_check: AnomalyCheckMeta | null
   error_message: string | null
   created_at: string
 }
@@ -359,6 +367,47 @@ export default function ExtractionDetailPage() {
         </div>
       )}
 
+      {/* Anomaly detection warnings */}
+      {extraction.anomaly_check?.has_anomalies && (
+        <div className={cn(
+          'rounded-lg border p-4 space-y-2',
+          extraction.anomaly_check.risk_level === 'high'
+            ? 'border-red-300 bg-red-50'
+            : 'border-amber-300 bg-amber-50',
+        )}>
+          <div className="flex items-start gap-2">
+            <AlertTriangle className={cn(
+              'h-5 w-5 mt-0.5 flex-shrink-0',
+              extraction.anomaly_check.risk_level === 'high' ? 'text-red-600' : 'text-amber-600',
+            )} />
+            <div className="flex-1">
+              <p className={cn(
+                'text-sm font-medium',
+                extraction.anomaly_check.risk_level === 'high' ? 'text-red-800' : 'text-amber-800',
+              )}>
+                Anomaly Detection — {extraction.anomaly_check.risk_level === 'high' ? 'High' : extraction.anomaly_check.risk_level === 'medium' ? 'Medium' : 'Low'} Risk
+              </p>
+              <ul className="mt-1 space-y-0.5">
+                {extraction.anomaly_check.flags.map((flag, i) => (
+                  <li key={i} className={cn(
+                    'text-sm flex items-center gap-1.5',
+                    flag.severity === 'error'
+                      ? 'text-red-700'
+                      : 'text-amber-700',
+                  )}>
+                    <span className={cn(
+                      'inline-block h-1.5 w-1.5 rounded-full flex-shrink-0',
+                      flag.severity === 'error' ? 'bg-red-500' : 'bg-amber-500',
+                    )} />
+                    {flag.message}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main content — two-column on desktop */}
       {!isProcessing && (
         <div className="grid lg:grid-cols-2 gap-6">
@@ -443,7 +492,18 @@ export default function ExtractionDetailPage() {
                 <p className="text-sm text-muted-foreground">
                   Extracted: {extraction.vendor_name || 'Not found'}
                   {extraction.vendor_match?.confidence != null && (
-                    <span className="ml-2 text-xs">({Math.round(extraction.vendor_match.confidence * 100)}% match)</span>
+                    <span className="ml-2 text-xs inline-flex items-center gap-1">
+                      ({Math.round(extraction.vendor_match.confidence * 100)}% match)
+                      {extraction.vendor_match.matched_vendor_name && (
+                        <MatchExplanationTooltip
+                          type="vendor"
+                          confidence={extraction.vendor_match.confidence}
+                          extractedText={extraction.vendor_name || 'Unknown'}
+                          matchedText={extraction.vendor_match.matched_vendor_name}
+                          autoAssigned={extraction.vendor_match.auto_assigned}
+                        />
+                      )}
+                    </span>
                   )}
                 </p>
                 <Input
@@ -549,7 +609,18 @@ export default function ExtractionDetailPage() {
                 <p className="text-sm text-muted-foreground">
                   Extracted: {extraction.cost_code_label || 'Not found'}
                   {extraction.cost_code_match?.invoice_level?.confidence != null && (
-                    <span className="ml-2 text-xs">({Math.round(extraction.cost_code_match.invoice_level.confidence * 100)}% match)</span>
+                    <span className="ml-2 text-xs inline-flex items-center gap-1">
+                      ({Math.round(extraction.cost_code_match.invoice_level.confidence * 100)}% match)
+                      {extraction.cost_code_match.invoice_level.matched_cost_code && (
+                        <MatchExplanationTooltip
+                          type="cost_code"
+                          confidence={extraction.cost_code_match.invoice_level.confidence}
+                          extractedText={extraction.cost_code_label || 'Unknown'}
+                          matchedText={extraction.cost_code_match.invoice_level.matched_cost_code}
+                          autoAssigned={extraction.cost_code_match.invoice_level.auto_assigned}
+                        />
+                      )}
+                    </span>
                   )}
                 </p>
                 <Input

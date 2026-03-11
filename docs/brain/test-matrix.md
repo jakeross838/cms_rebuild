@@ -1,5 +1,169 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 63 — Anomaly Detection (2026-03-11)
+
+### Anomaly Detector (`src/lib/invoice/anomaly-detector.ts`)
+- [ ] Missing vendor name → returns `missing_vendor` flag (warning)
+- [ ] Invoice dated Saturday → returns `weekend_date` flag (warning)
+- [ ] Invoice dated Sunday → returns `weekend_date` flag (warning)
+- [ ] Amount $10,000 (round) → returns `round_amount` flag (warning)
+- [ ] Amount $75,000 → returns `amount_outlier` flag (error, exceeds $50K)
+- [ ] Amount 3x vendor average → returns `amount_outlier` flag (warning)
+- [ ] 4+ invoices from vendor in 7 days → returns `unusual_frequency` flag (warning)
+- [ ] No vendor history → skips historical checks gracefully
+- [ ] DB error during historical query → returns only non-historical flags
+- [ ] Risk level: 2 errors → high, 1 error → medium, 2 warnings → medium, 1 warning → low
+
+### Anomaly UI in Extraction Detail Page
+- [ ] Anomaly warning card appears when `anomaly_check.has_anomalies` is true
+- [ ] Card shows risk level (Low/Medium/High)
+- [ ] Each flag listed with severity-colored dot and message
+- [ ] High risk uses red border/background, medium/low uses amber
+- [ ] No card shown when no anomalies detected
+
+### Review Flags
+- [ ] `amount_outlier` flag renders with TrendingUp icon
+- [ ] `unusual_frequency` flag renders with Clock icon
+- [ ] `weekend_date` flag renders with Calendar icon (info severity)
+- [ ] `round_amount` flag renders with DollarSign icon (info severity)
+- [ ] `high_amount` flag renders with AlertTriangle icon (error severity)
+- [ ] `missing_vendor` flag renders with Building2 icon (warning severity)
+
+## Session 62 — Email Forwarding Setup Page (2026-03-11)
+
+### Email Setup Page (`/invoices/extractions/email-setup`)
+- [ ] Page renders with "Email Forwarding Setup" heading and Mail icon
+- [ ] Back arrow navigates to `/invoices/extractions`
+- [ ] "Back to Queue" button navigates to `/invoices/extractions`
+- [ ] Forwarding address card shows `invoices-{first 8 chars of companyId}@inbox.rossos.com`
+- [ ] Forwarding address is displayed in monospace font inside accent-colored box
+- [ ] Setup instructions card shows 4 numbered steps with primary-colored circles
+- [ ] Supported formats card lists PDF, PNG/JPG, TIFF with icons and descriptions
+- [ ] Amber info box shows "Max 25MB per email" limit note
+- [ ] Recent forwarded table shows empty state when no email-sourced extractions exist
+- [ ] Recent forwarded table shows rows when extractions with `_meta.source_type = 'email'` exist
+- [ ] Each row in recent table links to `/invoices/extractions/[id]`
+- [ ] Status badges use correct colors: Ready=blue, Confirmed=emerald, Needs Review=amber, Failed=red
+- [ ] Confidence percentages use correct colors: >=80 emerald, >=60 amber, <60 red
+
+### CopyEmailButton Component
+- [ ] Clicking "Copy" button copies the email address to clipboard
+- [ ] Button shows Check icon + "Copied!" text for 2 seconds after click
+- [ ] Button reverts to Copy icon + "Copy" text after 2 seconds
+- [ ] Button uses outline variant and sm size
+
+### Extractions Page Navigation
+- [ ] "Email Setup" button visible in header actions area
+- [ ] "Email Setup" button has Mail icon
+- [ ] Clicking "Email Setup" navigates to `/invoices/extractions/email-setup`
+- [ ] Button appears before "Metrics" button in the action bar
+
+## Session 61 — Batch Review Mode for AI Extractions (2026-03-11)
+
+### Batch Confirm API (`POST /api/v2/invoices/extractions/batch/confirm`)
+- [ ] Returns 400 if extraction_ids is empty or has > 50 items
+- [ ] Returns 400 if extraction_ids contains non-UUID strings
+- [ ] Returns 401 if unauthenticated
+- [ ] Returns 403 if user role is not owner/admin/pm/office
+- [ ] Confirms actionable extractions (status=completed, unreviewed) and creates invoices
+- [ ] Confirms actionable extractions (status=needs_review) and creates invoices
+- [ ] Skips already-confirmed extractions (completed + reviewed_by set)
+- [ ] Skips failed extractions
+- [ ] Skips processing extractions
+- [ ] Returns extraction_not_found error for non-existent IDs
+- [ ] Returns extraction_not_found error for IDs belonging to another company
+- [ ] Skips duplicate invoices with status='skipped' when force=false
+- [ ] Confirms duplicate invoices when force=true
+- [ ] Creates line items from extracted_data.line_items
+- [ ] Sets reviewed_by, reviewed_at, matched_bill_id on extraction after confirm
+- [ ] Response includes correct confirmed/skipped/errors counts
+- [ ] Response includes per-extraction results with invoice_id for confirmed items
+
+### Batch Reject API (`POST /api/v2/invoices/extractions/batch/reject`)
+- [ ] Returns 400 if extraction_ids is empty or has > 50 items
+- [ ] Returns 401 if unauthenticated
+- [ ] Returns 403 if user role is not owner/admin/pm/office
+- [ ] Rejects actionable extractions — sets status=failed, error_message=reason
+- [ ] Sets reviewed_by and reviewed_at on rejected extractions
+- [ ] Uses "Rejected by user (batch)" as default reason when none provided
+- [ ] Errors for non-actionable extractions (already confirmed/failed/processing)
+- [ ] Response includes correct rejected/errors counts
+
+### Extractions List Page — Batch Selection UI
+- [ ] Checkbox appears on rows with status "Ready" (extracted) or "Needs Review" (review)
+- [ ] No checkbox on rows with status "Processing", "Confirmed", "Failed", "Pending"
+- [ ] "Select All" checkbox in header toggles all actionable items on current page
+- [ ] Clicking individual checkbox toggles that item's selection
+- [ ] Selected rows have emerald highlight background
+- [ ] Batch action bar appears when 1+ items are selected
+- [ ] Batch action bar shows correct selected count
+- [ ] "Confirm All" button is emerald colored with CheckCircle2 icon
+- [ ] "Reject All" button is red outline with XCircle icon
+- [ ] "Clear" button deselects all items and hides batch bar
+
+### Batch Confirm Flow
+- [ ] Clicking "Confirm All" calls batch confirm API with selected IDs
+- [ ] Loading spinner shown on button during mutation
+- [ ] Success toast shows confirmed/skipped/errors breakdown
+- [ ] Error toast shown if mutation throws
+- [ ] Selection cleared after successful confirm
+- [ ] Page data refreshes (router.refresh) after confirm
+
+### Batch Reject Flow
+- [ ] Clicking "Reject All" shows inline reject reason input + "Reject N" button + "Cancel"
+- [ ] Reject reason input is optional (can submit empty)
+- [ ] Clicking "Reject N" calls batch reject API with selected IDs and reason
+- [ ] Loading spinner shown on button during mutation
+- [ ] Success toast shows rejected/errors breakdown
+- [ ] Error toast shown if mutation throws
+- [ ] "Cancel" button hides the reject input without clearing selection
+- [ ] Selection cleared after successful reject
+- [ ] Page data refreshes after reject
+
+### Table Layout
+- [ ] Table has 7 columns: checkbox, document, vendor, amount, date, status, confidence
+- [ ] Each cell (except checkbox) links to `/invoices/extractions/[id]`
+- [ ] Empty state shows "No extractions found" message
+- [ ] Duplicate badge still appears on flagged rows
+
+### Toaster
+- [ ] Toast notifications appear in bottom-right position
+- [ ] Rich colors enabled (green for success, red for error)
+
+## Session 60 — "Why This Suggestion?" Tooltips (2026-03-11)
+
+### Extraction Detail Page — Vendor Match Tooltip
+- [ ] Info icon appears next to vendor "X% match" text when vendor_match has a matched_vendor_name
+- [ ] No info icon when vendor_match is null or has no matched_vendor_name
+- [ ] Hovering info icon shows tooltip with: "Matched using name similarity", extracted text, matched text, confidence percentage
+- [ ] Tooltip lists vendor strategies: exact match, containment, Levenshtein, Jaccard
+- [ ] Tooltip shows "Auto-assigned (above threshold)" when vendor_match.auto_assigned is true
+- [ ] Tooltip shows "Manual review recommended" when vendor_match.auto_assigned is false
+
+### Extraction Detail Page — Cost Code Match Tooltip
+- [ ] Info icon appears next to cost code "X% match" text when cost_code_match.invoice_level has a matched_cost_code
+- [ ] No info icon when cost_code_match is null or invoice_level has no matched_cost_code
+- [ ] Hovering info icon shows tooltip with: "Matched using code/description similarity", extracted text, matched text, confidence percentage
+- [ ] Tooltip lists cost code strategies: exact match, containment, Levenshtein, Jaccard, token-fuzzy
+- [ ] Tooltip shows "Auto-assigned (above threshold)" when auto_assigned is true
+- [ ] Tooltip shows "Manual review recommended" when auto_assigned is false
+
+### Upload Page — Vendor Match Tooltip
+- [ ] Info icon appears next to vendor match line when matched_vendor_name exists
+- [ ] Tooltip content matches extraction detail page behavior
+- [ ] Tooltip does not break the "Match: X% -> VendorName" text layout
+
+### Upload Page — Cost Code Match Tooltip
+- [ ] Info icon appears next to cost code match line when matched_cost_code exists
+- [ ] Tooltip content matches extraction detail page behavior
+- [ ] Tooltip does not break the "Match: X% -> CodeName" text layout
+
+### MatchExplanationTooltip Component
+- [ ] Renders Info icon at h-3.5 w-3.5 size
+- [ ] Button has aria-label "Why this suggestion?" for accessibility
+- [ ] Tooltip appears on hover with max-w-xs constraint
+- [ ] Text uses text-xs sizing to match UI density
+
 ## Session 59 — Draw Request & Purchase Order Enhancements (2026-03-10)
 
 ### Invoice List — Click-to-Modal

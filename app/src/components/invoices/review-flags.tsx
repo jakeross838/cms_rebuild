@@ -4,6 +4,7 @@ import {
   Briefcase,
   Building2,
   Calendar,
+  Clock,
   Copy,
   DollarSign,
   FileWarning,
@@ -91,6 +92,42 @@ export const REVIEW_FLAGS: Record<string, ReviewFlagConfig> = {
     description: 'Purchase order match confidence is low — please verify',
     severity: 'warning',
     icon: FileWarning,
+  },
+  amount_outlier: {
+    label: 'Unusual Amount',
+    description: 'Invoice amount is significantly higher than typical for this vendor',
+    severity: 'warning',
+    icon: AlertTriangle,
+  },
+  unusual_frequency: {
+    label: 'Frequent Invoicing',
+    description: 'Multiple invoices from this vendor in a short period',
+    severity: 'warning',
+    icon: Clock,
+  },
+  weekend_date: {
+    label: 'Weekend Date',
+    description: 'Invoice is dated on a weekend',
+    severity: 'info',
+    icon: Calendar,
+  },
+  round_amount: {
+    label: 'Round Amount',
+    description: 'Invoice amount is a suspiciously round number',
+    severity: 'info',
+    icon: DollarSign,
+  },
+  high_amount: {
+    label: 'High Amount',
+    description: 'Invoice amount exceeds the high-value threshold',
+    severity: 'error',
+    icon: AlertTriangle,
+  },
+  missing_vendor: {
+    label: 'No Vendor',
+    description: 'No vendor name was extracted from the invoice',
+    severity: 'warning',
+    icon: Building2,
   },
 }
 
