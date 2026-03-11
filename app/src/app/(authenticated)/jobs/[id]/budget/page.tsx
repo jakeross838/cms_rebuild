@@ -61,7 +61,7 @@ export default async function BudgetPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    linesQuery = linesQuery.ilike('description', `${safeOrIlike(sp.search)}`)
+    linesQuery = linesQuery.or(`description.ilike.${safeOrIlike(sp.search)}`)
   }
 
   const { data: linesData, count, error } = await linesQuery

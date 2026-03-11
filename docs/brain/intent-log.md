@@ -1,5 +1,19 @@
 # Intent Log — RossOS Construction Intelligence Platform
 
+## 2026-03-11: Session 64b — Search Bug Fix & Dead Code Removal
+
+### Why
+Audit found 17 pages using `.ilike('column', safeOrIlike(search))` which produces literal double-quote characters in PostgREST queries, preventing any search matches. The `safeOrIlike()` utility is designed for `.or()` patterns only. Also found `duplicate-detection.ts` was a redundant older file superseded by `duplicate-detector.ts`.
+
+### What Changed
+- Fixed 17 broken search pages: converted `.ilike('column', safeOrIlike(...))` to `.or('column.ilike.${safeOrIlike(...)}')`
+- Consolidated duplicate detection: moved `generateInvoiceHash` into `duplicate-detector.ts`, removed legacy fallback code from `check-duplicate/route.ts`, updated `register-hash/route.ts` import, deleted `duplicate-detection.ts`
+- Removed ~80 lines of redundant legacy duplicate detection code from `check-duplicate/route.ts`
+
+### Decisions
+- All single-column `.ilike()` calls with `safeOrIlike` converted to `.or()` even though `.or()` with one column is slightly verbose — consistency is more important than saving a few characters
+- Legacy duplicate detection fallback was fully redundant since `checkForDuplicates` already covers both exact and fuzzy matching
+
 ## 2026-03-11: Session 64 — Soft-Delete Consistency Hardening
 
 ### Why

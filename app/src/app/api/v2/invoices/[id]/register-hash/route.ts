@@ -10,7 +10,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
-import { generateInvoiceHash } from '@/lib/invoice/duplicate-detection'
+import { generateInvoiceHash } from '@/lib/invoice/duplicate-detector'
 import { createClient } from '@/lib/supabase/server'
 
 export const POST = createApiHandler(

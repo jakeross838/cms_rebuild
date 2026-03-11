@@ -48,7 +48,7 @@ export default async function ProposalsPage({
   }
 
   if (params.search) {
-    query = query.ilike('name', `${safeOrIlike(params.search)}`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: estimatesData, count, error } = await query

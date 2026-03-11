@@ -14,7 +14,6 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { createApiHandler, mapDbError, type ApiContext } from '@/lib/api/middleware'
 import { checkForDuplicates } from '@/lib/invoice/duplicate-detector'
-import { generateInvoiceHash, isNearDuplicate } from '@/lib/invoice/duplicate-detection'
 import { createClient } from '@/lib/supabase/server'
 
 export const POST = createApiHandler(
@@ -92,85 +91,7 @@ export const POST = createApiHandler(
       })
     }
 
-    // ----- Legacy fallback: check invoice_hashes table for exact match -----
-    const hash = generateInvoiceHash(invoice.vendor_id, invoice.invoice_number, invoice.amount)
-
-    const { data: exactMatch, error: hashError } = await (supabase as any)
-      .from('invoice_hashes')
-      .select('invoice_id, vendor_id, invoice_number, amount')
-      .eq('company_id', ctx.companyId!)
-      .eq('hash', hash)
-      .neq('invoice_id', id)
-      .limit(1)
-      .maybeSingle()
-
-    if (hashError) {
-      // invoice_hashes table may not exist — treat as no match
-      // (table is optional, main detection uses invoices table directly)
-    } else if (exactMatch) {
-      return NextResponse.json({
-        data: {
-          isDuplicate: true,
-          confidence: 0.99,
-          reason: 'Exact match on vendor, invoice number, and amount (hash table)',
-          duplicateOfId: exactMatch.invoice_id,
-          matchType: 'exact_hash',
-        },
-        requestId: ctx.requestId,
-      })
-    }
-
-    // ----- Legacy fallback: near-duplicate via old utility -----
-    const { data: recentInvoices, error: recentError } = await supabase
-      .from('invoices')
-      .select('id, vendor_id, invoice_number, amount')
-      .eq('company_id', ctx.companyId!)
-      .eq('vendor_id', invoice.vendor_id)
-      .neq('id', id)
-      .order('created_at', { ascending: false })
-      .limit(50)
-
-    if (recentError) {
-      const mapped = mapDbError(recentError)
-      return NextResponse.json(
-        { error: mapped.error, message: mapped.message, requestId: ctx.requestId },
-        { status: mapped.status }
-      )
-    }
-
-    const candidate = {
-      vendor_id: invoice.vendor_id,
-      invoice_number: invoice.invoice_number,
-      amount: invoice.amount,
-    }
-
-    for (const existing of recentInvoices ?? []) {
-      if (!existing.invoice_number) continue
-
-      const nearResult = isNearDuplicate(
-        {
-          vendor_id: existing.vendor_id ?? '',
-          invoice_number: existing.invoice_number,
-          amount: existing.amount,
-        },
-        candidate
-      )
-
-      if (nearResult.isDuplicate) {
-        return NextResponse.json({
-          data: {
-            isDuplicate: true,
-            confidence: nearResult.confidence,
-            reason: nearResult.reason,
-            duplicateOfId: existing.id,
-            matchType: 'fuzzy',
-          },
-          requestId: ctx.requestId,
-        })
-      }
-    }
-
-    // 5. No duplicate found
+    // No duplicate found
     return NextResponse.json({
       data: {
         isDuplicate: false,

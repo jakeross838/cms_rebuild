@@ -63,7 +63,7 @@ export default async function FilesPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    docsQuery = docsQuery.ilike('filename', `${safeOrIlike(sp.search)}`)
+    docsQuery = docsQuery.or(`filename.ilike.${safeOrIlike(sp.search)}`)
   }
 
   const { data: docsData, count, error } = await docsQuery

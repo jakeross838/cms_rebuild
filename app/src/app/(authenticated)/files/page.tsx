@@ -49,7 +49,7 @@ export default async function FilesPage({
     .range(offset, offset + pageSize - 1)
 
   if (params.search) {
-    query = query.ilike('filename', `${safeOrIlike(params.search)}`)
+    query = query.or(`filename.ilike.${safeOrIlike(params.search)}`)
   }
   if (params.type) {
     query = query.eq('document_type', params.type)

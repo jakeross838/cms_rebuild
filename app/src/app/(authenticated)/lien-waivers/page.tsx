@@ -49,7 +49,7 @@ export default async function LienWaiversPage({
     .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
-    query = query.ilike('claimant_name', `${safeOrIlike(params.search)}`)
+    query = query.or(`claimant_name.ilike.${safeOrIlike(params.search)}`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

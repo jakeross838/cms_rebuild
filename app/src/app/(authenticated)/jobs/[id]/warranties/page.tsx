@@ -49,7 +49,7 @@ export default async function JobWarrantiesPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    warrantiesQuery = warrantiesQuery.ilike('title', `${safeOrIlike(sp.search)}`)
+    warrantiesQuery = warrantiesQuery.or(`title.ilike.${safeOrIlike(sp.search)}`)
   }
 
   const { data: warrantiesData, count, error: warError } = await warrantiesQuery

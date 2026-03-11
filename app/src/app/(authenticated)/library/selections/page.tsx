@@ -41,7 +41,7 @@ export default async function SelectionsCatalogPage({
     .order('name', { ascending: true })
 
   if (params.search) {
-    query = query.ilike('name', `${safeOrIlike(params.search)}`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)}`)
   }
 
   const [

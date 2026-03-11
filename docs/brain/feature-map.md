@@ -1,5 +1,13 @@
 # Feature Map — RossOS Construction Intelligence Platform
 
+## Session 64b — Search Bug Fix & Dead Code Removal (2026-03-11)
+
+### Fixed: 17 broken search pages
+All pages using `.ilike('column', safeOrIlike(...))` converted to `.or('column.ilike.${safeOrIlike(...)}')`. Affected pages: bids, estimates, files, financial/payables, financial/receivables, library/selections, lien-waivers, permits, photos, proposals, punch-lists, warranties, jobs/[id]/budget, jobs/[id]/files, jobs/[id]/selections, jobs/[id]/team, jobs/[id]/warranties.
+
+### Consolidated: `src/lib/invoice/duplicate-detector.ts`
+Added `generateInvoiceHash(vendorId, invoiceNumber, amount)` function (vendor_id-based hash for confirmed invoices). Deleted `src/lib/invoice/duplicate-detection.ts` (redundant). Removed legacy fallback code (~80 lines) from `check-duplicate/route.ts`. Updated `register-hash/route.ts` import.
+
 ## Session 64 — Soft-Delete Consistency Hardening (2026-03-11)
 
 ### Updated: All 23 job sub-pages under `src/app/(authenticated)/jobs/[id]/*/page.tsx`

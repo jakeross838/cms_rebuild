@@ -40,7 +40,7 @@ export default async function PhotosPage({
     .range(offset, offset + pageSize - 1)
 
   if (params.search) {
-    query = query.ilike('filename', `${safeOrIlike(params.search)}`)
+    query = query.or(`filename.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data, count, error } = await query

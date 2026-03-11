@@ -43,7 +43,7 @@ export default async function PermitsPage({
     .order('created_at', { ascending: false })
 
   if (params.search) {
-    query = query.ilike('permit_number', `${safeOrIlike(params.search)}`)
+    query = query.or(`permit_number.ilike.${safeOrIlike(params.search)}`)
   }
 
   if (params.status) {

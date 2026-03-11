@@ -40,7 +40,7 @@ export default async function PayablesPage({
     .order('due_date', { ascending: true })
 
   if (params.search) {
-    query = query.ilike('bill_number', `${safeOrIlike(params.search)}`)
+    query = query.or(`bill_number.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: billsData, error } = await query

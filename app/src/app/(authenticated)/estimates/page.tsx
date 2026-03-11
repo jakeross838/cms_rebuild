@@ -59,7 +59,7 @@ export default async function EstimatesPage({
   }
 
   if (params.search) {
-    query = query.ilike('name', `${safeOrIlike(params.search)}`)
+    query = query.or(`name.ilike.${safeOrIlike(params.search)}`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

@@ -49,7 +49,7 @@ export default async function JobSelectionsPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    selectionsQuery = selectionsQuery.ilike('room', `${safeOrIlike(sp.search)}`)
+    selectionsQuery = selectionsQuery.or(`room.ilike.${safeOrIlike(sp.search)}`)
   }
 
   const { data: selectionsData, count, error } = await selectionsQuery

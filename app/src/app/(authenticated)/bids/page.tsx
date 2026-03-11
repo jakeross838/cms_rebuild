@@ -51,7 +51,7 @@ export default async function BidsPage({
     .order(sort.column, { ascending: sort.ascending })
 
   if (params.search) {
-    query = query.ilike('title', `${safeOrIlike(params.search)}`)
+    query = query.or(`title.ilike.${safeOrIlike(params.search)}`)
   }
 
   if (params.status) {

@@ -332,6 +332,18 @@ export interface DuplicateWarningMeta {
   reason: string | null
 }
 
+/**
+ * Generate a deterministic hash for the invoice_hashes table.
+ * Uses vendor_id (not vendor_name) since this is called after vendor resolution.
+ * Hash = SHA256(vendor_id | invoice_number_normalized | amount_cents)
+ */
+export function generateInvoiceHash(vendorId: string, invoiceNumber: string, amount: number): string {
+  const normalizedNumber = invoiceNumber.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
+  const amountCents = Math.round(amount * 100)
+  const input = `${vendorId}|${normalizedNumber}|${amountCents}`
+  return crypto.createHash('sha256').update(input).digest('hex')
+}
+
 export function buildDuplicateWarningMeta(result: DuplicateCheckResult): DuplicateWarningMeta {
   if (!result.has_duplicate || !result.match) {
     return {

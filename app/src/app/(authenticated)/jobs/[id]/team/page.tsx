@@ -47,7 +47,7 @@ export default async function JobTeamPage({
     .is('deleted_at', null)
 
   if (sp.search) {
-    rolesQuery = rolesQuery.ilike('role_override', `${safeOrIlike(sp.search)}`)
+    rolesQuery = rolesQuery.or(`role_override.ilike.${safeOrIlike(sp.search)}`)
   }
 
   const { data: rolesData, count, error } = await rolesQuery

@@ -1,5 +1,31 @@
 # Test Matrix — RossOS Construction Intelligence Platform
 
+## Session 64b — Search Bug Fix (2026-03-11)
+
+### Search with safeOrIlike (.or pattern)
+- [ ] Search bids page → returns matching results (was broken)
+- [ ] Search estimates page → returns matching results (was broken)
+- [ ] Search files page → returns matching results (was broken)
+- [ ] Search payables page → returns matching results (was broken)
+- [ ] Search receivables page → returns matching results (was broken)
+- [ ] Search library/selections page → returns matching results (was broken)
+- [ ] Search lien-waivers page → returns matching results (was broken)
+- [ ] Search permits page → returns matching results (was broken)
+- [ ] Search photos page → returns matching results (was broken)
+- [ ] Search proposals page → returns matching results (was broken)
+- [ ] Search punch-lists page → returns matching results (was broken)
+- [ ] Search warranties page → returns matching results (was broken)
+- [ ] Search jobs/budget page → returns matching results (was broken)
+- [ ] Search jobs/files page → returns matching results (was broken)
+- [ ] Search jobs/selections page → returns matching results (was broken)
+- [ ] Search jobs/team page → returns matching results (was broken)
+- [ ] Search jobs/warranties page → returns matching results (was broken)
+
+### Duplicate Detection Consolidation
+- [ ] `check-duplicate` endpoint returns results using `checkForDuplicates` (no legacy fallback)
+- [ ] `register-hash` endpoint imports from `duplicate-detector.ts` successfully
+- [ ] `duplicate-detection.ts` no longer exists (deleted)
+
 ## Session 64 — Soft-Delete Consistency (2026-03-11)
 
 ### Job Sub-Page Soft-Delete Filter

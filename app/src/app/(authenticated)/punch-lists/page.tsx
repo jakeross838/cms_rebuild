@@ -50,7 +50,7 @@ export default async function PunchListsPage({
   }
 
   if (params.search) {
-    query = query.ilike('title', `${safeOrIlike(params.search)}`)
+    query = query.or(`title.ilike.${safeOrIlike(params.search)}`)
   }
 
   query = query.range(offset, offset + pageSize - 1)

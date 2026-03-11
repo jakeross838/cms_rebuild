@@ -48,7 +48,7 @@ export default async function WarrantiesPage({
   }
 
   if (params.search) {
-    query = query.ilike('title', `${safeOrIlike(params.search)}`)
+    query = query.or(`title.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: warrantiesData, count, error } = await query

@@ -40,7 +40,7 @@ export default async function ReceivablesPage({
     .order('due_date', { ascending: true })
 
   if (params.search) {
-    query = query.ilike('invoice_number', `${safeOrIlike(params.search)}`)
+    query = query.or(`invoice_number.ilike.${safeOrIlike(params.search)}`)
   }
 
   const { data: invoicesData, error } = await query
