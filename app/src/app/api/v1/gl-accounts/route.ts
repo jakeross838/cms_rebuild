@@ -99,7 +99,7 @@ export const GET = createApiHandler(
 
     return NextResponse.json(paginatedResponse(accounts ?? [], count ?? 0, page, limit, ctx.requestId))
   },
-  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all' }
+  { requireAuth: true, rateLimit: 'api', permission: 'jobs:read:all', cacheControl: 'private, max-age=60, stale-while-revalidate=300' }
 )
 
 // ============================================================================

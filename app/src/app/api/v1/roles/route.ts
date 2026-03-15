@@ -46,6 +46,7 @@ export const GET = createApiHandler(
   },
   { requireAuth: true, rateLimit: 'api',
     permission: 'roles:read:all',
+    cacheControl: 'private, max-age=60, stale-while-revalidate=300',
   }
 )
 

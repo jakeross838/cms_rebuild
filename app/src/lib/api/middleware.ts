@@ -59,6 +59,9 @@ export interface ApiHandlerOptions {
     /** v2 endpoint path (e.g., '/api/v2/daily-logs') */
     alternative: string
   }
+  /** Cache-Control header for GET success responses. Use for slow-changing reference data.
+   *  Examples: 'private, max-age=60, stale-while-revalidate=300' */
+  cacheControl?: string
 }
 
 type ApiHandler = (
@@ -78,6 +81,7 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
     schema,
     permission,
     deprecated,
+    cacheControl,
   } = options
 
   return async (req: NextRequest): Promise<NextResponse | Response> => {
@@ -331,8 +335,13 @@ export function createApiHandler(handler: ApiHandler, options: ApiHandlerOptions
         if (method !== 'GET' || status >= 400) {
           response.headers.set('Cache-Control', 'no-store')
         } else if (!response.headers.has('Cache-Control')) {
-          // GET success — private, short TTL (API data is user-specific)
-          response.headers.set('Cache-Control', 'private, no-cache, max-age=0, must-revalidate')
+          if (cacheControl) {
+            // Per-route cache policy for slow-changing reference data
+            response.headers.set('Cache-Control', cacheControl)
+          } else {
+            // GET success — private, short TTL (API data is user-specific)
+            response.headers.set('Cache-Control', 'private, no-cache, max-age=0, must-revalidate')
+          }
         }
       }
 

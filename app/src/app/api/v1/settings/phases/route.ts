@@ -60,6 +60,7 @@ async function handleGet(_req: NextRequest, ctx: ApiContext) {
 }
 
 export const GET = createApiHandler(handleGet, { requireAuth: true, rateLimit: 'api',
+  cacheControl: 'private, max-age=60, stale-while-revalidate=300',
 })
 
 // ============================================================================
