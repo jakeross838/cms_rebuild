@@ -24,6 +24,10 @@ const SECURITY_HEADERS: Record<string, string> = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(self)',
   'X-DNS-Prefetch-Control': 'on',
+  'X-Permitted-Cross-Domain-Policies': 'none',
+  'Cross-Origin-Embedder-Policy': 'credentialless',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Resource-Policy': 'same-origin',
 }
 
 export async function proxy(request: NextRequest) {

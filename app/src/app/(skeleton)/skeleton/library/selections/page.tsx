@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { SelectionsCatalogPreview } from '@/components/skeleton/previews/selections-catalog-preview'
 import { cn } from '@/lib/utils'
+const SelectionsCatalogPreview = dynamic(() => import('@/components/skeleton/previews/selections-catalog-preview').then(mod => mod.SelectionsCatalogPreview), { ssr: false })
 
 const workflow = ['Catalog Setup', 'Estimate Creation', 'Client Selection', 'Procurement']
 

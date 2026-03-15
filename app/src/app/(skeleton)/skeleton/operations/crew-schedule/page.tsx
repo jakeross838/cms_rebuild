@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { CrewSchedulePreview } from '@/components/skeleton/previews/crew-schedule-preview'
 import { cn } from '@/lib/utils'
+const CrewSchedulePreview = dynamic(() => import('@/components/skeleton/previews/crew-schedule-preview').then(mod => mod.CrewSchedulePreview), { ssr: false })
 
 const workflow = ['View Assignments', 'Drag to Assign', 'Check Capacity', 'Resolve Conflicts']
 

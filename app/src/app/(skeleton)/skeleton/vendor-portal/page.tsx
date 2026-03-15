@@ -1,9 +1,10 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { VendorPortalPreview } from '@/components/skeleton/previews/vendor-portal-preview'
+const VendorPortalPreview = dynamic(() => import('@/components/skeleton/previews/vendor-portal-preview').then(mod => mod.VendorPortalPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Portal Login', 'Dashboard', 'Active Jobs', 'POs/Invoices', 'Bids', 'Documents'

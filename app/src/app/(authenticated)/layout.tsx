@@ -63,12 +63,45 @@ export default async function AuthenticatedLayout({
       }
     : null
 
-  // SSR prefetch user profile for client-side React Query cache (0C-4)
+  // SSR prefetch for client-side React Query cache
   const queryClient = getQueryClient()
-  await queryClient.prefetchQuery({
-    queryKey: ['user-profile', user.id],
-    queryFn: () => userProfile,
-  })
+
+  // Prefetch user profile, notification count, and company settings in parallel
+  const companyId = profile?.company_id
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ['user-profile', user.id],
+      queryFn: () => userProfile,
+    }),
+    companyId
+      ? queryClient.prefetchQuery({
+          queryKey: ['notifications-unread-count', companyId, user.id],
+          queryFn: async () => {
+            const { count } = await supabase
+              .from('notifications')
+              .select('*', { count: 'exact', head: true })
+              .eq('company_id', companyId)
+              .eq('user_id', user.id)
+              .eq('read', false)
+              .is('deleted_at', null)
+            return count ?? 0
+          },
+        })
+      : Promise.resolve(),
+    companyId
+      ? queryClient.prefetchQuery({
+          queryKey: ['company-settings', companyId],
+          queryFn: async () => {
+            const { data } = await supabase
+              .from('companies')
+              .select('id, name, settings, features')
+              .eq('id', companyId)
+              .single()
+            return data
+          },
+        })
+      : Promise.resolve(),
+  ])
 
   return (
     <Providers

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, memo } from 'react'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -98,7 +98,79 @@ const bottomNav: NavItem[] = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
-export function Sidebar({ user }: SidebarProps) {
+function NavLink({
+  item,
+  pathname,
+  openMenus,
+  onToggleMenu,
+}: {
+  item: NavItem
+  pathname: string
+  openMenus: string[]
+  onToggleMenu: (name: string) => void
+}) {
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
+  const hasChildren = item.children && item.children.length > 0
+  const isOpen = openMenus.includes(item.name)
+  const active = item.href ? isActive(item.href) : false
+
+  if (hasChildren) {
+    return (
+      <div>
+        <button
+          onClick={() => onToggleMenu(item.name)}
+          className={cn(
+            'w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-colors',
+            isOpen ? 'text-foreground' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+          )}
+        >
+          <span className="flex items-center gap-3">
+            <item.icon className={cn('h-5 w-5', isOpen ? 'text-primary' : 'text-muted-foreground')} />
+            {item.name}
+          </span>
+          {isOpen ? (
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          )}
+        </button>
+        {isOpen ? <div className="ml-9 mt-1 space-y-1 border-l border-border/50 pl-2 py-1">
+            {item.children?.map((child) => (
+              <Link
+                key={child.href}
+                href={child.href}
+                className={cn(
+                  'block px-3 py-2 text-sm rounded-md transition-all',
+                  isActive(child.href)
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                )}
+              >
+                {child.name}
+              </Link>
+            ))}
+          </div> : null}
+      </div>
+    )
+  }
+
+  return (
+    <Link
+      href={item.href!}
+      className={cn(
+        'flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all',
+        active
+          ? 'bg-primary/10 text-primary'
+          : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+      )}
+    >
+      <item.icon className={cn('h-5 w-5', active ? 'text-primary' : 'text-muted-foreground')} />
+      {item.name}
+    </Link>
+  )
+}
+
+export const Sidebar = memo(function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname()
   const [openMenus, setOpenMenus] = useState<string[]>(['Financial', 'Field'])
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -117,74 +189,11 @@ export function Sidebar({ user }: SidebarProps) {
 
   const closeMobile = useCallback(() => setMobileOpen(false), [])
 
-  const toggleMenu = (name: string) => {
+  const toggleMenu = useCallback((name: string) => {
     setOpenMenus((prev) =>
       prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
     )
-  }
-
-  const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
-
-  const NavLink = ({ item, depth = 0 }: { item: NavItem; depth?: number }) => {
-    const hasChildren = item.children && item.children.length > 0
-    const isOpen = openMenus.includes(item.name)
-    const active = item.href ? isActive(item.href) : false
-
-    if (hasChildren) {
-      return (
-        <div>
-          <button
-            onClick={() => toggleMenu(item.name)}
-            className={cn(
-              'w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-colors',
-              isOpen ? 'text-foreground' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-            )}
-          >
-            <span className="flex items-center gap-3">
-              <item.icon className={cn('h-5 w-5', isOpen ? 'text-primary' : 'text-muted-foreground')} />
-              {item.name}
-            </span>
-            {isOpen ? (
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            )}
-          </button>
-          {isOpen ? <div className="ml-9 mt-1 space-y-1 border-l border-border/50 pl-2 py-1">
-              {item.children?.map((child) => (
-                <Link
-                  key={child.href}
-                  href={child.href}
-                  className={cn(
-                    'block px-3 py-2 text-sm rounded-md transition-all',
-                    isActive(child.href)
-                      ? 'bg-primary/10 text-primary font-medium'
-                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-                  )}
-                >
-                  {child.name}
-                </Link>
-              ))}
-            </div> : null}
-        </div>
-      )
-    }
-
-    return (
-      <Link
-        href={item.href!}
-        className={cn(
-          'flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all',
-          active
-            ? 'bg-primary/10 text-primary'
-            : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-        )}
-      >
-        <item.icon className={cn('h-5 w-5', active ? 'text-primary' : 'text-muted-foreground')} />
-        {item.name}
-      </Link>
-    )
-  }
+  }, [])
 
   const sidebarContent = (
     <>
@@ -212,14 +221,26 @@ export function Sidebar({ user }: SidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
         {navigation.map((item) => (
-          <NavLink key={item.name} item={item} />
+          <NavLink
+            key={item.name}
+            item={item}
+            pathname={pathname}
+            openMenus={openMenus}
+            onToggleMenu={toggleMenu}
+          />
         ))}
       </nav>
 
       {/* Bottom navigation */}
       <div className="p-3 border-t border-border/40 space-y-1">
         {bottomNav.map((item) => (
-          <NavLink key={item.name} item={item} />
+          <NavLink
+            key={item.name}
+            item={item}
+            pathname={pathname}
+            openMenus={openMenus}
+            onToggleMenu={toggleMenu}
+          />
         ))}
       </div>
 
@@ -267,4 +288,4 @@ export function Sidebar({ user }: SidebarProps) {
       ) : null}
     </>
   )
-}
+})

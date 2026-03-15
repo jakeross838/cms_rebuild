@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { TimeClockPreview } from '@/components/skeleton/previews/time-clock-preview'
 import { cn } from '@/lib/utils'
+const TimeClockPreview = dynamic(() => import('@/components/skeleton/previews/time-clock-preview').then(mod => mod.TimeClockPreview), { ssr: false })
 
 export default function TimeClockSkeleton() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

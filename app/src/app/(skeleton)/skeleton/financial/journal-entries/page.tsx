@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { JournalEntriesPreview } from '@/components/skeleton/previews/journal-entries-preview'
 import { cn } from '@/lib/utils'
+const JournalEntriesPreview = dynamic(() => import('@/components/skeleton/previews/journal-entries-preview').then(mod => mod.JournalEntriesPreview), { ssr: false })
 
 const journalEntriesWorkflow = ['Create Entry', 'Add Line Items', 'Verify Balance', 'Submit for Approval', 'Post to GL']
 

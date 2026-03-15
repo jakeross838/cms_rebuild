@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { TodosPreview } from '@/components/skeleton/previews/todos-preview'
 import { cn } from '@/lib/utils'
+const TodosPreview = dynamic(() => import('@/components/skeleton/previews/todos-preview').then(mod => mod.TodosPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Task Creation', 'Todo Lists', 'Task Board', 'Assignments', 'Notifications', 'Reports'

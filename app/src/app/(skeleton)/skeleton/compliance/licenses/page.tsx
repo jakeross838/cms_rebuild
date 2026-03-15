@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { LicensesPreview } from '@/components/skeleton/previews/licenses-preview'
 import { cn } from '@/lib/utils'
+const LicensesPreview = dynamic(() => import('@/components/skeleton/previews/licenses-preview').then(mod => mod.LicensesPreview), { ssr: false })
 
 export default function LicensesPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

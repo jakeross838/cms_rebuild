@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { SustainabilityPreview } from '@/components/skeleton/previews/sustainability-preview'
 import { cn } from '@/lib/utils'
+const SustainabilityPreview = dynamic(() => import('@/components/skeleton/previews/sustainability-preview').then(mod => mod.SustainabilityPreview), { ssr: false })
 
 export default function SustainabilityPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

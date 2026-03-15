@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { PermitsPreview } from '@/components/skeleton/previews/permits-preview'
 import { cn } from '@/lib/utils'
+const PermitsPreview = dynamic(() => import('@/components/skeleton/previews/permits-preview').then(mod => mod.PermitsPreview), { ssr: false })
 
 export default function JobPermitsPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

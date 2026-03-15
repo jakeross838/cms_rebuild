@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { PriceIntelligencePreview } from '@/components/skeleton/previews/price-intelligence-preview'
 import { cn } from '@/lib/utils'
+const PriceIntelligencePreview = dynamic(() => import('@/components/skeleton/previews/price-intelligence-preview').then(mod => mod.PriceIntelligencePreview), { ssr: false })
 
 export default function PriceIntelligencePage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

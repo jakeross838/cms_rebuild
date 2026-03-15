@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { CalendarPreview } from '@/components/skeleton/previews/calendar-preview'
 import { cn } from '@/lib/utils'
+const CalendarPreview = dynamic(() => import('@/components/skeleton/previews/calendar-preview').then(mod => mod.CalendarPreview), { ssr: false })
 
 export default function CompanyCalendarPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

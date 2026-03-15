@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { CommunicationHubPreview } from '@/components/skeleton/previews/communication-hub-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const CommunicationHubPreview = dynamic(() => import('@/components/skeleton/previews/communication-hub-preview').then(mod => mod.CommunicationHubPreview), { ssr: false })
 
 export default function CommunicationHubPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

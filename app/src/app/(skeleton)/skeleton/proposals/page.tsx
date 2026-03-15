@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { ProposalsPreview } from '@/components/skeleton/previews/proposals-preview'
 import { cn } from '@/lib/utils'
+const ProposalsPreview = dynamic(() => import('@/components/skeleton/previews/proposals-preview').then(mod => mod.ProposalsPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Leads', 'Estimates', 'Proposals', 'Contracts', 'Jobs'

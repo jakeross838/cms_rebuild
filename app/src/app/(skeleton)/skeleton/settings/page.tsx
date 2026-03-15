@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { SettingsPreview } from '@/components/skeleton/previews/settings-preview'
 import { cn } from '@/lib/utils'
+const SettingsPreview = dynamic(() => import('@/components/skeleton/previews/settings-preview').then(mod => mod.SettingsPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Company Setup', 'Settings', 'Users', 'Integrations', 'Templates'

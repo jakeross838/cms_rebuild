@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { FinancialDashboardPreview } from '@/components/skeleton/previews/financial-dashboard-preview'
 import { cn } from '@/lib/utils'
+const FinancialDashboardPreview = dynamic(() => import('@/components/skeleton/previews/financial-dashboard-preview').then(mod => mod.FinancialDashboardPreview), { ssr: false })
 
 export default function FinancialDashboardPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

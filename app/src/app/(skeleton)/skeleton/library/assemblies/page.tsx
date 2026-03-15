@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { AssembliesPreview } from '@/components/skeleton/previews/assemblies-preview'
 import { cn } from '@/lib/utils'
+const AssembliesPreview = dynamic(() => import('@/components/skeleton/previews/assemblies-preview').then(mod => mod.AssembliesPreview), { ssr: false })
 
 const workflow = ['Create Assembly', 'Add to Estimate', 'Customize', 'Track Performance']
 

@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { IntegrationsPreview } from '@/components/skeleton/previews/integrations-preview'
 import { cn } from '@/lib/utils'
+const IntegrationsPreview = dynamic(() => import('@/components/skeleton/previews/integrations-preview').then(mod => mod.IntegrationsPreview), { ssr: false })
 
 export default function IntegrationsPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

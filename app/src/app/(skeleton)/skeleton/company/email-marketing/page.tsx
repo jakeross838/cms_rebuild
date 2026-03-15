@@ -1,9 +1,10 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { EmailMarketingPreview } from '@/components/skeleton/previews/email-marketing-preview'
+const EmailMarketingPreview = dynamic(() => import('@/components/skeleton/previews/email-marketing-preview').then(mod => mod.EmailMarketingPreview), { ssr: false })
 
 export default function EmailMarketingPage() {
   const [activeTab, setActiveTab] = useState<'specs' | 'preview'>('specs')

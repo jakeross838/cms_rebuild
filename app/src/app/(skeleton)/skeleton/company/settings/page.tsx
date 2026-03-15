@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { CompanySettingsPreview } from '@/components/skeleton/previews/company-settings-preview'
 import { cn } from '@/lib/utils'
+const CompanySettingsPreview = dynamic(() => import('@/components/skeleton/previews/company-settings-preview').then(mod => mod.CompanySettingsPreview), { ssr: false })
 
 export default function CompanySettingsPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

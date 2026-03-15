@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { ReceivablesPreview } from '@/components/skeleton/previews/receivables-preview'
 import { cn } from '@/lib/utils'
+const ReceivablesPreview = dynamic(() => import('@/components/skeleton/previews/receivables-preview').then(mod => mod.ReceivablesPreview), { ssr: false })
 
 const receivablesWorkflow = ['Draw Approved', 'Invoice Sent', 'Payment Due', 'Follow Up', 'Payment Received']
 

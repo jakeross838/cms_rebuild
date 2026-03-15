@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { TradeIntuitionPreview } from '@/components/skeleton/previews/trade-intuition-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const TradeIntuitionPreview = dynamic(() => import('@/components/skeleton/previews/trade-intuition-preview').then(mod => mod.TradeIntuitionPreview), { ssr: false })
 
 export default function TradeIntuitionPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

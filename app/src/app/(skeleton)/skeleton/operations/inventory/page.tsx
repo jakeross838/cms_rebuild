@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { InventoryPreview } from '@/components/skeleton/previews/inventory-preview'
 import { cn } from '@/lib/utils'
+const InventoryPreview = dynamic(() => import('@/components/skeleton/previews/inventory-preview').then(mod => mod.InventoryPreview), { ssr: false })
 
 const inventoryWorkflow = ['Catalog Setup', 'Receive Materials', 'Issue to Job', 'Track Consumption', 'Reorder']
 

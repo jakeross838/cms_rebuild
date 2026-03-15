@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { LienLawPreview } from '@/components/skeleton/previews/lien-law-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const LienLawPreview = dynamic(() => import('@/components/skeleton/previews/lien-law-preview').then(mod => mod.LienLawPreview), { ssr: false })
 
 export default function LienLawPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

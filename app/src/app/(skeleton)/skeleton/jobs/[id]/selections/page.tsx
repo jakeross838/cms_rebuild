@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { SelectionsPreview } from '@/components/skeleton/previews/selections-preview'
 import { cn } from '@/lib/utils'
+const SelectionsPreview = dynamic(() => import('@/components/skeleton/previews/selections-preview').then(mod => mod.SelectionsPreview), { ssr: false })
 
 export default function JobSelectionsPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { JobClosePreview } from '@/components/skeleton/previews/job-close-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const JobClosePreview = dynamic(() => import('@/components/skeleton/previews/job-close-preview').then(mod => mod.JobClosePreview), { ssr: false })
 
 export default function JobClosePage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

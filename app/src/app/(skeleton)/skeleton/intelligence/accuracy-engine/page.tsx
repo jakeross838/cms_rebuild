@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { AccuracyEnginePreview } from '@/components/skeleton/previews/accuracy-engine-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const AccuracyEnginePreview = dynamic(() => import('@/components/skeleton/previews/accuracy-engine-preview').then(mod => mod.AccuracyEnginePreview), { ssr: false })
 
 export default function AccuracyEnginePage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

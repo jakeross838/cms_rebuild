@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { PhotosPreview } from '@/components/skeleton/previews/photos-preview'
 import { cn } from '@/lib/utils'
+const PhotosPreview = dynamic(() => import('@/components/skeleton/previews/photos-preview').then(mod => mod.PhotosPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Daily Logs', 'Photos', 'Client Portal', 'Documents'

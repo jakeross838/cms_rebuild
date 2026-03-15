@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { RFIsPreview } from '@/components/skeleton/previews/rfis-preview'
 import { cn } from '@/lib/utils'
+const RFIsPreview = dynamic(() => import('@/components/skeleton/previews/rfis-preview').then(mod => mod.RFIsPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Identify Question', 'Create RFI + Markup', 'Route to A/E', 'Ball-in-Court', 'Response', 'Impact → CO'

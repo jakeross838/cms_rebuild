@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { ProductionQualityPreview } from '@/components/skeleton/previews/production-quality-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const ProductionQualityPreview = dynamic(() => import('@/components/skeleton/previews/production-quality-preview').then(mod => mod.ProductionQualityPreview), { ssr: false })
 
 export default function ProductionPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

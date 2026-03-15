@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { TemplatesPreview } from '@/components/skeleton/previews/templates-preview'
 import { cn } from '@/lib/utils'
+const TemplatesPreview = dynamic(() => import('@/components/skeleton/previews/templates-preview').then(mod => mod.TemplatesPreview), { ssr: false })
 
 export default function DocumentTemplatesPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { HrWorkforcePreview } from '@/components/skeleton/previews/hr-workforce-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const HrWorkforcePreview = dynamic(() => import('@/components/skeleton/previews/hr-workforce-preview').then(mod => mod.HrWorkforcePreview), { ssr: false })
 
 export default function HrWorkforcePage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

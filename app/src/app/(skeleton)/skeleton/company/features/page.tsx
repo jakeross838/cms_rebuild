@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { FeatureRegistryPreview } from '@/components/skeleton/previews/feature-registry-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const FeatureRegistryPreview = dynamic(() => import('@/components/skeleton/previews/feature-registry-preview').then(mod => mod.FeatureRegistryPreview), { ssr: false })
 
 export default function FeaturesPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

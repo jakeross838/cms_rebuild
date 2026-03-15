@@ -1,4 +1,5 @@
-import ActivityPreview from '@/components/skeleton/previews/activity-preview'
+import dynamic from 'next/dynamic'
+const ActivityPreview = dynamic(() => import('@/components/skeleton/previews/activity-preview'), { ssr: false })
 
 export default function ActivityFeedPage() {
   return <ActivityPreview />

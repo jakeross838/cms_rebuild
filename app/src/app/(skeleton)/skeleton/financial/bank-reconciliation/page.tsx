@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { BankReconciliationPreview } from '@/components/skeleton/previews/bank-reconciliation-preview'
 import { cn } from '@/lib/utils'
+const BankReconciliationPreview = dynamic(() => import('@/components/skeleton/previews/bank-reconciliation-preview').then(mod => mod.BankReconciliationPreview), { ssr: false })
 
 const bankReconciliationWorkflow = ['Import Statement', 'Auto-Match', 'Manual Match', 'Resolve Differences', 'Complete Reconciliation']
 

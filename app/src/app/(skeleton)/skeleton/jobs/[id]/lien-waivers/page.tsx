@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { LienWaiversPreview } from '@/components/skeleton/previews/lien-waivers-preview'
 import { cn } from '@/lib/utils'
+const LienWaiversPreview = dynamic(() => import('@/components/skeleton/previews/lien-waivers-preview').then(mod => mod.LienWaiversPreview), { ssr: false })
 
 export default function JobLienWaiversPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

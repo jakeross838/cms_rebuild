@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback, memo } from 'react'
 
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -13,7 +14,10 @@ import {
   Menu,
 } from 'lucide-react'
 
-import { CommandPalette } from '@/components/command-palette/command-palette'
+const CommandPalette = dynamic(
+  () => import('@/components/command-palette/command-palette').then(mod => mod.CommandPalette),
+  { ssr: false }
+)
 import { TenantSwitcher } from '@/components/layout/TenantSwitcher'
 import { NotificationBell } from '@/components/notifications/notification-bell'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -28,16 +32,16 @@ interface TopNavProps {
   } | null
 }
 
-export function TopNav({ user }: TopNavProps) {
+export const TopNav = memo(function TopNav({ user }: TopNavProps) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()
-  }
+  }, [supabase.auth, router])
 
   return (
     <header className="h-16 bg-card/95 backdrop-blur supports-backdrop-blur:bg-card/60 border-b border-border/40 flex items-center justify-between px-6 z-10 shadow-sm">
@@ -145,4 +149,4 @@ export function TopNav({ user }: TopNavProps) {
       </div>
     </header>
   )
-}
+})

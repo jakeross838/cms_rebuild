@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { TeamPreview } from '@/components/skeleton/previews/team-preview'
 import { cn } from '@/lib/utils'
+const TeamPreview = dynamic(() => import('@/components/skeleton/previews/team-preview').then(mod => mod.TeamPreview), { ssr: false })
 
 export default function TeamPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

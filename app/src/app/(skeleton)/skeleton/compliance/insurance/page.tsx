@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { InsurancePreview } from '@/components/skeleton/previews/insurance-preview'
 import { cn } from '@/lib/utils'
+const InsurancePreview = dynamic(() => import('@/components/skeleton/previews/insurance-preview').then(mod => mod.InsurancePreview), { ssr: false })
 
 export default function InsurancePage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

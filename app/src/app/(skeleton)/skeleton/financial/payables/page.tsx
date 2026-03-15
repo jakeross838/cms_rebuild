@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { PayablesPreview } from '@/components/skeleton/previews/payables-preview'
 import { cn } from '@/lib/utils'
+const PayablesPreview = dynamic(() => import('@/components/skeleton/previews/payables-preview').then(mod => mod.PayablesPreview), { ssr: false })
 
 const payablesWorkflow = ['Invoice Received', 'Approved', 'Scheduled', 'Paid', 'Reconciled']
 

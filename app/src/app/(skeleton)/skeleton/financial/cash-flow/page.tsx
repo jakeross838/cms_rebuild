@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { CashFlowPreview } from '@/components/skeleton/previews/cash-flow-preview'
 import { cn } from '@/lib/utils'
+const CashFlowPreview = dynamic(() => import('@/components/skeleton/previews/cash-flow-preview').then(mod => mod.CashFlowPreview), { ssr: false })
 
 const cashFlowWorkflow = ['Current Position', 'Project Inflows', 'Project Outflows', 'Identify Gaps', 'Plan Actions']
 

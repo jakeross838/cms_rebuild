@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { DashboardsPreview } from '@/components/skeleton/previews/dashboards-preview'
 import { cn } from '@/lib/utils'
+const DashboardsPreview = dynamic(() => import('@/components/skeleton/previews/dashboards-preview').then(mod => mod.DashboardsPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Data Sources', 'Widget Selection', 'Dashboard Design', 'Share'

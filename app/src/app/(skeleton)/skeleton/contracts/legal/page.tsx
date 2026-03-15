@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { ContractLegalPreview } from '@/components/skeleton/previews/contract-legal-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const ContractLegalPreview = dynamic(() => import('@/components/skeleton/previews/contract-legal-preview').then(mod => mod.ContractLegalPreview), { ssr: false })
 
 export default function ContractLegalPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
@@ -8,8 +9,8 @@ import {
 } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { OverviewPreview } from '@/components/skeleton/previews/overview-preview'
 import { cn } from '@/lib/utils'
+const OverviewPreview = dynamic(() => import('@/components/skeleton/previews/overview-preview').then(mod => mod.OverviewPreview), { ssr: false })
 
 export default function OverviewPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

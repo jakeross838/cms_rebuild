@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { SafetyPreview } from '@/components/skeleton/previews/safety-preview'
 import { cn } from '@/lib/utils'
+const SafetyPreview = dynamic(() => import('@/components/skeleton/previews/safety-preview').then(mod => mod.SafetyPreview), { ssr: false })
 
 export default function SafetyPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

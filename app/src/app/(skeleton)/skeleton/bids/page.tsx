@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { BidsPreview } from '@/components/skeleton/previews/bids-preview'
 import { cn } from '@/lib/utils'
+const BidsPreview = dynamic(() => import('@/components/skeleton/previews/bids-preview').then(mod => mod.BidsPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Create Package', 'Attach Plans', 'Invite Vendors', 'Receive Bids', 'Level & Compare', 'Award & PO'

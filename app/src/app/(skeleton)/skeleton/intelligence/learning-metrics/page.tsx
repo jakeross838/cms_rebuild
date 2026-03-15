@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { LearningMetricsPreview } from '@/components/skeleton/previews/learning-metrics-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const LearningMetricsPreview = dynamic(() => import('@/components/skeleton/previews/learning-metrics-preview').then(mod => mod.LearningMetricsPreview), { ssr: false })
 
 export default function LearningMetricsPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

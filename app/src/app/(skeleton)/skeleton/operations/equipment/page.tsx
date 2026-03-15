@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { EquipmentPreview } from '@/components/skeleton/previews/equipment-preview'
 import { cn } from '@/lib/utils'
+const EquipmentPreview = dynamic(() => import('@/components/skeleton/previews/equipment-preview').then(mod => mod.EquipmentPreview), { ssr: false })
 
 const workflow = ['Register Asset', 'Deploy to Job', 'Track Usage/GPS', 'Schedule Maintenance', 'Return/Checkout', 'Depreciate/Dispose']
 

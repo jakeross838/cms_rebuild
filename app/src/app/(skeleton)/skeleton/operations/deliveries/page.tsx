@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { DeliveriesPreview } from '@/components/skeleton/previews/deliveries-preview'
 import { cn } from '@/lib/utils'
+const DeliveriesPreview = dynamic(() => import('@/components/skeleton/previews/deliveries-preview').then(mod => mod.DeliveriesPreview), { ssr: false })
 
 const workflow = ['PO Created', 'Delivery Scheduled', 'Arriving Soon', 'Received', 'Verified']
 

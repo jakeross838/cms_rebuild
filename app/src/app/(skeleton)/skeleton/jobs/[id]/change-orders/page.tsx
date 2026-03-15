@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { ChangeOrdersPreview } from '@/components/skeleton/previews/change-orders-preview'
 import { cn } from '@/lib/utils'
+const ChangeOrdersPreview = dynamic(() => import('@/components/skeleton/previews/change-orders-preview').then(mod => mod.ChangeOrdersPreview), { ssr: false })
 
 export default function JobChangeOrdersPage() {
   

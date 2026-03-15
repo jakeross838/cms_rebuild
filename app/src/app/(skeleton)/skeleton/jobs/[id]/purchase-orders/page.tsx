@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { PurchaseOrdersPreview } from '@/components/skeleton/previews/purchase-orders-preview'
 import { cn } from '@/lib/utils'
+const PurchaseOrdersPreview = dynamic(() => import('@/components/skeleton/previews/purchase-orders-preview').then(mod => mod.PurchaseOrdersPreview), { ssr: false })
 
 export default function JobPurchaseOrdersPage() {
   

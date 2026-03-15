@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { NotificationsPreview } from '@/components/skeleton/previews/notifications-preview'
 import { cn } from '@/lib/utils'
+const NotificationsPreview = dynamic(() => import('@/components/skeleton/previews/notifications-preview').then(mod => mod.NotificationsPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Module emits event', 'Resolve recipients (role + project)', 'Render template per channel', 'Deliver via channel adapters', 'Track delivery status'

@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { ChartOfAccountsPreview } from '@/components/skeleton/previews/chart-of-accounts-preview'
 import { cn } from '@/lib/utils'
+const ChartOfAccountsPreview = dynamic(() => import('@/components/skeleton/previews/chart-of-accounts-preview').then(mod => mod.ChartOfAccountsPreview), { ssr: false })
 
 const chartOfAccountsWorkflow = ['Create Account', 'Configure Hierarchy', 'Post Transactions', 'Review Balances', 'Close Period']
 

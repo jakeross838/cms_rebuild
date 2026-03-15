@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { WarrantiesPreview } from '@/components/skeleton/previews/warranties-preview'
 import { cn } from '@/lib/utils'
+const WarrantiesPreview = dynamic(() => import('@/components/skeleton/previews/warranties-preview').then(mod => mod.WarrantiesPreview), { ssr: false })
 
 export default function JobWarrantiesPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

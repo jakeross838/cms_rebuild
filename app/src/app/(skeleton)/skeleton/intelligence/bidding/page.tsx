@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { BiddingEstimatingPreview } from '@/components/skeleton/previews/bidding-estimating-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const BiddingEstimatingPreview = dynamic(() => import('@/components/skeleton/previews/bidding-estimating-preview').then(mod => mod.BiddingEstimatingPreview), { ssr: false })
 
 export default function BiddingPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

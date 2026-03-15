@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { BusinessManagementPreview } from '@/components/skeleton/previews/business-management-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const BusinessManagementPreview = dynamic(() => import('@/components/skeleton/previews/business-management-preview').then(mod => mod.BusinessManagementPreview), { ssr: false })
 
 export default function BusinessManagementPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

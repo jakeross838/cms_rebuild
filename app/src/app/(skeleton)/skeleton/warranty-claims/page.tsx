@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { WarrantyClaimsPreview } from '@/components/skeleton/previews/warranty-claims-preview'
 import { cn } from '@/lib/utils'
+const WarrantyClaimsPreview = dynamic(() => import('@/components/skeleton/previews/warranty-claims-preview').then(mod => mod.WarrantyClaimsPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Client Report', 'Warranty Check', 'Claim Filed', 'Resolution', 'Closeout'

@@ -1,10 +1,11 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { PostBuildPreview } from '@/components/skeleton/previews/post-build-preview'
 import { Eye, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
+const PostBuildPreview = dynamic(() => import('@/components/skeleton/previews/post-build-preview').then(mod => mod.PostBuildPreview), { ssr: false })
 
 export default function PostBuildPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')

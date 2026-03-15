@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { PortalPreview } from '@/components/skeleton/previews/portal-preview'
 import { cn } from '@/lib/utils'
+const PortalPreview = dynamic(() => import('@/components/skeleton/previews/portal-preview').then(mod => mod.PortalPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Client Login', 'Portal Dashboard', 'Project View', 'Selections', 'Documents', 'Payments'

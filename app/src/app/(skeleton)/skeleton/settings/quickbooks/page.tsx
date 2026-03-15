@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { QuickbooksPreview } from '@/components/skeleton/previews/quickbooks-preview'
 import { cn } from '@/lib/utils'
+const QuickbooksPreview = dynamic(() => import('@/components/skeleton/previews/quickbooks-preview').then(mod => mod.QuickbooksPreview), { ssr: false })
 
 const constructionWorkflow = [
   'Settings', 'OAuth Connect', 'Account Mapping', 'Sync Config', 'Monitor', 'Resolve'

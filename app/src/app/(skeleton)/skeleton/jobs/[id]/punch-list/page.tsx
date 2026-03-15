@@ -1,12 +1,13 @@
 'use client'
+import dynamic from 'next/dynamic'
 
 import { useState } from 'react'
 
 import { Eye, BookOpen } from 'lucide-react'
 
 import { PageSpec } from '@/components/skeleton/page-spec'
-import { PunchListPreview } from '@/components/skeleton/previews/punch-list-preview'
 import { cn } from '@/lib/utils'
+const PunchListPreview = dynamic(() => import('@/components/skeleton/previews/punch-list-preview').then(mod => mod.PunchListPreview), { ssr: false })
 
 export default function JobPunchListPage() {
   const [activeTab, setActiveTab] = useState<'preview' | 'spec'>('preview')
