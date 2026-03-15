@@ -62,6 +62,8 @@ function NavDropdown({
     <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
         className={cn(
           'flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors',
           isActive
@@ -185,6 +187,9 @@ function SettingsMegaMenu() {
     <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+        aria-label="Settings & More"
         className={cn(
           'p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors',
           isActive && 'bg-accent text-foreground'

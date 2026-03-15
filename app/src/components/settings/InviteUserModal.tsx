@@ -56,7 +56,7 @@ export function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="invite-modal-title">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50"
@@ -73,10 +73,11 @@ export function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <UserPlus className="h-5 w-5" />
-            Invite Team Member
+            <span id="invite-modal-title">Invite Team Member</span>
           </h2>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="p-1 text-muted-foreground hover:text-foreground rounded-md hover:bg-accent"
           >
             <X className="h-5 w-5" />

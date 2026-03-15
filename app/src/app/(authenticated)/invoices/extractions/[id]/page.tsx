@@ -4,6 +4,8 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 
+import Image from 'next/image'
+
 import {
   ArrowLeft,
   Sparkles,
@@ -417,12 +419,14 @@ export default function ExtractionDetailPage() {
               <h2 className="text-sm font-semibold text-foreground">Original Document</h2>
             </div>
             {extraction.file_url ? (
-              <div className="aspect-[8.5/11] bg-stone-100">
+              <div className="aspect-[8.5/11] bg-stone-100 relative">
                 {extraction.file_url.match(/\.(png|jpg|jpeg|gif|webp)/i) ? (
-                  <img
+                  <Image
                     src={extraction.file_url}
-                    alt="Invoice"
-                    className="w-full h-full object-contain"
+                    alt="Invoice document preview"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-contain"
                   />
                 ) : (
                   <iframe

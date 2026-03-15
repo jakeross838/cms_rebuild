@@ -125,6 +125,9 @@ export function TenantSwitcher({ className }: TenantSwitcherProps) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={isSwitching}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-label={`Switch company: ${currentCompany?.name || 'Select Company'}`}
         className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent transition-colors disabled:opacity-50"
       >
         <Building2 className="h-4 w-4 text-muted-foreground" />

@@ -90,11 +90,16 @@ export function NotificationBell() {
         type="button"
         onClick={() => setOpen(!open)}
         className="relative inline-flex items-center justify-center h-9 w-9 rounded-md hover:bg-accent transition-colors"
-        aria-label="Notifications"
+        aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : 'Notifications'}
+        aria-haspopup="true"
+        aria-expanded={open}
       >
         <Bell className="h-5 w-5 text-muted-foreground" />
         {unreadCount > 0 ? (
-          <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold">
+          <span
+            className="absolute -top-0.5 -right-0.5 flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold"
+            aria-hidden="true"
+          >
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         ) : null}

@@ -196,8 +196,9 @@ export default function PhotoDetailPage() {
                     src={photo.photo_url}
                     alt={photo.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, 768px"
                     className="object-contain"
-                    unoptimized
+                    priority
                   />
                 </div>
               </CardContent>
